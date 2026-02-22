@@ -1,10 +1,11 @@
-# 📐 Diseño Arquitectónico de Travel Planner
+# Disseny de la app OdyWay
 
 ## 🏛️ Arquitectura General
-Travel Planner sigue una arquitectura **MVVM (Model-View-ViewModel)** para una mejor separación de responsabilidades y escalabilidad.
 
+TODO
 
-## 📊 Modelo de Datos: Creado completo para futuros Sprints
+## 📊 Model de dades
+
+TODO
 
 ![alt text](domain_model.png)
-
