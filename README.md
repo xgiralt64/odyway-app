@@ -1,10 +1,22 @@
-# 🌍 Odyway
+# Odyway
 
 Benvingut a **Odyway**, l’app de gestió de viatges.
 
 Hem triat el nom com la suma de la paraula odisea i el camí que seguiràs en els teus viatges!
 
 ---
+
+## Logo de la App
+
+Logo Principal:
+
+
+![](assets/20260223_115827_appLogo.png)
+
+Splash screen
+
+
+![](assets/20260223_115857_splashScreen.png)
 
 ## Sobre el Projecte
 
