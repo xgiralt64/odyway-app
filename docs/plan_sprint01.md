@@ -2,7 +2,7 @@
 
 ## 1. Sprint Goal
 
-Definir les tasques de cada membre del grup i la seva importancia a mes de definir el projecte i com es desenvoluparà.
+Definir l'objectiu de l'sprint
 
 ## 2. Sprint Backlog
 
