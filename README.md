@@ -21,17 +21,10 @@ L’aplicació està construïda amb:
 
 ## Característiques Principals
 
-<<<<<<< HEAD
 1. **Planificació d’itineraris** – Organitza els teus viatges i visualitza el recorregut fàcilment
 2. **Gestió de destinacions** – Afegeix llocs, dates i notes personalitzades
 3. **Preferències d’usuari** – Personalitza l’experiència segons els teus interessos
 4. **Arquitectura escalable** – Preparada per créixer amb noves funcionalitats
-=======
-✅ **Planificació d’itineraris** – Organitza els teus viatges i visualitza el recorregut fàcilment 
-✅ **Gestió de destinacions** – Afegeix llocs, dates i notes personalitzades
-✅ **Preferències d’usuari** – Personalitza l’experiència segons els teus interessos
-✅ **Arquitectura escalable** – Preparada per créixer amb noves funcionalitats
->>>>>>> 7d99bceda5032c10a8c8bcf0b945a0e22aed4956
 
 ---
 
