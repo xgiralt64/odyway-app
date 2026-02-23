@@ -8,15 +8,21 @@ Hem triat el nom com la suma de la paraula odisea i el camí que seguiràs en el
 
 ## Logo de la App
 
-Logo Principal:
+Logo Principal
+
+<p align="center">
+  <img src="assets/20260223_115827_appLogo.png" width="200"/>
+</p>
 
 
-![](assets/20260223_115827_appLogo.png)
 
-Splash screen
+Splash Screen
 
+<p align="center">
+  <img src="assets/20260223_115857_splashScreen.png" width="250"/>
+</p>
 
-![](assets/20260223_115857_splashScreen.png)
+---
 
 ## Sobre el Projecte
 
