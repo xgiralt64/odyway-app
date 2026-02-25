@@ -1,0 +1,83 @@
+classDiagram
+
+%%Diagrama amb el que creiem que implementarem fins ara
+
+class User {
+    +String id
+    +String name
+    +String email
+    +register()
+    +login()
+    +logout()
+}
+
+class Authentication {
+    +login(email, password)
+    +logout()
+    +resetPassword(email)
+}
+
+class Preferences {
+    +String userId
+    +Boolean notificationsEnabled
+    +String preferredLanguage
+    +String theme
+    +updatePreferences()
+}
+
+class Trip {
+    +String id
+    +String userId
+    +String title
+    +String description
+    +LocalDate startDate
+    +LocalDate endDate
+    +Double budget
+    +getRemainingBudget()
+    +getTotalCost()
+    +optimizeBudgetDistribution()
+}
+
+class Activity {
+    +String id
+    +String name
+    +String location
+    +LocalDateTime dateTime
+    +Double cost
+    +isFree()
+}
+
+class ItineraryItem {
+    +String id
+    +String title
+    +LocalDateTime scheduledTime
+    +isPast()
+}
+
+class Image {
+    +String id
+    +String url
+    +String description
+    +isValidUrl()
+}
+
+class AIRecommendations {
+    +generateSuggestions()
+}
+
+class Map {
+    +showLocation()
+    +getNearbyPlaces()
+}
+
+%% Relacions
+
+User "1" --> "1" Preferences : has
+User "1" --> "many" Trip : owns
+User "1" --> "1" Authentication : manages
+
+Trip "1" --> "many" Activity : contains
+Trip "1" --> "many" ItineraryItem : schedules
+Trip "1" --> "many" Image : stores
+Trip --> AIRecommendations : gets
+Trip --> Map : shows locations
