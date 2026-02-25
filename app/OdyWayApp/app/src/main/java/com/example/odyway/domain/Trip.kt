@@ -53,13 +53,13 @@ data class Trip(
      * Future feature: calculate optimization of daily spending.
      */
     fun optimizeBudgetDistribution() {
-        // @TODO Implement smart AI-based budget distribution algorithm
+        // @TODO
     }
 
     /**
      * Future feature: suggest best transport options between destinations.
      */
     fun suggestTransportOptions() {
-        // @TODO Integrate external API for transport suggestions
+        // @TODO
     }
 }
