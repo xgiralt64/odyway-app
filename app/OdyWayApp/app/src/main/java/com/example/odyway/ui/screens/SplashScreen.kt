@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.sp
 import com.example.odyway.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.Color
+import com.example.odyway.ui.theme.BackgroundSplash
+import com.example.odyway.ui.theme.Pink40
 
 @Composable
 fun SplashScreen(
@@ -27,7 +29,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(BackgroundSplash),
         contentAlignment = Alignment.Center
     ) {
 
@@ -38,7 +40,7 @@ fun SplashScreen(
 
             // Logo
             Image(                                      //CANVIAR PER EL LOGO REAL
-                painter = painterResource(id = R.drawable.splash),
+                painter = painterResource(id = R.drawable.icon_odyway),
                 contentDescription = "Logo OdyWay",
                 modifier = Modifier
                     .size(180.dp)
@@ -48,7 +50,7 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Loading
-            CircularProgressIndicator(
+            LinearProgressIndicator(
                 color = Color.White
             )
 
@@ -56,7 +58,8 @@ fun SplashScreen(
 
             Text(
                 text = "Carregant...",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
             )
         }
     }
