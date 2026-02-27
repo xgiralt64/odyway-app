@@ -1,8 +1,26 @@
-# 🌍 Odyway
+# Odyway
 
 Benvingut a **Odyway**, l’app de gestió de viatges.
 
 Hem triat el nom com la suma de la paraula odisea i el camí que seguiràs en els teus viatges!
+
+---
+
+## Logo de la App
+
+Logo Principal
+
+<p align="center">
+  <img src="assets/20260223_115827_appLogo.png" width="200"/>
+</p>
+
+
+
+Splash Screen
+
+<p align="center">
+  <img src="assets/20260223_115857_splashScreen.png" width="250"/>
+</p>
 
 ---
 
@@ -21,10 +39,10 @@ L’aplicació està construïda amb:
 
 ## Característiques Principals
 
-✅ **Planificació d’itineraris** – Organitza els teus viatges i visualitza el recorregut fàcilment 
-✅ **Gestió de destinacions** – Afegeix llocs, dates i notes personalitzades
-✅ **Preferències d’usuari** – Personalitza l’experiència segons els teus interessos
-✅ **Arquitectura escalable** – Preparada per créixer amb noves funcionalitats
+1. **Planificació d’itineraris** – Organitza els teus viatges i visualitza el recorregut fàcilment
+2. **Gestió de destinacions** – Afegeix llocs, dates i notes personalitzades
+3. **Preferències d’usuari** – Personalitza l’experiència segons els teus interessos
+4. **Arquitectura escalable** – Preparada per créixer amb noves funcionalitats
 
 ---
 
