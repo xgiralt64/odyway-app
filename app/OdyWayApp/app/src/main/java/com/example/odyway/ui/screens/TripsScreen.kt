@@ -47,6 +47,7 @@ data class ActivityMock(
     val title: String,
     val cost: Double
 )
+data class GalleryImageMock(val id: Int, val imageRes: Int)
 
 val itinerarioMock = listOf(
     ActivityMock(1, "09:00", "Cafe i esmorzar tradicional", 12.50),
@@ -54,6 +55,16 @@ val itinerarioMock = listOf(
     ActivityMock(3, "14:00", "Dinar a un restaurant local", 35.00),
     ActivityMock(4, "17:00", "Passeig lliure i compres", 0.00),
     ActivityMock(5, "20:00", "Sopar amb vistes a la ciutat", 45.00)
+)
+
+
+val galeriaMock = listOf(
+    GalleryImageMock(1, R.drawable.paris_example),
+    GalleryImageMock(2, R.drawable.paris_example),
+    GalleryImageMock(3, R.drawable.paris_example),
+    GalleryImageMock(4, R.drawable.paris_example),
+    GalleryImageMock(5, R.drawable.paris_example),
+    GalleryImageMock(6, R.drawable.paris_example)
 )
 
 @Composable
@@ -65,7 +76,6 @@ fun TripsScreen() {
         containerColor = BackgroundLight,
         topBar = {
             Column {
-                // --- NUEVO: Imagen superior con título y fechas ---
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -91,7 +101,7 @@ fun TripsScreen() {
                             )
                     )
 
-                    // Título y fechas superpuestos en la esquina inferior izquierda
+                    //título y fechas superpuestos en la esquina inferior izquierda
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
@@ -158,7 +168,7 @@ fun TripsScreen() {
 
             when (selectedTabIndex) {
                 0 -> ItineraryList()
-                1 -> Text("Aquí anirà la Galeria d'imatges", modifier = Modifier.padding(16.dp), color = NavyBlue)
+                1 -> TripGallerySection()
                 2 -> Text("Estadístiques detallades de despeses", modifier = Modifier.padding(16.dp), color = NavyBlue)
             }
         }
@@ -247,8 +257,87 @@ fun ActivityCard(activity: ActivityMock) {
         }
     }
 }
+
+@Composable
+fun TripGallerySection() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
+        // Barra superior de la galería: Título, Botón Ordenar y Botón Añadir
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Photos of the trip",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = NavyBlue
+            )
+
+            Row {
+                // Botón Ordenar (Mock)
+                IconButton(onClick = { /* TODO: Lógica de ordenar */ }) {
+                    Icon(Icons.Default.Sort, contentDescription = "Ordenar", tint = NavyBlue)
+                }
+                // Botón Añadir Foto (Mock)
+                IconButton(onClick = { /* TODO: Lógica de añadir foto */ }) {
+                    Icon(Icons.Default.AddPhotoAlternate, contentDescription = "Añadir foto", tint = MapPinRed)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Cuadrícula de fotos (Grid)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2), // 2 columnas
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(galeriaMock) { image ->
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f) // Hace que la imagen sea perfectamente cuadrada
+                        .clip(RoundedCornerShape(8.dp))
+                ) {
+                    // La imagen
+                    Image(
+                        painter = painterResource(id = image.imageRes),
+                        contentDescription = "Foto galería",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    //btn borrar superpuesto en la esquina superior derecha
+                    IconButton(
+                        onClick = { /* TODO: Lógica de borrar foto */ },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .background(Color.Black.copy(alpha = 0.5f), CircleShape) // Fondo semitransparente para que se vea
+                            .size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Borrar",
+                            tint = White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+            // Margen inferior para que no quede tapado por la barra de navegacion
+            item { Spacer(modifier = Modifier.height(80.dp)) }
+        }
+    }
+}
 @Preview
 @Composable
 fun Preview() {
-    TripsScreen()
+    TripGallerySection()
 }
