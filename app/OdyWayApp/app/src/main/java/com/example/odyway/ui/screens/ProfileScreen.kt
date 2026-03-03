@@ -28,7 +28,7 @@ import com.example.odyway.ui.theme.White
 import com.example.odyway.ui.theme.MapPinRed
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(onNavigateToSettings: () -> Unit) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Recent", "Favorites", "Stats")
 
@@ -43,7 +43,7 @@ fun ProfileScreen() {
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(onClick = { /* TODO: Navigate to Preferences/Settings */ }) {
+                IconButton(onClick = onNavigateToSettings) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings", tint = White,
                         modifier = Modifier.size(38.dp))
                 }
@@ -185,8 +185,3 @@ fun ProfileStatItem(label: String, value: String) {
     }
 }
 
-@Preview
-@Composable
-fun Preview() {
-    ProfileScreen()
-}
