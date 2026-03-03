@@ -336,8 +336,3 @@ fun TripGallerySection() {
         }
     }
 }
-@Preview
-@Composable
-fun Preview() {
-    TripGallerySection()
-}
