@@ -75,7 +75,7 @@ fun NavGraph() {
                 HomeScreen()
             }
             composable(Screen.Trips.route) {
-                Text("Pantalla de Viajes")
+                TripsScreen()
             }
             composable(Screen.Profile.route) {
                 Text("Pantalla de Cuenta")

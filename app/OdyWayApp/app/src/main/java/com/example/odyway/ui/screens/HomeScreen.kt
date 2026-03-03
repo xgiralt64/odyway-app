@@ -152,9 +152,3 @@ fun TripCard(trip: TripMock) {
         }
     }
 }
-
-@Preview
-@Composable
-fun Preview() {
-    HomeScreen()
-}
