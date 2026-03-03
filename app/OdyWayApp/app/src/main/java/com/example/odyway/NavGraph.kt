@@ -78,7 +78,7 @@ fun NavGraph() {
                 TripsScreen()
             }
             composable(Screen.Profile.route) {
-                Text("Pantalla de Cuenta")
+                ProfileScreen()
             }
         }
     }
