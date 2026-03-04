@@ -36,6 +36,7 @@ sealed class Screen(
     data object Profile : Screen("profile", "Profile", Icons.Filled.Person)
     data object Splash : Screen("splash")
     data object Settings : Screen("settings")
+    data object Preferences : Screen("preferences")
 }
 
 @Composable
@@ -72,12 +73,15 @@ fun NavGraph() {
                     }
                 )
             }
+
             composable(Screen.Home.route) {
                 HomeScreen()
             }
+
             composable(Screen.Trips.route) {
                 TripsScreen()
             }
+
             composable(Screen.Profile.route) {
                 // Pasamos la accion de navegación al ProfileScreen
                 ProfileScreen(
@@ -88,10 +92,13 @@ fun NavGraph() {
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(
-                    // Pasamos la accion para volver atrás con la flechita
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToPreferences = { navController.navigate(Screen.Preferences.route) }
+                )
+            }
+            composable(Screen.Preferences.route) {
+                PreferencesScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }

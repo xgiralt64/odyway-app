@@ -1,15 +1,12 @@
 package com.example.odyway.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,12 +20,12 @@ import com.example.odyway.ui.theme.MapPinRed
 
 @Composable
 fun SettingsScreen(
-    onNavigateBack: () -> Unit // Función para volver al Profile
+    onNavigateBack: () -> Unit,
+    onNavigateToPreferences: () -> Unit,
 ) {
     Scaffold(
         containerColor = BackgroundLight,
         topBar = {
-            // Barra superior personalizada
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,14 +67,14 @@ fun SettingsScreen(
                         icon = Icons.Filled.Person,
                         title = "Account Information",
                         subtitle = "Manage your personal data",
-                        onClick = { /* TODO: Navigate to Account Info */ }
+                        onClick = { /* TODO */ }
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.Settings,
                         title = "Preferences",
                         subtitle = "Language, Theme, Notifications (T4.4)",
-                        onClick = { /* TODO: Navigate to Preferences Screen */ }
+                        onClick = onNavigateToPreferences
                     )
                 }
             }
@@ -89,21 +86,21 @@ fun SettingsScreen(
                         icon = Icons.Filled.Info,
                         title = "Help & Support",
                         subtitle = "FAQ and contact",
-                        onClick = { /* TODO: Navigate to Help */ }
+                        onClick = { /* TODO */ }
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.Star,
                         title = "About OdyWay",
                         subtitle = "Version, Team info (T4.2)",
-                        onClick = { /* TODO: Navigate to About Screen */ }
+                        onClick = { /* TODO */ }
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.List,
                         title = "Terms & Conditions",
                         subtitle = "Legal agreements (T4.3)",
-                        onClick = { /* TODO: Navigate to TC Screen */ }
+                        onClick = { /* TODO */ }
                     )
                 }
             }
@@ -117,7 +114,7 @@ fun SettingsScreen(
                         subtitle = "Sign out of your account",
                         iconTint = MapPinRed,
                         titleColor = MapPinRed,
-                        onClick = { /* TODO: Logout logic */ }
+                        onClick = { /* TODO */ }
                     )
                 }
             }
