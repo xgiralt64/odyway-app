@@ -37,6 +37,8 @@ sealed class Screen(
     data object Splash : Screen("splash")
     data object Settings : Screen("settings")
     data object Preferences : Screen("preferences")
+    data object About : Screen("about")
+    data object TermsConditions : Screen("termsconditions")
 }
 
 @Composable
@@ -83,7 +85,6 @@ fun NavGraph() {
             }
 
             composable(Screen.Profile.route) {
-                // Pasamos la accion de navegación al ProfileScreen
                 ProfileScreen(
                     onNavigateToSettings = {
                         navController.navigate(Screen.Settings.route)
@@ -93,7 +94,9 @@ fun NavGraph() {
             composable(Screen.Settings.route) {
                 SettingsScreen(
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToPreferences = { navController.navigate(Screen.Preferences.route) }
+                    onNavigateToPreferences = { navController.navigate(Screen.Preferences.route) },
+                    onNavigateToAbout = { navController.navigate(Screen.About.route) },
+                    onNavigateToTerms = { navController.navigate(Screen.TermsConditions.route) }
                 )
             }
             composable(Screen.Preferences.route) {
@@ -101,6 +104,19 @@ fun NavGraph() {
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
+
+            composable(Screen.About.route) {
+                AboutScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.TermsConditions.route) {
+                TermsConditionsScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
         }
     }
 }
