@@ -22,6 +22,8 @@ import com.example.odyway.ui.theme.MapPinRed
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToPreferences: () -> Unit,
+    onNavigateToAbout: () -> Unit,
+    onNavigateToTerms: () -> Unit
 ) {
     Scaffold(
         containerColor = BackgroundLight,
@@ -93,14 +95,14 @@ fun SettingsScreen(
                         icon = Icons.Filled.Star,
                         title = "About OdyWay",
                         subtitle = "Version, Team info (T4.2)",
-                        onClick = { /* TODO */ }
+                        onClick = onNavigateToAbout
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.List,
                         title = "Terms & Conditions",
                         subtitle = "Legal agreements (T4.3)",
-                        onClick = { /* TODO */ }
+                        onClick = onNavigateToTerms
                     )
                 }
             }
