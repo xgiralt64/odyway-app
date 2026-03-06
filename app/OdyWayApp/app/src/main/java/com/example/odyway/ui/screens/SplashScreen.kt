@@ -8,22 +8,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.odyway.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.Color
 import com.example.odyway.ui.theme.BackgroundSplash
-import com.example.odyway.ui.theme.Pink40
 
 @Composable
 fun SplashScreen(
-    onNavigateToHome: () -> Unit
+    onNavigateToLogin: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         delay(2000)
-        onNavigateToHome()
+        onNavigateToLogin()
     }
 
     Box(
@@ -39,13 +36,12 @@ fun SplashScreen(
         ) {
 
             // Logo
-            Image(                                      //CANVIAR PER EL LOGO REAL
+            Image(
                 painter = painterResource(id = R.drawable.icon_odyway),
                 contentDescription = "Logo OdyWay",
                 modifier = Modifier
                     .size(180.dp)
             )
-
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -59,7 +55,7 @@ fun SplashScreen(
             Text(
                 text = "Carregant...",
                 style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
+                color = Color.White
             )
         }
     }
