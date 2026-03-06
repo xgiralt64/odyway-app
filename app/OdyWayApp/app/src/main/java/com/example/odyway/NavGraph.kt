@@ -2,8 +2,8 @@ package com.example.odyway
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
@@ -15,15 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
 import com.example.odyway.ui.screens.*
-import com.example.odyway.ui.theme.CyanBlue
 import com.example.odyway.ui.theme.MapPinRed
 import com.example.odyway.ui.theme.NavyBlue
-import com.example.odyway.ui.theme.White
 
 // sealed class
 sealed class Screen(
@@ -32,6 +29,7 @@ sealed class Screen(
     val icon: androidx.compose.ui.graphics.vector.ImageVector? = null
 ) {
     data object Home : Screen("home", "Home", Icons.Filled.Home)
+    data object Login : Screen("login", "Login", Icons.Filled.Login)
     data object Trips : Screen("trips", "Trips", Icons.Filled.Place)
     data object Profile : Screen("profile", "Profile", Icons.Filled.Person)
     data object Splash : Screen("splash")
@@ -63,14 +61,24 @@ fun NavGraph() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route, // Usar la constante!
+            startDestination = Screen.Splash.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen(
-                    onNavigateToHome = {
-                        navController.navigate(Screen.Home.route) {
+                    onNavigateToLogin = {
+                        navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     }
                 )
