@@ -19,7 +19,7 @@ Logo Principal
 Splash Screen
 
 <p align="center">
-  <img src="assets/splash_screen.png" width="250"/>
+  <img src="assets/splash_screen.PNG" width="250"/>
 </p>
 
 ---
