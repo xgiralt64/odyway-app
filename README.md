@@ -11,7 +11,7 @@ Hem triat el nom com la suma de la paraula odisea i el camí que seguiràs en el
 Logo Principal
 
 <p align="center">
-  <img src="assets/20260223_115827_appLogo.png" width="200"/>
+  <img src="icon_odyway.png" width="200"/>
 </p>
 
 
@@ -19,7 +19,7 @@ Logo Principal
 Splash Screen
 
 <p align="center">
-  <img src="assets/20260223_115857_splashScreen.png" width="250"/>
+  <img src="assets/splash_screen.png" width="250"/>
 </p>
 
 ---

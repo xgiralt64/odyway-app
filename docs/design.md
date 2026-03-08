@@ -1,6 +1,6 @@
 # Disseny de la app OdyWay
 
-## 🏛️ Arquitectura General
+## Arquitectura General
 
 Hem decitit que OdyWay segueixi una arquitectura en 3 capes per mantenir el codi ordenat i fàcil d’escalar:
 
@@ -14,16 +14,135 @@ Hem decitit que OdyWay segueixi una arquitectura en 3 capes per mantenir el codi
 - **Data (`/data/`)**  
   Proporciona dades a l’app. De moment en aquest Sprint es treballa amb dades mock que mes endevant substituirem amb la API
 
-## 📊 Model de dades
 
-- **User**: representa l’usuari de l’app.
-- **Preferences**: configuració de l’usuari (idioma, tema, notificacions…).
-- **Authentication**: operacions d’autenticació (login/logout/reset).
-- **Trip**: entitat principal del projecte. Conté informació del viatge i relacions amb:
-  - **Activity**: activitats planificades amb cost i data/hora.
-  - **ItineraryItem**: elements de l’itinerari (agenda del viatge).
-  - **Image**: imatges associades al viatge.
-- **Map**: funcions relacionades amb ubicacions i llocs propers
+## **Estructura del Projecte**
+
+```plaintext
+com.example.odyway/
+├── ui/
+│   ├── screens/          # Totes les pantalles de l'app (Home, Trips, Profile, etc.)
+│   ├── theme/            # Colors, tipografia i tema dinàmic (Clar/Fosc)
+│   └── navigation/       # Graf de navegació i rutes
+├── domain/               # Model de domini (Trip, User, Activity, ItineraryItem...)
+└── data/
+    ├── repository/       
+    └── local/            
+
+```
+
+## Pantalles Implementades (Sprint 01)
+
+---
+
+## Flux d'Autenticació
+
+### **SplashScreen**
+- Logo de l'app  
+- Indicador de càrrega  
+- Versió (amb retard simulat)
+
+### **LoginScreen**
+- Formulari d’inici de sessió (usuari + contrasenya)
+
+---
+
+## Pestanyes Principals (Bottom Navigation)
+
+### **HomeScreen**
+- Panell principal  
+- Viatge actual ("LIVE")  
+- Propers viatges planificats  
+- Suggeriments de destins
+
+### **TripsScreen**
+- Gestió d’un viatge  
+- Pestanyes internes:
+  - Itinerari  
+  - Galeria (grid d’imatges)  
+  - Costos  
+
+### **ProfileScreen**
+- Dades de l’usuari  
+- Estadístiques (Trips, Countries, Photos)
+
+---
+
+## Altres Pantalles (Settings Flow)
+
+### **SettingsScreen**
+- Opcions del compte  
+- Components reutilitzables (*SettingsItem*)
+
+### **PreferencesScreen**
+- Mode fosc  
+- Idioma  
+- Notificacions push
+
+### **AboutScreen**
+- Informació de l’equip  
+- Llicència  
+- Detalls tècnics
+
+### **TermsConditionsScreen**
+- Condicions d’ús  
+- Scroll independent  
+- Botons d’acció
+
+---
+
+## Model de Dades
+
+L’aplicació gestiona les següents entitats principals (definides a `/domain/`):
+
+### **User**
+- ID  
+- Nom complet  
+- Nom d’usuari  
+- Email  
+- Foto de perfil  
+
+### **Preferences**
+- Idioma  
+- Tema (clar/fosc)  
+- Notificacions  
+
+### **Trip**
+- Títol  
+- Destinació  
+- Pressupost  
+- Estat  
+- Dates d’inici i fi  
+
+### **Activity** *(Gestió de Pressupost)*
+- Títol  
+- Descripció  
+- Localització  
+- Cost  
+
+### **ItineraryItem** *(Agenda)*
+- Data  
+- Hora  
+- Títol  
+- Localització  
+- Estat  
+
+### **GalleryImage**
+- URL  
+- Descripció  
+
+### **Recommendation**
+- Suggeriments de destins per inspirar l’usuari  
+
+---
+
+## Relacions
+
+- Un **User** té unes úniques **Preferences**  
+- Un **User** posseeix múltiples **Trips**  
+- Un **User** rep múltiples **Recommendations**  
+- Un **Trip** gestiona múltiples **Activities**  
+- Un **Trip** programa múltiples **ItineraryItems**  
+- Un **Trip** emmagatzema múltiples **GalleryImages**  
 
 El diagrama següent reflecteix aquestes relacions i s’ha mantingut coherent amb les classes implementades a `app/domain/`.
 

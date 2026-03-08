@@ -1,18 +1,17 @@
 classDiagram
 
-%%Diagrama amb el que creiem que implementarem fins ara
-%% https://mermaid.ai/d/96b5fe1b-3928-4462-8461-4281763c11a1
+%% Diagrama de Dominio OdyWay - Sprint 01
 
 class User {
     +String id
     +String name
+    +String username
     +String email
+    +String profileImageUrl
     +register()
-    +login()
-    +logout()
 }
 
-class Authentication {
+class AuthenticationService {
     +login(email, password)
     +logout()
     +resetPassword(email)
@@ -20,9 +19,9 @@ class Authentication {
 
 class Preferences {
     +String userId
+    +Boolean isDarkMode
     +Boolean notificationsEnabled
     +String preferredLanguage
-    +String theme
     +updatePreferences()
 }
 
@@ -30,55 +29,57 @@ class Trip {
     +String id
     +String userId
     +String title
-    +String description
+    +String destination
+    +String status
     +LocalDate startDate
     +LocalDate endDate
     +Double budget
     +getRemainingBudget()
     +getTotalCost()
-    +optimizeBudgetDistribution()
 }
 
 class Activity {
     +String id
-    +String name
+    +String tripId
+    +String title
+    +String description
     +String location
-    +LocalDateTime dateTime
     +Double cost
     +isFree()
 }
 
 class ItineraryItem {
     +String id
+    +String tripId
+    +LocalDate date
+    +String time
     +String title
-    +LocalDateTime scheduledTime
-    +isPast()
+    +String location
+    +Boolean isCompleted
+    +toggleComplete()
 }
 
-class Image {
+class GalleryImage {
     +String id
-    +String url
+    +String tripId
+    +String imageUrl
     +String description
-    +isValidUrl()
 }
 
-class AIRecommendations {
-    +generateSuggestions()
-}
-
-class Map {
-    +showLocation()
-    +getNearbyPlaces()
+class Recommendation {
+    +String id
+    +String title
+    +String description
+    +String destination
 }
 
 %% Relacions
 
 User "1" --> "1" Preferences : has
 User "1" --> "many" Trip : owns
-User "1" --> "1" Authentication : manages
+User "1" --> "1" AuthenticationService : uses
+User "1" --> "many" Recommendation : receives
 
-Trip "1" --> "many" Activity : contains
+Trip "1" --> "many" Activity : manages expenses
 Trip "1" --> "many" ItineraryItem : schedules
-Trip "1" --> "many" Image : stores
-Trip --> AIRecommendations : gets
-Trip --> Map : shows locations
+Trip "1" --> "many" GalleryImage : stores
