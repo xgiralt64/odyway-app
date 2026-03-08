@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,32 +21,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.odyway.R
-import com.example.odyway.ui.theme.BackgroundLight
-import com.example.odyway.ui.theme.CyanBlue
-import com.example.odyway.ui.theme.NavyBlue
-import com.example.odyway.ui.theme.White
+import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun AboutScreen(onNavigateBack: () -> Unit) {
     Scaffold(
-        containerColor = BackgroundLight,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavyBlue)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(horizontal = 8.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = White)
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "About OdyWay",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -74,21 +74,21 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
                 text = "Ody Way",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = NavyBlue
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             // VERSIÓN -
             Text(
                 text = "Version 0.1.0 (Sprint 01)",
                 style = MaterialTheme.typography.bodyMedium,
-                color = CyanBlue,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
             // Contenedor de información tipo tarjeta
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -98,11 +98,11 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
                 ) {
                     AboutInfoSection(title = "Development Team", info = "Jonas Obando\nXavier Giralt")
 
-                    Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                    Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
 
                     AboutInfoSection(title = "Technical Information", info = "Built con Android Jetpack Compose\nKotlin & Material Design 3\nAPI 35")
 
-                    Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                    Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
 
                     AboutInfoSection(title = "License", info = "OdyWay © 2025\nAll rights reserved.\nUdL - Sprint 01")
                 }
@@ -117,15 +117,31 @@ fun AboutInfoSection(title: String, info: String) {
         Text(
             text = title,
             fontWeight = FontWeight.Bold,
-            color = NavyBlue,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Text(
             text = info,
-            color = Color.DarkGray,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             fontSize = 14.sp,
             lineHeight = 20.sp
         )
+    }
+}
+
+@Preview(showBackground = true, name = "About Mode Light")
+@Composable
+fun AboutScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        AboutScreen(onNavigateBack = {})
+    }
+}
+
+@Preview(showBackground = true, name = "About Mode Dark")
+@Composable
+fun AboutScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        AboutScreen(onNavigateBack = {})
     }
 }

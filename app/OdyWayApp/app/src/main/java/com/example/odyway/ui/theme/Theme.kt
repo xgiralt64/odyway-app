@@ -1,6 +1,5 @@
 package com.example.odyway.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,32 +11,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = NavyBlue,           // Mantenemos la barra superior azul oscura
+    onPrimary = White,            // Texto sobre la barra superior
+    secondary = CyanBlue,
+    tertiary = GoldOrange,
+    background = DarkNavy,        // Fondo casi negro
+    onBackground = White,         // Texto principal en modo oscuro
+    surface = NavyBlue,           // Las tarjetas serán azul oscuro
+    onSurface = White,            // Texto dentro de las tarjetas
+    error = MapPinRed
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = NavyBlue,           // Barra superior azul oscura
+    onPrimary = White,            // Texto sobre la barra superior
+    secondary = CyanBlue,
+    tertiary = GoldOrange,
+    background = BackgroundLight, // Fondo gris claro
+    onBackground = NavyBlue,      // Texto principal en modo claro
+    surface = White,              // Las tarjetas serán blancas
+    onSurface = NavyBlue,         // Texto dentro de las tarjetas
+    error = MapPinRed
 )
 
 @Composable
 fun OdyWayTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // IMPORTANTE: Puesto en false para forzar NUESTROS colores y no los del sistema
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -45,14 +46,13 @@ fun OdyWayTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = Typography, // Asegúrate de tener tu archivo Type.kt
         content = content
     )
 }

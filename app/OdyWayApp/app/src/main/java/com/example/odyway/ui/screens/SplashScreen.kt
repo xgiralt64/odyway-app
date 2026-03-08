@@ -11,8 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.odyway.R
 import kotlinx.coroutines.delay
-import androidx.compose.ui.graphics.Color
-import com.example.odyway.ui.theme.BackgroundSplash
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun SplashScreen(
@@ -26,7 +27,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundSplash),
+            .background(MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center
     ) {
 
@@ -47,7 +48,8 @@ fun SplashScreen(
 
             // Loading
             LinearProgressIndicator(
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary,
+                trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -55,8 +57,34 @@ fun SplashScreen(
             Text(
                 text = "Carregant...",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
+
+        Text(
+            text = "v1.0.0 - Sprint 01",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 34.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Splash Mode Light")
+@Composable
+fun SplashScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        SplashScreen(onNavigateToLogin = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Splash Mode Dark")
+@Composable
+fun SplashScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        SplashScreen(onNavigateToLogin = {})
     }
 }

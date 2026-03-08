@@ -20,12 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.odyway.R
-
-import com.example.odyway.ui.theme.NavyBlue
-import com.example.odyway.ui.theme.CyanBlue
-import com.example.odyway.ui.theme.BackgroundLight
-import com.example.odyway.ui.theme.White
-import com.example.odyway.ui.theme.MapPinRed
+import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun ProfileScreen(onNavigateToSettings: () -> Unit) {
@@ -33,19 +28,22 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
     val tabs = listOf("Recent", "Favorites", "Stats")
 
     Scaffold(
-        containerColor = BackgroundLight,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            // Top Bar con icono de Ajustes (Settings)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavyBlue)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = onNavigateToSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings", tint = White,
-                        modifier = Modifier.size(38.dp))
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(38.dp)
+                    )
                 }
             }
         }
@@ -56,39 +54,35 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // --- seccion superior foto de perfil y nombres ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavyBlue)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(bottom = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Foto de perfil con botón de editar
                     Box(contentAlignment = Alignment.BottomEnd) {
                         Image(
-                            painter = painterResource(id = R.drawable.icon_odyway), // Placeholder del usuario
+                            painter = painterResource(id = R.drawable.icon_odyway),
                             contentDescription = "Profile Picture",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(124.dp)
                                 .clip(CircleShape)
-                                .border(1.dp, White)
-                                .background(White)
+                                .background(MaterialTheme.colorScheme.surface)
                         )
-                        // para editar
                         IconButton(
                             onClick = { /* TODO: Edit Photo */ },
                             modifier = Modifier
                                 .size(36.dp)
-                                .background(MapPinRed, CircleShape)
-                                .border(2.dp, White, CircleShape)
+                                .background(MaterialTheme.colorScheme.error, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
                         ) {
                             Icon(
                                 Icons.Default.Edit,
                                 contentDescription = "Edit",
-                                tint = White,
+                                tint = Color.White,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -96,22 +90,20 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // mnombre y Usuario
                     Text(
-                        text = "Xavi Xabon", // Ejemplo en español
+                        text = "Xavi Xabon",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
                         text = "@mamwebo_travels",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = CyanBlue
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
 
-            // --- informacion de usuario ---
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,15 +115,14 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                 ProfileStatItem("Photos", "148")
             }
 
-            // --- tabs de perfil ---
             TabRow(
                 selectedTabIndex = selectedTabIndex,
-                containerColor = BackgroundLight,
-                contentColor = NavyBlue,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = MapPinRed
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             ) {
@@ -142,7 +133,7 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                         text = {
                             Text(
                                 text = title,
-                                color = if (selectedTabIndex == index) MapPinRed else NavyBlue,
+                                color = if (selectedTabIndex == index) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
                                 fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
                             )
                         }
@@ -150,7 +141,6 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                 }
             }
 
-            // --- contenido de tabs mock por ahora ---
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -158,16 +148,15 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                 contentAlignment = Alignment.TopCenter
             ) {
                 when (selectedTabIndex) {
-                    0 -> Text("No recent trips found", color = Color.Gray)
-                    1 -> Text("You haven't added favorites yet", color = Color.Gray)
-                    2 -> Text("Travel statistics coming soon", color = Color.Gray)
+                    0 -> Text("No recent trips found", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    1 -> Text("You haven't added favorites yet", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    2 -> Text("Travel statistics coming soon", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
                 }
             }
         }
     }
 }
 
-// Componente para los numeritos de estadística del perfil
 @Composable
 fun ProfileStatItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -175,13 +164,28 @@ fun ProfileStatItem(label: String, value: String) {
             text = value,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = NavyBlue
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
         )
     }
 }
 
+@Preview(showBackground = true, name = "Profile Mode Light")
+@Composable
+fun ProfileScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        ProfileScreen(onNavigateToSettings = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Profile Mode Dark")
+@Composable
+fun ProfileScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        ProfileScreen(onNavigateToSettings = {})
+    }
+}

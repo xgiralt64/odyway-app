@@ -11,38 +11,38 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.odyway.ui.theme.BackgroundLight
-import com.example.odyway.ui.theme.MapPinRed
-import com.example.odyway.ui.theme.NavyBlue
-import com.example.odyway.ui.theme.White
+import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
     Scaffold(
-        containerColor = BackgroundLight,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavyBlue)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(horizontal = 8.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = White)
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Terms & Conditions",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -59,7 +59,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                 text = "Terms And Conditions",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = NavyBlue,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
@@ -67,7 +67,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                colors = CardDefaults.cardColors(containerColor = White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -92,7 +92,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                                 "We are not responsible for any losses, damages, or issues that may arise during your trips planned with our application.\n\n" +
                                 "6. Modifications\n" +
                                 "We reserve the right to revise these terms at any time. By continuing to use the application after such revisions, you agree to the updated terms.",
-                        color = Color.DarkGray,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                         fontSize = 14.sp,
                         lineHeight = 22.sp,
                         textAlign = TextAlign.Justify
@@ -108,12 +108,14 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // btn rechazar
-                OutlinedButton(
+                Button(
                     onClick = onNavigateBack, // Vuelve atrás como acción mock
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MapPinRed)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
                 ) {
-                    Text("Reject", fontWeight = FontWeight.Bold)
+                    Text("Reject", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -122,17 +124,27 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                 Button(
                     onClick = onNavigateBack, // Vuelve atrás como acción mock
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = NavyBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Accept", color = White, fontWeight = FontWeight.Bold)
+                    Text("Accept", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                 }
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true, name = "Terms Mode Light")
 @Composable
-fun Preview(){
-    TermsConditionsScreen (){  }
+fun TermsConditionsScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        TermsConditionsScreen(onNavigateBack = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Terms Mode Dark")
+@Composable
+fun TermsConditionsScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        TermsConditionsScreen(onNavigateBack = {})
+    }
 }

@@ -12,11 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.odyway.ui.theme.NavyBlue
-import com.example.odyway.ui.theme.BackgroundLight
-import com.example.odyway.ui.theme.White
-import com.example.odyway.ui.theme.MapPinRed
+import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun SettingsScreen(
@@ -26,12 +24,12 @@ fun SettingsScreen(
     onNavigateToTerms: () -> Unit
 ) {
     Scaffold(
-        containerColor = BackgroundLight,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavyBlue)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(horizontal = 8.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -39,7 +37,7 @@ fun SettingsScreen(
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = White
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -47,7 +45,7 @@ fun SettingsScreen(
                     text = "Settings",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -114,8 +112,8 @@ fun SettingsScreen(
                         icon = Icons.Filled.Warning,
                         title = "Log Out",
                         subtitle = "Sign out of your account",
-                        iconTint = MapPinRed,
-                        titleColor = MapPinRed,
+                        iconTint = MaterialTheme.colorScheme.error,
+                        titleColor = MaterialTheme.colorScheme.error,
                         onClick = { /* TODO */ }
                     )
                 }
@@ -138,12 +136,12 @@ fun SettingsGroup(
             text = title,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
         )
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(content = content)
@@ -156,8 +154,8 @@ fun SettingsItem(
     icon: ImageVector,
     title: String,
     subtitle: String? = null,
-    iconTint: Color = NavyBlue,
-    titleColor: Color = NavyBlue,
+    iconTint: Color = MaterialTheme.colorScheme.primary,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     onClick: () -> Unit
 ) {
     // Surface genera un efecto de onda Ripple rectangular perfecto y nativo
@@ -192,7 +190,7 @@ fun SettingsItem(
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -200,7 +198,7 @@ fun SettingsItem(
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
                 contentDescription = "Go",
-                tint = Color.Gray
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         }
     }
@@ -213,6 +211,32 @@ fun ManualDivider() {
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(Color.LightGray.copy(alpha = 0.3f))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     )
+}
+
+@Preview(showBackground = true, name = "Settings Mode Light")
+@Composable
+fun SettingsScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        SettingsScreen(
+            onNavigateBack = {},
+            onNavigateToPreferences = {},
+            onNavigateToAbout = {},
+            onNavigateToTerms = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Settings Mode Dark")
+@Composable
+fun SettingsScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        SettingsScreen(
+            onNavigateBack = {},
+            onNavigateToPreferences = {},
+            onNavigateToAbout = {},
+            onNavigateToTerms = {}
+        )
+    }
 }
