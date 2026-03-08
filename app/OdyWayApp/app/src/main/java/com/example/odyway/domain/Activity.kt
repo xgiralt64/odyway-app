@@ -4,10 +4,10 @@ import java.time.LocalDateTime
 
 data class Activity(
     val id: String,
-    val name: String,
+    val tripId: String, // ¡Faltaba esto para vincularlo al viaje!
+    val title: String,  // Cambiado de 'name' a 'title'
     val description: String,
     val location: String,
-    val dateTime: LocalDateTime,
     val cost: Double
 ) {
 
@@ -17,9 +17,5 @@ data class Activity(
 
     fun getFormattedCost(): String {
         return "€%.2f".format(cost)
-    }
-
-    fun validateSchedule() {
-        // @TODO Validate activity does not overlap with other activities
     }
 }
