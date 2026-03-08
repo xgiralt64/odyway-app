@@ -1,15 +1,27 @@
 package com.example.odyway.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.odyway.R
+import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun LoginScreen(
@@ -22,6 +34,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -31,9 +44,26 @@ fun LoginScreen(
         Image(
             painter = painterResource(id = R.drawable.icon_odyway),
             contentDescription = "Logo",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(120.dp)
-                .padding(bottom = 32.dp)
+                .clip(CircleShape)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Benvingut a OdyWay",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Text(
+            text = "Inicia sessió per continuar",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            modifier = Modifier.padding(bottom = 32.dp, top = 8.dp)
         )
 
         // Camp usuari
@@ -41,7 +71,16 @@ fun LoginScreen(
             value = username,
             onValueChange = { username = it },
             label = { Text("Usuari") },
-            modifier = Modifier.fillMaxWidth()
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "Usuari",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -51,9 +90,31 @@ fun LoginScreen(
             value = password,
             onValueChange = { password = it },
             label = { Text("Contrasenya") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Lock,
+                    contentDescription = "Contrasenya",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            singleLine = true
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(
+            onClick = { /* TODO: Recuperar contrasenya */ },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(
+                text = "Has oblidat la contrasenya?",
+                color = MaterialTheme.colorScheme.secondary,
+                fontWeight = FontWeight.Medium
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -63,9 +124,50 @@ fun LoginScreen(
                 // De moment sense comprovar res
                 onLoginSuccess()
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
-            Text("Iniciar sessió")
+            Text("Iniciar sessió", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "No tens compte?",
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            )
+            TextButton(onClick = { /* TODO: Crear compte */ }) {
+                Text(
+                    text = "Registra't",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Login Mode Light")
+@Composable
+fun LoginScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        LoginScreen(onLoginSuccess = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Login Mode Dark")
+@Composable
+fun LoginScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        LoginScreen(onLoginSuccess = {})
     }
 }

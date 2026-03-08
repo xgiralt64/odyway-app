@@ -21,15 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.odyway.domain.Image
-import com.example.odyway.ui.theme.NavyBlue
-import com.example.odyway.ui.theme.CyanBlue
-import com.example.odyway.ui.theme.BackgroundLight
-import com.example.odyway.ui.theme.GoldOrange
-import com.example.odyway.ui.theme.White
-import com.example.odyway.ui.theme.MountainGreen
-import com.example.odyway.ui.theme.MapPinRed
 import com.example.odyway.R
+import com.example.odyway.ui.theme.MountainGreen
+import com.example.odyway.ui.theme.OdyWayTheme
 
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -57,7 +51,6 @@ val itinerarioMock = listOf(
     ActivityMock(5, "20:00", "Sopar amb vistes a la ciutat", 45.00)
 )
 
-
 val galeriaMock = listOf(
     GalleryImageMock(1, R.drawable.paris_example),
     GalleryImageMock(2, R.drawable.paris_example),
@@ -73,7 +66,7 @@ fun TripsScreen() {
     val tabs = listOf("Itinerary", "Galery", "Costs")
 
     Scaffold(
-        containerColor = BackgroundLight,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column {
                 Box(
@@ -95,7 +88,7 @@ fun TripsScreen() {
                             .fillMaxSize()
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(Color.Transparent, NavyBlue.copy(alpha = 0.9f)),
+                                    colors = listOf(Color.Transparent, MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)),
                                     startY = 150f
                                 )
                             )
@@ -111,7 +104,7 @@ fun TripsScreen() {
                             text = "Viatge a París",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = White
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -119,7 +112,7 @@ fun TripsScreen() {
                             Icon(
                                 imageVector = Icons.Default.DateRange,
                                 contentDescription = "Dates",
-                                tint = White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -127,7 +120,7 @@ fun TripsScreen() {
                             Text(
                                 text = "12 Oct - 15 Oct",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = White
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -136,12 +129,12 @@ fun TripsScreen() {
 
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
-                    containerColor = NavyBlue,
-                    contentColor = White,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     indicator = { tabPositions ->
                         TabRowDefaults.SecondaryIndicator(
                             Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            color = GoldOrange
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 ) {
@@ -149,7 +142,12 @@ fun TripsScreen() {
                         Tab(
                             selected = selectedTabIndex == index,
                             onClick = { selectedTabIndex = index },
-                            text = { Text(title, color = if (selectedTabIndex == index) GoldOrange else White) }
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = if (selectedTabIndex == index) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
                         )
                     }
                 }
@@ -169,7 +167,11 @@ fun TripsScreen() {
             when (selectedTabIndex) {
                 0 -> ItineraryList()
                 1 -> TripGallerySection()
-                2 -> Text("Estadístiques detallades de despeses", modifier = Modifier.padding(16.dp), color = NavyBlue)
+                2 -> Text(
+                    text = "Estadístiques detallades de despeses",
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
     }
@@ -181,7 +183,7 @@ fun TripStatisticsSection() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -190,8 +192,8 @@ fun TripStatisticsSection() {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatItem("Budget", "1000€", NavyBlue)
-            StatItem("Wasted", "117.50€", MapPinRed)
+            StatItem("Budget", "1000€", MaterialTheme.colorScheme.onSurface)
+            StatItem("Wasted", "117.50€", MaterialTheme.colorScheme.error)
             StatItem("Remaining", "882.50€", MountainGreen)
         }
     }
@@ -200,8 +202,17 @@ fun TripStatisticsSection() {
 @Composable
 fun StatItem(label: String, value: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = label, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-        Text(text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = color)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = color
+        )
     }
 }
 
@@ -222,7 +233,7 @@ fun ItineraryList() {
 fun ActivityCard(activity: ActivityMock) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -232,8 +243,17 @@ fun ActivityCard(activity: ActivityMock) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(Icons.Default.Schedule, contentDescription = "Hora", tint = MapPinRed, modifier = Modifier.size(20.dp))
-                Text(text = activity.time, fontWeight = FontWeight.Bold, color = NavyBlue)
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = "Hora",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = activity.time,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -242,11 +262,16 @@ fun ActivityCard(activity: ActivityMock) {
                 text = activity.title,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyMedium,
-                color = NavyBlue
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.AccountBalanceWallet, contentDescription = "Cost", tint = MountainGreen, modifier = Modifier.size(16.dp))
+                Icon(
+                    imageVector = Icons.Default.AccountBalanceWallet,
+                    contentDescription = "Cost",
+                    tint = MountainGreen,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "${activity.cost}€",
@@ -275,17 +300,25 @@ fun TripGallerySection() {
                 text = "Photos of the trip",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = NavyBlue
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Row {
                 // Botón Ordenar (Mock)
                 IconButton(onClick = { /* TODO: Lógica de ordenar */ }) {
-                    Icon(Icons.Default.Sort, contentDescription = "Ordenar", tint = NavyBlue)
+                    Icon(
+                        imageVector = Icons.Default.Sort,
+                        contentDescription = "Ordenar",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
                 // Botón Añadir Foto (Mock)
                 IconButton(onClick = { /* TODO: Lógica de añadir foto */ }) {
-                    Icon(Icons.Default.AddPhotoAlternate, contentDescription = "Añadir foto", tint = MapPinRed)
+                    Icon(
+                        imageVector = Icons.Default.AddPhotoAlternate,
+                        contentDescription = "Añadir foto",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
@@ -325,7 +358,7 @@ fun TripGallerySection() {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Borrar",
-                            tint = White,
+                            tint = Color.White,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -334,5 +367,21 @@ fun TripGallerySection() {
             // Margen inferior para que no quede tapado por la barra de navegacion
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Trips Mode Light")
+@Composable
+fun TripsScreenPreviewLight() {
+    OdyWayTheme(darkTheme = false) {
+        TripsScreen()
+    }
+}
+
+@Preview(showBackground = true, name = "Trips Mode Dark")
+@Composable
+fun TripsScreenPreviewDark() {
+    OdyWayTheme(darkTheme = true) {
+        TripsScreen()
     }
 }
