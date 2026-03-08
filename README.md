@@ -11,7 +11,7 @@ Hem triat el nom com la suma de la paraula odisea i el camí que seguiràs en el
 Logo Principal
 
 <p align="center">
-  <img src="icon_odyway.png" width="200"/>
+  <img src="assets/icon_odyway.png" width="200"/>
 </p>
 
 
