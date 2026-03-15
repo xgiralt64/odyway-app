@@ -36,6 +36,9 @@ Implementar la lògica principal de l'aplicació *OdyWay* mitjançant operacions
 - [ ] Preferències d'usuari (username, data de naixement, mode fosc, idioma) guardades i carregades amb `SharedPreferences`.
 - [ ] Tests unitaris per al CRUD escrits i validats.
 - [ ] Missatges de Logcat implementats correctament (CRUD, errors, validacions).
+- [ ] L'entitat Trip conté exactament els camps exigits: title, startDate, endDate i description.
+- [ ] L'entitat Activity conté exactament els camps exigits: title, description, date i time.
+- [ ] El ViewModel bloqueja la creació si els camps de text obligatoris estan buits.
 
 ### Frontend (Jonas)
 - [ ] Interacció amb els formularis totalment funcional (Afegir, Editar i Esborrar).
