@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -15,14 +16,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
 import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.screens.*
-import com.example.odyway.ui.theme.MapPinRed
-import com.example.odyway.ui.theme.NavyBlue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.odyway.domain.TripRepository
+import com.example.odyway.ui.theme.OdyWayTheme
+import com.example.odyway.ui.viewmodels.TripViewModel
+import com.example.odyway.ui.viewmodels.TripViewModelFactory
 
 // sealed class amb resource IDs per a la traducció
 sealed class Screen(
@@ -43,7 +50,10 @@ sealed class Screen(
 }
 
 @Composable
-fun NavGraph(settingsManager: SettingsManager) {
+fun NavGraph(
+    settingsManager: SettingsManager,
+    tripRepository: TripRepository
+) {
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -51,6 +61,10 @@ fun NavGraph(settingsManager: SettingsManager) {
 
     // Usamos las constantes de tu sealed class para evitar errores de tipeo
     val routesWithBottomBar = listOf(Screen.Home.route, Screen.Trips.route, Screen.Profile.route)
+
+    val tripViewModel: TripViewModel = viewModel(
+        factory = TripViewModelFactory(tripRepository)
+    )
 
     Scaffold(
         bottomBar = {
@@ -88,11 +102,13 @@ fun NavGraph(settingsManager: SettingsManager) {
             }
 
             composable(Screen.Home.route) {
-                HomeScreen()
+                // Le pasamos el cerebro a la Home
+                HomeScreen(tripViewModel = tripViewModel)
             }
 
+
             composable(Screen.Trips.route) {
-                TripsScreen()
+                TripsScreen(tripViewModel = tripViewModel)
             }
 
             composable(Screen.Profile.route) {
@@ -143,14 +159,14 @@ fun NavGraph(settingsManager: SettingsManager) {
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
-    currentRoute: String? // Recibe la ruta actual como String
+    currentRoute: String?
 ) {
-    // Creamos una lista solo con las pantallas que van en el menú
     val navigationItems = listOf(Screen.Home, Screen.Trips, Screen.Profile)
 
     NavigationBar(
-        containerColor = NavyBlue,
-        contentColor = Color.White
+        // El fondo será tu color primario (NavyBlue en tu tema)
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
         navigationItems.forEach { item ->
             val title = item.titleRes?.let { stringResource(id = it) } ?: ""
@@ -166,13 +182,34 @@ fun BottomNavigationBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.White,
-                    selectedTextColor = MapPinRed,
-                    indicatorColor = MapPinRed,
-                    unselectedIconColor = Color.White,
-                    unselectedTextColor = Color.White
+                    // Icono seleccionado (blanco para que contraste con la burbuja roja)
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    // Texto seleccionado (rojo para resaltar)
+                    selectedTextColor = MaterialTheme.colorScheme.error,
+                    // La burbuja de fondo del icono seleccionado (rojo)
+                    indicatorColor = MaterialTheme.colorScheme.error,
+                    // Iconos y textos no seleccionados (blancos pero un poco transparentes)
+                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+                    unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
                 )
             )
         }
     }
 }
+//
+//@Preview(showBackground = true, name = "Profile Mode Light")
+//@Composable
+//fun NavScreenPreviewLight() {
+//    OdyWayTheme(darkTheme = false) {
+//        BottomNavigationBar{}
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "Profile Mode Dark")
+//@Composable
+//fun NavScreenPreviewDark() {
+//    val context = LocalContext.current
+//    OdyWayTheme(darkTheme = true) {
+//        BottomNavigationBar{}
+//    }
+//}
