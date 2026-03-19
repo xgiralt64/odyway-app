@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +27,11 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
 
     // Variables de estado persistentes usando SettingsManager
     var isDarkMode by remember { mutableStateOf(settingsManager.isDarkMode) }
+    var currentLanguageCode by remember { mutableStateOf(settingsManager.language ?: "ca") }
     var notificationsEnabled by remember { mutableStateOf(true) }
+
+    var expanded by remember { mutableStateOf(false) }
+    val languages = listOf("ca" to "Català", "es" to "Castellà", "en" to "Anglès")
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -56,7 +60,6 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
             }
         }
     ) { paddingValues ->
-        // CONTENIDO PRINCIPAL
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,7 +68,6 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                 .padding(24.dp)
         ) {
 
-            // Idioma y Tema
             Text(
                 text = "GENERAL",
                 style = MaterialTheme.typography.labelLarge,
@@ -80,43 +82,62 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Column {
-                    //Idioma
-                    Surface(
-                        onClick = { /* TODO: Mostrar lista de idiomas mock */ },
-                        color = Color.Transparent,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    // Idioma con DropdownMenu
+                    Box {
+                        Surface(
+                            onClick = { expanded = true },
+                            color = Color.Transparent,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = "Language",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    text = "English",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                ) // Mock value
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.KeyboardArrowRight,
-                                    contentDescription = "Change",
-                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    text = "Language",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    val currentLanguageName = languages.find { it.first == currentLanguageCode }?.second ?: "Català"
+                                    Text(
+                                        text = currentLanguageName,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Icon(
+                                        imageVector = Icons.Filled.KeyboardArrowDown,
+                                        contentDescription = "Expand",
+                                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                }
+                            }
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            languages.forEach { (code, name) ->
+                                DropdownMenuItem(
+                                    text = { Text(name) },
+                                    onClick = {
+                                        currentLanguageCode = code
+                                        settingsManager.language = code
+                                        expanded = false
+                                    }
                                 )
                             }
                         }
                     }
 
-                    // Línea separadora
                     HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
                     // Tema
@@ -166,7 +187,6 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                // 3. Notificaciones (Toggle)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
