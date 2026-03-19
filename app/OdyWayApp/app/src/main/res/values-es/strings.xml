@@ -123,6 +123,7 @@
     <string name="account_info_email">Correo electrónico</string>
     <string name="account_info_full_name">Nombre completo</string>
     <string name="account_info_bio">Biografía</string>
+    <string name="account_info_birth_date">Fecha de nacimiento</string>
     <string name="account_info_section_personal">Datos personales</string>
     <string name="account_info_section_public">Perfil público</string>
 

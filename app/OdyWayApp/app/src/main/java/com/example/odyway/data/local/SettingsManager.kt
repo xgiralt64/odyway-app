@@ -15,6 +15,12 @@ class SettingsManager(context: Context) {
     private val _languageFlow = MutableStateFlow(getString(KEY_LANGUAGE, "ca") ?: "ca")
     val languageFlow: StateFlow<String> = _languageFlow
 
+    private val _usernameFlow = MutableStateFlow(getString(KEY_USERNAME, "Xavi") ?: "Xavi")
+    val usernameFlow: StateFlow<String> = _usernameFlow
+
+    private val _birthDateFlow = MutableStateFlow(getLong(KEY_BIRTH_DATE, 0L))
+    val birthDateFlow: StateFlow<Long> = _birthDateFlow
+
     //Al final hem hagut de crear una referencia forta perque no ens funcionava ja que el Garbage Collector l'elimini
     //Canviar si trobem una millor solució
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
@@ -24,6 +30,12 @@ class SettingsManager(context: Context) {
             }
             KEY_LANGUAGE -> {
                 _languageFlow.value = prefs.getString(key, "ca") ?: "ca"
+            }
+            KEY_USERNAME -> {
+                _usernameFlow.value = prefs.getString(key, "Xavi") ?: "Xavi"
+            }
+            KEY_BIRTH_DATE -> {
+                _birthDateFlow.value = getLong(key, 0L)
             }
         }
     }
@@ -46,7 +58,11 @@ class SettingsManager(context: Context) {
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return sharedPreferences.getBoolean(key, defaultValue)
+        return try {
+            sharedPreferences.getBoolean(key, defaultValue)
+        } catch (e: ClassCastException) {
+            defaultValue
+        }
     }
 
     fun saveString(key: String, value: String) {
@@ -54,7 +70,29 @@ class SettingsManager(context: Context) {
     }
 
     fun getString(key: String, defaultValue: String? = null): String? {
-        return sharedPreferences.getString(key, defaultValue)
+        return try {
+            sharedPreferences.getString(key, defaultValue)
+        } catch (e: ClassCastException) {
+            defaultValue
+        }
+    }
+
+    fun saveLong(key: String, value: Long) {
+        sharedPreferences.edit().putLong(key, value).apply()
+    }
+
+    fun getLong(key: String, defaultValue: Long): Long {
+        return try {
+            sharedPreferences.getLong(key, defaultValue)
+        } catch (e: ClassCastException) {
+            // Se ve que en algún momento se guardó como String o hay un conflicto de tipos
+            val value = sharedPreferences.all[key]
+            if (value is String) {
+                value.toLongOrNull() ?: defaultValue
+            } else {
+                defaultValue
+            }
+        }
     }
 
     // --- Mètodes específics ---
@@ -64,12 +102,12 @@ class SettingsManager(context: Context) {
         set(value) = saveString(KEY_LANGUAGE, value ?: "ca")
 
     var username: String?
-        get() = getString(KEY_USERNAME, "")
-        set(value) = saveString(KEY_USERNAME, value ?: "")
+        get() = getString(KEY_USERNAME, "Xavi")
+        set(value) = saveString(KEY_USERNAME, value ?: "Xavi")
 
-    var birthDate: String?
-        get() = getString(KEY_BIRTH_DATE, "")
-        set(value) = saveString(KEY_BIRTH_DATE, value ?: "")
+    var birthDate: Long
+        get() = getLong(KEY_BIRTH_DATE, 0L)
+        set(value) = saveLong(KEY_BIRTH_DATE, value)
 
     var isDarkMode: Boolean
         get() = getBoolean(KEY_DARK_MODE, false)

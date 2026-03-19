@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 LocalContext provides localizedContext
             ) {
                 OdyWayTheme(darkTheme = isDarkMode) {
-                    NavGraph()
+                    NavGraph(settingsManager = settingsManager)
                 }
             }
         }

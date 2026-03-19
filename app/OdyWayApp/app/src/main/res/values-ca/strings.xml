@@ -86,7 +86,7 @@
     <!-- termsconditionsscreen -->
     <string name="terms_title">Termes i Condicions</string>
     <string name="terms_headline">Termes i Condicions</string>
-    <string name="terms_legal_text">Darrera actualització: Març 2026\n\n1. Acceptació dels Termes\nEn accedir i utilitzar l\'aplicació OdyWay, acceptes quedar vinculat per aquests termes i condicions. Si no estàs d\'acord amb alguna part dels termes, no pots utilitzar el servei.\n\n2. Ús del Servei\nOdyWay és una eina per planificar viatges. Ens reservem el dret de modificar o suspendre el servei en qualsevol moment sense previ avís.\n\n3. Privadesa i Dades\nLa teva privadesa és important per a nosaltres. Recollim i utilitzem la informació personal d\'acord amb la nostra Política de Privadesa.\n\n4. Propietat Intel·lectual\nTot el contingut, disseny, logotips i codi de l\'aplicació són propietat exclusiva dels desenvolupadors d\'OdyWay.\n\n5. Limitació de Responsabilitat\nNo ens fem responsables de cap pèrdua, dany o problema que pugui sorgir durant els teus viatges planificats amb la nostra aplicació.\n\n6. Modificacions\nEns reservem el dret de revisar aquests termes en qualsevol moment. En continuar utilitzant l\'aplicació després d\'aquestes revisions, acceptes els termes actualitzats.</string>
+    <string name="terms_legal_text">Darrera actualització: Març 2026\n\n1. Acceptació dels Termes\nEn accedir i utilitzar l\'aplicació OdyWay, acceptes quedar vinculat per aquests termes i condicions. Si no estàs d\'acord amb alguna part dels termes, no pots utilitzar el servei.\n\n2. Ús del Servei\nOdyWay és una eina per planificar viatges. Ens reservem el dret de modificar o suspendre el servei en qualsevol moment sense previ avís.\n\n3. Privadesa i Dades\nLa teva privadesa és important per a nosaltres. Recollim i utilitzem la informació personal d\'acord amb la nostra Política de Privadesa.\n\n4. Propietat Intel·lectual\nTot el contingut, disseny, logotips i codi de l\'aplicació són propietat exclusiva dels desenvolupadors d\'OdyWay.\n\n5. Limitació de Responsabilitat\nNo ens fem responsables de cap pèrdua, dany o problema que pugui sorgir durant els teus viatges planificats amb la nostra aplicació.\n\n6. Modificacions\nEns reservem el dret de revisar aquests termes en qualsevol moment. En continuar utilitzant l\'aplicació efter d\'aquestes revisions, acceptes els termes actualitzats.</string>
     <string name="terms_reject">Rebutjar</string>
     <string name="terms_accept">Acceptar</string>
 
@@ -123,6 +123,7 @@
     <string name="account_info_email">Correu electrònic</string>
     <string name="account_info_full_name">Nom complet</string>
     <string name="account_info_bio">Biografia</string>
+    <string name="account_info_birth_date">Data de naixement</string>
     <string name="account_info_section_personal">Dades personals</string>
     <string name="account_info_section_public">Perfil públic</string>
 

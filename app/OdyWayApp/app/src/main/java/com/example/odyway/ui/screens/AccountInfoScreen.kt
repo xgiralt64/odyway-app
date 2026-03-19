@@ -1,12 +1,14 @@
 package com.example.odyway.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -14,20 +16,58 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.odyway.R
+import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.theme.OdyWayTheme
+import java.text.SimpleDateFormat
+import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountInfoScreen(onNavigateBack: () -> Unit) {
-    // Estats per als camps @JONAS haz que esto lo pille de la fakeDB
-    var username by remember { mutableStateOf("xgiralt64") }
+fun AccountInfoScreen(settingsManager: SettingsManager, onNavigateBack: () -> Unit) {
+    val savedUsername by settingsManager.usernameFlow.collectAsState()
+    val savedBirthDate by settingsManager.birthDateFlow.collectAsState()
+
+    var username by remember(savedUsername) { mutableStateOf(savedUsername) }
+    var birthDateMillis by remember(savedBirthDate) { mutableStateOf(savedBirthDate) }
+    
     var email by remember { mutableStateOf("xavier@xgiralt.com") }
     var fullName by remember { mutableStateOf("Xavier Giralt") }
     var bio by remember { mutableStateOf("Passionat pels viatges i la tecnologia.") }
+
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = if (birthDateMillis > 0) birthDateMillis else System.currentTimeMillis()
+    )
+
+    val dateFormatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    val birthDateDisplay = if (birthDateMillis > 0) dateFormatter.format(Date(birthDateMillis)) else ""
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    birthDateMillis = datePickerState.selectedDateMillis ?: birthDateMillis
+                    showDatePicker = false
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -97,6 +137,28 @@ fun AccountInfoScreen(onNavigateBack: () -> Unit) {
                         shape = RoundedCornerShape(12.dp),
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) }
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Birth Date Field (Using a Box to handle click properly with Material 3)
+                    Box(modifier = Modifier.fillMaxWidth().clickable { showDatePicker = true }) {
+                        OutlinedTextField(
+                            value = birthDateDisplay,
+                            onValueChange = { },
+                            readOnly = true,
+                            label = { Text(stringResource(id = R.string.account_info_birth_date)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = false, 
+                            shape = RoundedCornerShape(12.dp),
+                            leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                disabledBorderColor = MaterialTheme.colorScheme.outline,
+                                disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        )
+                    }
                 }
             }
 
@@ -141,7 +203,11 @@ fun AccountInfoScreen(onNavigateBack: () -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { /* TODO: Guardar canvis */ },
+                onClick = {
+                    settingsManager.username = username
+                    settingsManager.birthDate = birthDateMillis
+                    onNavigateBack()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -162,15 +228,17 @@ fun AccountInfoScreen(onNavigateBack: () -> Unit) {
 @Preview(showBackground = true, name = "Account Info Light")
 @Composable
 fun AccountInfoScreenPreviewLight() {
+    val context = LocalContext.current
     OdyWayTheme(darkTheme = false) {
-        AccountInfoScreen(onNavigateBack = {})
+        AccountInfoScreen(settingsManager = SettingsManager(context), onNavigateBack = {})
     }
 }
 
 @Preview(showBackground = true, name = "Account Info Dark")
 @Composable
 fun AccountInfoScreenPreviewDark() {
+    val context = LocalContext.current
     OdyWayTheme(darkTheme = true) {
-        AccountInfoScreen(onNavigateBack = {})
+        AccountInfoScreen(settingsManager = SettingsManager(context), onNavigateBack = {})
     }
 }
