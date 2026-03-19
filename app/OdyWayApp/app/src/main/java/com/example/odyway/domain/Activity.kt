@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 data class Activity(
     val id: String,
-    val tripId: String, // ¡Faltaba esto para vincularlo al viaje!
-    val title: String,  // Cambiado de 'name' a 'title'
+    val tripId: String,
+    val title: String,
     val description: String,
     val location: String,
     val cost: Double

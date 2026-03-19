@@ -8,12 +8,13 @@ data class Trip(
     val userId: String,
     val title: String,
     val destination: String,
+    val description: String,
     val status: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val budget: Double,
     val activities: List<Activity> = emptyList(),
-    val itinerary: List<ItineraryItem> = emptyList(), // ¡AQUÍ VUELVE EL ITINERARIO!
+    val itinerary: List<ItineraryItem> = emptyList(),
     val images: List<GalleryImage> = emptyList()
 ) {
     fun getDurationInDays(): Long {

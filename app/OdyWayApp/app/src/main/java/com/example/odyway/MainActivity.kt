@@ -3,6 +3,7 @@ package com.example.odyway
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,8 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
 import com.example.odyway.data.local.SettingsManager
+import com.example.odyway.data.repository.TripRepositoryImpl
 import com.example.odyway.ui.theme.OdyWayTheme
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -21,6 +25,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // --- INICIO DE LA PRUEBA DEL PASO 1 ---
+        val testRepository = TripRepositoryImpl()
+
+        // Lanzamos una pequeña corrutina porque Flow necesita recolectarse
+        lifecycleScope.launch {
+            testRepository.getAllTrips().collect { trips ->
+                Log.w("PRUEBA_PASO1", "¡Funciona! Hay ${trips.size} viajes en la memoria.")
+                trips.forEach { trip ->
+                    Log.w("PRUEBA_PASO1", "-> Viaje: ${trip.title} (Destino: ${trip.destination})")
+                }
+            }
+        }
 
         setContent {
             val context = LocalContext.current
