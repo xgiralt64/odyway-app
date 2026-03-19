@@ -13,15 +13,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun PreferencesScreen(onNavigateBack: () -> Unit) {
-    // Variables de estado Mock para que los interruptores se puedan mover
-    var isDarkMode by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+
+    // Variables de estado persistentes usando SettingsManager
+    var isDarkMode by remember { mutableStateOf(settingsManager.isDarkMode) }
     var notificationsEnabled by remember { mutableStateOf(true) }
 
     Scaffold(
@@ -112,7 +117,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                     }
 
                     // Línea separadora
-                    Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
                     // Tema
                     Row(
@@ -130,7 +135,10 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                         )
                         Switch(
                             checked = isDarkMode,
-                            onCheckedChange = { isDarkMode = it },
+                            onCheckedChange = { 
+                                isDarkMode = it
+                                settingsManager.isDarkMode = it
+                            },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                                 checkedTrackColor = MaterialTheme.colorScheme.error,
