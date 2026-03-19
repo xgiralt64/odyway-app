@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
@@ -22,16 +23,16 @@ import com.example.odyway.ui.screens.*
 import com.example.odyway.ui.theme.MapPinRed
 import com.example.odyway.ui.theme.NavyBlue
 
-// sealed class
+// sealed class amb resource IDs per a la traducció
 sealed class Screen(
     val route: String,
-    val title: String? = null,
+    val titleRes: Int? = null,
     val icon: androidx.compose.ui.graphics.vector.ImageVector? = null
 ) {
-    data object Home : Screen("home", "Home", Icons.Filled.Home)
-    data object Login : Screen("login", "Login", Icons.Filled.Login)
-    data object Trips : Screen("trips", "Trips", Icons.Filled.Place)
-    data object Profile : Screen("profile", "Profile", Icons.Filled.Person)
+    data object Home : Screen("home", R.string.nav_home, Icons.Filled.Home)
+    data object Login : Screen("login", R.string.login_button, Icons.Filled.Login)
+    data object Trips : Screen("trips", R.string.nav_trips, Icons.Filled.Place)
+    data object Profile : Screen("profile", R.string.nav_profile, Icons.Filled.Person)
     data object Splash : Screen("splash")
     data object Settings : Screen("settings")
     data object Preferences : Screen("preferences")
@@ -142,9 +143,10 @@ fun BottomNavigationBar(
         contentColor = Color.White
     ) {
         navigationItems.forEach { item ->
+            val title = item.titleRes?.let { stringResource(id = it) } ?: ""
             NavigationBarItem(
-                icon = { Icon(item.icon!!, contentDescription = item.title) },
-                label = { Text(item.title!!) },
+                icon = { Icon(item.icon!!, contentDescription = title) },
+                label = { Text(title) },
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {

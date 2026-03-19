@@ -11,11 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.odyway.R
 import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
@@ -33,13 +35,13 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.back_button),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Terms & Conditions",
+                    text = stringResource(id = R.string.terms_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
@@ -56,7 +58,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
         ) {
             // Título principal
             Text(
-                text = "Terms And Conditions",
+                text = stringResource(id = R.string.terms_headline),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -79,19 +81,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                         .padding(24.dp)
                 ) {
                     Text(
-                        text = "Last updated: March 2026\n\n" +
-                                "1. Acceptance of the Terms\n" +
-                                "By accessing and using the OdyWay application, you agree to be bound by these terms and conditions. If you do not agree with any part of the terms, you may not use the service.\n\n" +
-                                "2. Use of the Service\n" +
-                                "OdyWay is a tool for planning trips. We reserve the right to modify or suspend the service at any time without prior notice.\n\n" +
-                                "3. Privacy and Data\n" +
-                                "Your privacy is important to us. We collect and use personal information in accordance with our Privacy Policy.\n\n" +
-                                "4. Intellectual Property\n" +
-                                "All content, design, logos, and code of the application are the exclusive property of the OdyWay developers.\n\n" +
-                                "5. Limitation of Liability\n" +
-                                "We are not responsible for any losses, damages, or issues that may arise during your trips planned with our application.\n\n" +
-                                "6. Modifications\n" +
-                                "We reserve the right to revise these terms at any time. By continuing to use the application after such revisions, you agree to the updated terms.",
+                        text = stringResource(id = R.string.terms_legal_text),
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                         fontSize = 14.sp,
                         lineHeight = 22.sp,
@@ -115,7 +105,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Reject", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.terms_reject), color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -126,7 +116,7 @@ fun TermsConditionsScreen(onNavigateBack: () -> Unit) {
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Accept", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.terms_accept), color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                 }
             }
         }

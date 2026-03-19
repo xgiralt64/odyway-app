@@ -11,9 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.odyway.R
 import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
@@ -36,13 +38,13 @@ fun SettingsScreen(
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.back_button),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Settings",
+                    text = stringResource(id = R.string.settings_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
@@ -62,18 +64,18 @@ fun SettingsScreen(
 
             // account preferences
             item {
-                SettingsGroup(title = "Account & Preferences") {
+                SettingsGroup(title = stringResource(id = R.string.settings_group_account)) {
                     SettingsItem(
                         icon = Icons.Filled.Person,
-                        title = "Account Information",
-                        subtitle = "Manage your personal data",
+                        title = stringResource(id = R.string.settings_account_info),
+                        subtitle = stringResource(id = R.string.settings_account_info_sub),
                         onClick = { /* TODO */ }
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.Settings,
-                        title = "Preferences",
-                        subtitle = "Language, Theme, Notifications (T4.4)",
+                        title = stringResource(id = R.string.settings_preferences),
+                        subtitle = stringResource(id = R.string.settings_preferences_sub),
                         onClick = onNavigateToPreferences
                     )
                 }
@@ -81,25 +83,25 @@ fun SettingsScreen(
 
             // --- GRUPO 2: SUPPORT & INFO ---
             item {
-                SettingsGroup(title = "Support & Information") {
+                SettingsGroup(title = stringResource(id = R.string.settings_group_support)) {
                     SettingsItem(
                         icon = Icons.Filled.Info,
-                        title = "Help & Support",
-                        subtitle = "FAQ and contact",
+                        title = stringResource(id = R.string.settings_help),
+                        subtitle = stringResource(id = R.string.settings_help_sub),
                         onClick = { /* TODO */ }
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.Star,
-                        title = "About OdyWay",
-                        subtitle = "Version, Team info (T4.2)",
+                        title = stringResource(id = R.string.settings_about),
+                        subtitle = stringResource(id = R.string.settings_about_sub),
                         onClick = onNavigateToAbout
                     )
                     ManualDivider()
                     SettingsItem(
                         icon = Icons.Filled.List,
-                        title = "Terms & Conditions",
-                        subtitle = "Legal agreements (T4.3)",
+                        title = stringResource(id = R.string.settings_terms),
+                        subtitle = stringResource(id = R.string.settings_terms_sub),
                         onClick = onNavigateToTerms
                     )
                 }
@@ -107,11 +109,11 @@ fun SettingsScreen(
 
             // actions
             item {
-                SettingsGroup(title = "Actions") {
+                SettingsGroup(title = stringResource(id = R.string.settings_group_actions)) {
                     SettingsItem(
                         icon = Icons.Filled.Warning,
-                        title = "Log Out",
-                        subtitle = "Sign out of your account",
+                        title = stringResource(id = R.string.settings_logout),
+                        subtitle = stringResource(id = R.string.settings_logout_sub),
                         iconTint = MaterialTheme.colorScheme.error,
                         titleColor = MaterialTheme.colorScheme.error,
                         onClick = { /* TODO */ }
@@ -197,7 +199,7 @@ fun SettingsItem(
 
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Go",
+                contentDescription = stringResource(id = R.string.settings_go_desc),
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         }

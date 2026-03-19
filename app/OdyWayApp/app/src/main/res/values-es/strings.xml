@@ -26,4 +26,94 @@
     <string name="home_section_upcoming">Próximos viajes</string>
     <string name="home_section_recommendations">Recomendaciones para ti</string>
     <string name="home_live_badge">EN VIVO</string>
+
+    <!-- loginscreen -->
+    <string name="login_logo_desc">Logotipo</string>
+    <string name="login_welcome">Bienvenido a OdyWay</string>
+    <string name="login_subtitle">Inicia sesión para continuar</string>
+    <string name="login_username_label">Usuario</string>
+    <string name="login_password_label">Contraseña</string>
+    <string name="login_forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="login_no_account">¿No tienes cuenta?</string>
+    <string name="login_signup">Regístrate</string>
+
+    <!-- profilescreen -->
+    <string name="profile_settings_desc">Configuración</string>
+    <string name="profile_pic_desc">Foto de perfil</string>
+    <string name="profile_edit_desc">Editar</string>
+    <string name="profile_trips_label">Viajes</string>
+    <string name="profile_countries_label">Países</string>
+    <string name="profile_photos_label">Fotos</string>
+    <string name="profile_tab_recent">Recientes</string>
+    <string name="profile_tab_favorites">Favoritos</string>
+    <string name="profile_tab_stats">Estadísticas</string>
+    <string name="profile_no_recent_trips">No se han encontrado viajes recientes</string>
+    <string name="profile_no_favorites">Aún no has añadido favoritos</string>
+    <string name="profile_stats_coming_soon">Las estadísticas de viaje estarán disponibles pronto</string>
+
+    <!-- preferencesscreen -->
+    <string name="prefs_section_general">GENERAL</string>
+    <string name="prefs_section_notifications">NOTIFICACIONES</string>
+    <string name="prefs_push_notifications">Notificaciones Push</string>
+    <string name="prefs_expand_desc">Expandir</string>
+
+    <!-- settingsscreen -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_group_account">Cuenta y Preferencias</string>
+    <string name="settings_account_info">Información de la cuenta</string>
+    <string name="settings_account_info_sub">Gestiona tus datos personales</string>
+    <string name="settings_preferences">Preferencias</string>
+    <string name="settings_preferences_sub">Idioma, Tema, Notificaciones</string>
+    <string name="settings_group_support">Soporte e Información</string>
+    <string name="settings_help">Ayuda y Soporte</string>
+    <string name="settings_help_sub">FAQ y contacto</string>
+    <string name="settings_about">Sobre OdyWay</string>
+    <string name="settings_about_sub">Versión, información del equipo</string>
+    <string name="settings_terms">Términos y Condiciones</string>
+    <string name="settings_terms_sub">Acuerdos legales</string>
+    <string name="settings_group_actions">Acciones</string>
+    <string name="settings_logout">Cerrar sesión</string>
+    <string name="settings_logout_sub">Salir de tu cuenta</string>
+    <string name="settings_go_desc">Ir</string>
+
+    <!-- splashscreen -->
+    <string name="splash_logo_desc">Logotipo de OdyWay</string>
+    <string name="splash_loading">Cargando...</string>
+    <string name="splash_version">v1.0.0 - Sprint 01</string>
+
+    <!-- termsconditionsscreen -->
+    <string name="terms_title">Términos y Condiciones</string>
+    <string name="terms_headline">Términos y Condiciones</string>
+    <string name="terms_legal_text">Última actualización: Marzo 2026\n\n1. Aceptación de los Términos\nAl acceder y utilizar la aplicación OdyWay, aceptas quedar vinculado por estos términos y condiciones. Si no estás de acuerdo con alguna parte de los términos, no puedes utilizar el servicio.\n\n2. Uso del Servicio\nOdyWay es una herramienta para planificar viajes. Nos reservamos el derecho de modificar o suspender el servicio en cualquier momento sin previo aviso.\n\n3. Privacidad y Datos\nTu privacidad es importante para nosotros. Recopilamos y utilizamos la información personal de acuerdo con nuestra Política de Privacidad.\n\n4. Propiedad Intelectual\nTodo el contenido, diseño, logotipos y código de la aplicación son propiedad exclusiva de los desarrolladores de OdyWay.\n\n5. Limitación de Responsabilidad\nNo nos hacemos responsables de cualquier pérdida, daño o problema que pueda surgir durante tus viajes planificados con nuestra aplicación.\n\n6. Modificaciones\nNos reservamos el derecho de revisar estos términos en cualquier momento. Al continuar utilizando la aplicación después de tales revisiones, aceptas los términos actualizados.</string>
+    <string name="terms_reject">Rechazar</string>
+    <string name="terms_accept">Aceptar</string>
+
+    <!-- tripsscreen -->
+    <string name="trips_tab_itinerary">Itinerario</string>
+    <string name="trips_tab_gallery">Galería</string>
+    <string name="trips_tab_costs">Gastos</string>
+    <string name="trips_dates_desc">Fechas</string>
+    <string name="trips_costs_stats_placeholder">Estadísticas detalladas de gastos</string>
+    <string name="trips_stat_budget">Presupuesto</string>
+    <string name="trips_stat_wasted">Gastado</string>
+    <string name="trips_stat_remaining">Restante</string>
+    <string name="trips_hour_desc">Hora</string>
+    <string name="trips_cost_desc">Coste</string>
+    <string name="trips_gallery_title">Fotos del viaje</string>
+    <string name="trips_sort_desc">Ordenar</string>
+    <string name="trips_add_photo_desc">Añadir foto</string>
+    <string name="trips_photo_desc">Foto de la galería</string>
+    <string name="trips_delete_desc">Eliminar</string>
+
+    <!-- navbar -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_trips">Viajes</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- languages -->
+    <string name="lang_ca">Catalán</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_en">Inglés</string>
+
 </resources>

@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.odyway.R
 import kotlinx.coroutines.delay
@@ -39,7 +40,7 @@ fun SplashScreen(
             // Logo
             Image(
                 painter = painterResource(id = R.drawable.icon_odyway),
-                contentDescription = "Logo OdyWay",
+                contentDescription = stringResource(id = R.string.splash_logo_desc),
                 modifier = Modifier
                     .size(180.dp)
             )
@@ -55,14 +56,14 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Carregant...",
+                text = stringResource(id = R.string.splash_loading),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
 
         Text(
-            text = "v1.0.0 - Sprint 01",
+            text = stringResource(id = R.string.splash_version),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary,
             fontSize = 14.sp,

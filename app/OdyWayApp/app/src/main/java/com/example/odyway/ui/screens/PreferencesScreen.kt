@@ -32,7 +32,11 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
     var notificationsEnabled by remember { mutableStateOf(true) }
 
     var expanded by remember { mutableStateOf(false) }
-    val languages = listOf("ca" to "Català", "es" to "Castellà", "en" to "Anglès")
+    val languages = listOf(
+        "ca" to stringResource(id = R.string.lang_ca),
+        "es" to stringResource(id = R.string.lang_es),
+        "en" to stringResource(id = R.string.lang_en)
+    )
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -47,7 +51,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.back_button),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -70,7 +74,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
         ) {
 
             Text(
-                text = "GENERAL",
+                text = stringResource(id = R.string.prefs_section_general),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
@@ -105,7 +109,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                                 )
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    val currentLanguageName = languages.find { it.first == currentLanguageCode }?.second ?: "Català"
+                                    val currentLanguageName = languages.find { it.first == currentLanguageCode }?.second ?: stringResource(id = R.string.lang_ca)
                                     Text(
                                         text = currentLanguageName,
                                         style = MaterialTheme.typography.bodyMedium,
@@ -114,7 +118,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Icon(
                                         imageVector = Icons.Filled.KeyboardArrowDown,
-                                        contentDescription = "Expand",
+                                        contentDescription = stringResource(id = R.string.prefs_expand_desc),
                                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                 }
@@ -150,7 +154,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Dark Mode",
+                            text = stringResource(id = R.string.dark_mode),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
@@ -176,7 +180,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
 
             // NOTIFICATIONS
             Text(
-                text = "NOTIFICATIONS",
+                text = stringResource(id = R.string.prefs_section_notifications),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
@@ -196,7 +200,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Push Notifications",
+                        text = stringResource(id = R.string.prefs_push_notifications),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface

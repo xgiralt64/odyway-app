@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,7 +64,11 @@ val galeriaMock = listOf(
 @Composable
 fun TripsScreen() {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Itinerary", "Galery", "Costs")
+    val tabs = listOf(
+        stringResource(id = R.string.trips_tab_itinerary),
+        stringResource(id = R.string.trips_tab_gallery),
+        stringResource(id = R.string.trips_tab_costs)
+    )
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -77,7 +82,7 @@ fun TripsScreen() {
                     // Imagen del viaje
                     Image(
                         painter = painterResource(id = R.drawable.paris_example),
-                        contentDescription = "Imatge de París",
+                        contentDescription = "Imatge de París", // Hardcoded perque es contingut dinamic mock
                         contentScale = ContentScale.Crop, // Llena el Box recortando si es necesario
                         modifier = Modifier.fillMaxSize()
                     )
@@ -101,7 +106,7 @@ fun TripsScreen() {
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Viatge a París",
+                            text = "Viatge a París", // Hardcoded perque es contingut dinamic mock
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary
@@ -111,14 +116,14 @@ fun TripsScreen() {
                             // Icono de calendario
                             Icon(
                                 imageVector = Icons.Default.DateRange,
-                                contentDescription = "Dates",
+                                contentDescription = stringResource(id = R.string.trips_dates_desc),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             // Fechas de ida y vuelta
                             Text(
-                                text = "12 Oct - 15 Oct",
+                                text = "12 Oct - 15 Oct", // Hardcoded perque es contingut dinamic mock
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
@@ -168,7 +173,7 @@ fun TripsScreen() {
                 0 -> ItineraryList()
                 1 -> TripGallerySection()
                 2 -> Text(
-                    text = "Estadístiques detallades de despeses",
+                    text = stringResource(id = R.string.trips_costs_stats_placeholder),
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -192,9 +197,9 @@ fun TripStatisticsSection() {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatItem("Budget", "1000€", MaterialTheme.colorScheme.onSurface)
-            StatItem("Wasted", "117.50€", MaterialTheme.colorScheme.error)
-            StatItem("Remaining", "882.50€", MountainGreen)
+            StatItem(stringResource(id = R.string.trips_stat_budget), "1000€", MaterialTheme.colorScheme.onSurface)
+            StatItem(stringResource(id = R.string.trips_stat_wasted), "117.50€", MaterialTheme.colorScheme.error)
+            StatItem(stringResource(id = R.string.trips_stat_remaining), "882.50€", MountainGreen)
         }
     }
 }
@@ -245,7 +250,7 @@ fun ActivityCard(activity: ActivityMock) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.Default.Schedule,
-                    contentDescription = "Hora",
+                    contentDescription = stringResource(id = R.string.trips_hour_desc),
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(20.dp)
                 )
@@ -268,7 +273,7 @@ fun ActivityCard(activity: ActivityMock) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = "Cost",
+                    contentDescription = stringResource(id = R.string.trips_cost_desc),
                     tint = MountainGreen,
                     modifier = Modifier.size(16.dp)
                 )
@@ -297,7 +302,7 @@ fun TripGallerySection() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Photos of the trip",
+                text = stringResource(id = R.string.trips_gallery_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -308,7 +313,7 @@ fun TripGallerySection() {
                 IconButton(onClick = { /* TODO: Lógica de ordenar */ }) {
                     Icon(
                         imageVector = Icons.Default.Sort,
-                        contentDescription = "Ordenar",
+                        contentDescription = stringResource(id = R.string.trips_sort_desc),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -316,7 +321,7 @@ fun TripGallerySection() {
                 IconButton(onClick = { /* TODO: Lógica de añadir foto */ }) {
                     Icon(
                         imageVector = Icons.Default.AddPhotoAlternate,
-                        contentDescription = "Añadir foto",
+                        contentDescription = stringResource(id = R.string.trips_add_photo_desc),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
@@ -341,7 +346,7 @@ fun TripGallerySection() {
                     // La imagen
                     Image(
                         painter = painterResource(id = image.imageRes),
-                        contentDescription = "Foto galería",
+                        contentDescription = stringResource(id = R.string.trips_photo_desc),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -357,7 +362,7 @@ fun TripGallerySection() {
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Borrar",
+                            contentDescription = stringResource(id = R.string.trips_delete_desc),
                             tint = Color.White,
                             modifier = Modifier.size(16.dp)
                         )
