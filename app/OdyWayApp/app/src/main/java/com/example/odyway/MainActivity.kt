@@ -42,6 +42,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val settingsManager = remember { SettingsManager(context) }
+
+            val tripRepository = remember { TripRepositoryImpl() }
             
             // Observem tant el mode fosc com l'idioma
             val isDarkMode by settingsManager.isDarkModeFlow.collectAsState()
@@ -62,7 +64,11 @@ class MainActivity : ComponentActivity() {
                 LocalContext provides localizedContext
             ) {
                 OdyWayTheme(darkTheme = isDarkMode) {
-                    NavGraph(settingsManager = settingsManager)
+                    NavGraph(
+                        settingsManager = settingsManager,
+                        tripRepository = tripRepository
+                    )
+
                 }
             }
         }

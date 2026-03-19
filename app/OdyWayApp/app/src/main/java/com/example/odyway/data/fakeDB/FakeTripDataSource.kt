@@ -36,7 +36,8 @@ object FakeTripDataSource {
     private fun loadFakeData() {
         val today = LocalDate.now()
 
-        val fakeTrip = Trip(
+        // 1. VIAJE PRÓXIMO (Empieza en 5 días)
+        val fakeTripUpcoming = Trip(
             id = "trip-001",
             userId = "user-1",
             title = "Aventura en Barcelona",
@@ -48,19 +49,106 @@ object FakeTripDataSource {
             budget = 600.0
         )
 
-        val fakeActivity = ItineraryItem(
+        // 2. VIAJE EN CURSO (Empezó hace 2 días y termina en 3 días)
+        val fakeTripActive = Trip(
+            id = "trip-002",
+            userId = "user-1",
+            title = "Ruta por Roma",
+            destination = "Roma, Italia",
+            description = "Comiendo pasta y viendo el Coliseo.",
+            status = "En curso",
+            startDate = today.minusDays(2),  // <-- ¡Empezó en el pasado!
+            endDate = today.plusDays(3),     // <-- ¡Termina en el futuro!
+            budget = 800.0
+        )
+
+        val fakeActivity_1 = ItineraryItem(
             id = "act-001",
             tripId = "trip-001",
-            date = today.plusDays(6),
+            date = today.plusDays(10),
             time = LocalTime.of(10, 30),
             title = "Visita Sagrada Familia",
-            description = "Entrada general reservada online.",
+            description = "Entrada general reservada online. No olvidar cámara.",
             location = "Carrer de Mallorca, 401",
             isCompleted = false
         )
 
-        _trips.value = listOf(fakeTrip)
-        _itinerary.value = listOf(fakeActivity)
+        val fakeActivity_2 = ItineraryItem(
+            id = "act-002",
+            tripId = "trip-001",
+            date = today.plusDays(10),
+            time = LocalTime.of(14, 0),
+            title = "Comida en el Mercado de la Boqueria",
+            description = "Tapas y productos frescos. Probar jamón ibérico.",
+            location = "La Rambla, 91",
+            isCompleted = false
+        )
+
+        val fakeActivity_3 = ItineraryItem(
+            id = "act-003",
+            tripId = "trip-001",
+            date = today.plusDays(10),
+            time = LocalTime.of(16, 30),
+            title = "Paseo por el Barrio Gótico",
+            description = "Recorrer calles medievales y visitar la Catedral.",
+            location = "Barri Gòtic",
+            isCompleted = false
+        )
+
+        val fakeActivity_4 = ItineraryItem(
+            id = "act-004",
+            tripId = "trip-001",
+            date = today.plusDays(11),
+            time = LocalTime.of(9, 0),
+            title = "Park Güell",
+            description = "Entrada a las 9h. Llegar 15 min antes. Ver zona monumental.",
+            location = "Carrer d'Olot, s/n",
+            isCompleted = false
+        )
+
+        val fakeActivity_5 = ItineraryItem(
+            id = "act-005",
+            tripId = "trip-001",
+            date = today.plusDays(11),
+            time = LocalTime.of(12, 30),
+            title = "Casa Batlló",
+            description = "Audio guía incluida. Tour de 1 hora aprox.",
+            location = "Passeig de Gràcia, 43",
+            isCompleted = false
+        )
+
+        val fakeActivity_6 = ItineraryItem(
+            id = "act-006",
+            tripId = "trip-001",
+            date = today.plusDays(11),
+            time = LocalTime.of(20, 0),
+            title = "Cena en Barceloneta",
+            description = "Restaurante frente al mar. Reserva confirmada para 4 personas.",
+            location = "Passeig Marítim de la Barceloneta",
+            isCompleted = false
+        )
+
+        val fakeActivity_7 = ItineraryItem(
+            id = "act-007",
+            tripId = "trip-001",
+            date = today.plusDays(12),
+            time = LocalTime.of(11, 0),
+            title = "Montjuïc y Pueblo Español",
+            description = "Teleférico + visita al castillo. Llevar calzado cómodo.",
+            location = "Montjuïc",
+            isCompleted = false
+        )
+
+        _trips.value = listOf(fakeTripUpcoming,fakeTripActive)
+        _itinerary.value = listOf(
+            fakeActivity_1,
+            fakeActivity_2,
+            fakeActivity_3,
+            fakeActivity_4,
+            fakeActivity_5,
+            fakeActivity_6,
+            fakeActivity_7
+        )
     }
 
     // ==========================================

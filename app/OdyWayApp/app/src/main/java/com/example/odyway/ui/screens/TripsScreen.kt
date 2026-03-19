@@ -20,11 +20,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.odyway.R
 import com.example.odyway.ui.theme.MountainGreen
-import com.example.odyway.ui.theme.OdyWayTheme
 
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -35,34 +33,32 @@ import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.ui.draw.clip
+import com.example.odyway.domain.ItineraryItem
+import com.example.odyway.domain.Trip
+import com.example.odyway.ui.viewmodels.TripViewModel
+import java.time.format.DateTimeFormatter
 
-data class ActivityMock(
-    val id: Int,
-    val time: String,
-    val title: String,
-    val cost: Double
-)
+// Mock de galería
 data class GalleryImageMock(val id: Int, val imageRes: Int)
-
-val itinerarioMock = listOf(
-    ActivityMock(1, "09:00", "Cafe i esmorzar tradicional", 12.50),
-    ActivityMock(2, "10:30", "Visita guiada pel centre historic", 25.00),
-    ActivityMock(3, "14:00", "Dinar a un restaurant local", 35.00),
-    ActivityMock(4, "17:00", "Passeig lliure i compres", 0.00),
-    ActivityMock(5, "20:00", "Sopar amb vistes a la ciutat", 45.00)
-)
-
 val galeriaMock = listOf(
     GalleryImageMock(1, R.drawable.paris_example),
-    GalleryImageMock(2, R.drawable.paris_example),
-    GalleryImageMock(3, R.drawable.paris_example),
-    GalleryImageMock(4, R.drawable.paris_example),
-    GalleryImageMock(5, R.drawable.paris_example),
-    GalleryImageMock(6, R.drawable.paris_example)
+    GalleryImageMock(2, R.drawable.paris_example)
 )
 
 @Composable
-fun TripsScreen() {
+fun TripsScreen(tripViewModel: TripViewModel) {
+    // 1. Obtenemos los viajes. Por ahora, asumimos que mostramos el primero.
+    val trips by tripViewModel.trips.collectAsState()
+    val currentTrip = trips.firstOrNull()
+
+    // 2. Obtenemos el itinerario de ESE viaje
+    val itinerary by tripViewModel.currentItinerary.collectAsState()
+
+    // 3. Cuando la pantalla carga, le pedimos al ViewModel que busque las actividades de este viaje
+    LaunchedEffect(currentTrip?.id) {
+        currentTrip?.id?.let { tripViewModel.loadItineraryForTrip(it) }
+    }
+
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf(
         stringResource(id = R.string.trips_tab_itinerary),
@@ -70,50 +66,43 @@ fun TripsScreen() {
         stringResource(id = R.string.trips_tab_costs)
     )
 
+    if (currentTrip == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("No hay viajes disponibles.")
+        }
+        return
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp) // Altura de la imagen de cabecera
-                ) {
-                    // Imagen del viaje
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.paris_example),
-                        contentDescription = "Imatge de París", // Hardcoded perque es contingut dinamic mock
-                        contentScale = ContentScale.Crop, // Llena el Box recortando si es necesario
+                        contentDescription = "Imagen del viaje",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
-
-                    // Gradiente oscuro para que el texto sea legible
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color.Transparent, MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)),
-                                    startY = 150f
-                                )
+                        modifier = Modifier.fillMaxSize().background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)),
+                                startY = 150f
                             )
+                        )
                     )
-
-                    //título y fechas superpuestos en la esquina inferior izquierda
                     Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
+                        modifier = Modifier.align(Alignment.BottomStart).padding(16.dp)
                     ) {
                         Text(
-                            text = "Viatge a París", // Hardcoded perque es contingut dinamic mock
+                            text = currentTrip.title, // Ahora viene de la FakeDB
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Icono de calendario
                             Icon(
                                 imageVector = Icons.Default.DateRange,
                                 contentDescription = stringResource(id = R.string.trips_dates_desc),
@@ -121,16 +110,15 @@ fun TripsScreen() {
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            // Fechas de ida y vuelta
+                            val formatter = DateTimeFormatter.ofPattern("dd MMM")
                             Text(
-                                text = "12 Oct - 15 Oct", // Hardcoded perque es contingut dinamic mock
+                                text = "${currentTrip.startDate.format(formatter)} - ${currentTrip.endDate.format(formatter)}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
                 }
-                // --- hasta qui colocamos la imagen   ---
 
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
@@ -161,16 +149,14 @@ fun TripsScreen() {
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
-            TripStatisticsSection()
+            TripStatisticsSection(currentTrip)
 
             Spacer(modifier = Modifier.height(8.dp))
 
             when (selectedTabIndex) {
-                0 -> ItineraryList()
+                0 -> ItineraryList(itinerary) // Pasamos la lista real
                 1 -> TripGallerySection()
                 2 -> Text(
                     text = stringResource(id = R.string.trips_costs_stats_placeholder),
@@ -183,23 +169,19 @@ fun TripsScreen() {
 }
 
 @Composable
-fun TripStatisticsSection() {
+fun TripStatisticsSection(trip: Trip) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatItem(stringResource(id = R.string.trips_stat_budget), "1000€", MaterialTheme.colorScheme.onSurface)
-            StatItem(stringResource(id = R.string.trips_stat_wasted), "117.50€", MaterialTheme.colorScheme.error)
-            StatItem(stringResource(id = R.string.trips_stat_remaining), "882.50€", MountainGreen)
+            StatItem(stringResource(id = R.string.trips_stat_budget), "${trip.budget}€", MaterialTheme.colorScheme.onSurface)
+            StatItem(stringResource(id = R.string.trips_stat_wasted), "0.0€", MaterialTheme.colorScheme.error)
+            StatItem(stringResource(id = R.string.trips_stat_remaining), "${trip.budget}€", MountainGreen)
         }
     }
 }
@@ -222,29 +204,31 @@ fun StatItem(label: String, value: String, color: Color) {
 }
 
 @Composable
-fun ItineraryList() {
-    LazyColumn(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(itinerarioMock) { activity ->
-            ActivityCard(activity)
+fun ItineraryList(itinerary: List<ItineraryItem>) {
+    if (itinerary.isEmpty()) {
+        Text("No hay actividades planificadas.", modifier = Modifier.padding(16.dp))
+    } else {
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(itinerary) { activity ->
+                ActivityCard(activity)
+            }
+            item { Spacer(modifier = Modifier.height(80.dp)) }
         }
-        item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
 @Composable
-fun ActivityCard(activity: ActivityMock) {
+fun ActivityCard(activity: ItineraryItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -255,7 +239,7 @@ fun ActivityCard(activity: ActivityMock) {
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
-                    text = activity.time,
+                    text = activity.time.toString(), // Viene de LocalTime en FakeDB
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -263,31 +247,22 @@ fun ActivityCard(activity: ActivityMock) {
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Text(
-                text = activity.title,
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = stringResource(id = R.string.trips_cost_desc),
-                    tint = MountainGreen,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "${activity.cost}€",
+                    text = activity.title,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MountainGreen
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = activity.location,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
         }
     }
 }
-
 @Composable
 fun TripGallerySection() {
     Column(
@@ -375,18 +350,18 @@ fun TripGallerySection() {
     }
 }
 
-@Preview(showBackground = true, name = "Trips Mode Light")
-@Composable
-fun TripsScreenPreviewLight() {
-    OdyWayTheme(darkTheme = false) {
-        TripsScreen()
-    }
-}
-
-@Preview(showBackground = true, name = "Trips Mode Dark")
-@Composable
-fun TripsScreenPreviewDark() {
-    OdyWayTheme(darkTheme = true) {
-        TripsScreen()
-    }
-}
+//@Preview(showBackground = true, name = "Trips Mode Light")
+//@Composable
+//fun TripsScreenPreviewLight() {
+//    OdyWayTheme(darkTheme = false) {
+//        TripsScreen()
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "Trips Mode Dark")
+//@Composable
+//fun TripsScreenPreviewDark() {
+//    OdyWayTheme(darkTheme = true) {
+//        TripsScreen()
+//    }
+//}
