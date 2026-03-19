@@ -2,10 +2,29 @@ package com.example.odyway.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class SettingsManager(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("odyway_settings", Context.MODE_PRIVATE)
+
+    private val _isDarkModeFlow = MutableStateFlow(getBoolean(KEY_DARK_MODE, false))
+    val isDarkModeFlow: StateFlow<Boolean> = _isDarkModeFlow
+
+    //Al final hem hagut de crear una referencia forta perque no ens funcionava ja que el Garbage Collector l'elimini
+    //Canviar si trobem una millor solució
+    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+        when (key) {
+            KEY_DARK_MODE -> {
+                _isDarkModeFlow.value = prefs.getBoolean(key, false)
+            }
+        }
+    }
+
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
 
     companion object {
         private const val KEY_LANGUAGE = "language"
@@ -18,6 +37,7 @@ class SettingsManager(context: Context) {
 
     fun saveBoolean(key: String, value: Boolean) {
         sharedPreferences.edit().putBoolean(key, value).apply()
+        // No cal actualitzar el Flow manualment aquí, el listener ja ho farà
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
@@ -32,24 +52,20 @@ class SettingsManager(context: Context) {
         return sharedPreferences.getString(key, defaultValue)
     }
 
-    // --- Mètodes específics per a les preferències de l'app ---
+    // --- Mètodes específics ---
 
-    // Idioma
     var language: String?
         get() = getString(KEY_LANGUAGE, "ca")
         set(value) = saveString(KEY_LANGUAGE, value ?: "ca")
 
-    // Nom d'usuari
     var username: String?
         get() = getString(KEY_USERNAME, "")
         set(value) = saveString(KEY_USERNAME, value ?: "")
 
-    // Data de naixement
     var birthDate: String?
         get() = getString(KEY_BIRTH_DATE, "")
         set(value) = saveString(KEY_BIRTH_DATE, value ?: "")
 
-    // Dark Mode
     var isDarkMode: Boolean
         get() = getBoolean(KEY_DARK_MODE, false)
         set(value) = saveBoolean(KEY_DARK_MODE, value)
