@@ -12,12 +12,18 @@ class SettingsManager(context: Context) {
     private val _isDarkModeFlow = MutableStateFlow(getBoolean(KEY_DARK_MODE, false))
     val isDarkModeFlow: StateFlow<Boolean> = _isDarkModeFlow
 
+    private val _languageFlow = MutableStateFlow(getString(KEY_LANGUAGE, "ca") ?: "ca")
+    val languageFlow: StateFlow<String> = _languageFlow
+
     //Al final hem hagut de crear una referencia forta perque no ens funcionava ja que el Garbage Collector l'elimini
     //Canviar si trobem una millor solució
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
         when (key) {
             KEY_DARK_MODE -> {
                 _isDarkModeFlow.value = prefs.getBoolean(key, false)
+            }
+            KEY_LANGUAGE -> {
+                _languageFlow.value = prefs.getString(key, "ca") ?: "ca"
             }
         }
     }
@@ -37,7 +43,6 @@ class SettingsManager(context: Context) {
 
     fun saveBoolean(key: String, value: Boolean) {
         sharedPreferences.edit().putBoolean(key, value).apply()
-        // No cal actualitzar el Flow manualment aquí, el listener ja ho farà
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
