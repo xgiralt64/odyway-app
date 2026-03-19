@@ -1,3 +1,31 @@
 <resources>
+    <!-- GENERAL -->
     <string name="app_name">OdyWay</string>
+    <string name="preferences_title">Preferences</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="language">Language</string>
+
+
+    <!-- AboutPageScreen -->
+    <string name="back_button">Back</string>
+    <string name="about_title">About OdyWay</string>
+    <string name="logo_desc">OdyWay Logo</string>
+    <string name="app_name_display">OdyWay</string>
+    <string name="version_text">Version 0.2.0 (Sprint 02)</string>
+    <string name="dev_team_title">Development Team</string>
+    <string name="dev_team_info">Jonas Obando\nXavier Giralt</string>
+    <string name="tech_info_title">Technical Information</string>
+    <string name="tech_info_info">Built with Android Jetpack Compose\nKotlin &amp; Material Design 3\nAPI 35</string>
+    <string name="license_title">License</string>
+    <string name="license_info">OdyWay © 2025\nAll rights reserved.\nUdL - Sprint 02</string>
+
+    <!-- homescreen -->
+    <string name="home_logo_desc">OdyWay Logo</string>
+    <string name="home_search_desc">Search trip</string>
+    <string name="home_add_desc">Add</string>
+    <string name="home_section_in_progress">In progress</string>
+    <string name="home_section_upcoming">Upcoming trips</string>
+    <string name="home_section_recommendations">Recommendations for you</string>
+    <string name="home_live_badge">LIVE</string>
+
 </resources>
