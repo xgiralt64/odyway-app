@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +44,7 @@ fun LoginScreen(
         // Logo
         Image(
             painter = painterResource(id = R.drawable.icon_odyway),
-            contentDescription = "Logo",
+            contentDescription = stringResource(id = R.string.login_logo_desc),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(120.dp)
@@ -53,14 +54,14 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Benvingut a OdyWay",
+            text = stringResource(id = R.string.login_welcome),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         Text(
-            text = "Inicia sessió per continuar",
+            text = stringResource(id = R.string.login_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
             modifier = Modifier.padding(bottom = 32.dp, top = 8.dp)
@@ -70,11 +71,11 @@ fun LoginScreen(
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Usuari") },
+            label = { Text(stringResource(id = R.string.login_username_label)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Person,
-                    contentDescription = "Usuari",
+                    contentDescription = stringResource(id = R.string.login_username_label),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -89,11 +90,11 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Contrasenya") },
+            label = { Text(stringResource(id = R.string.login_password_label)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Lock,
-                    contentDescription = "Contrasenya",
+                    contentDescription = stringResource(id = R.string.login_password_label),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -110,7 +111,7 @@ fun LoginScreen(
             modifier = Modifier.align(Alignment.End)
         ) {
             Text(
-                text = "Has oblidat la contrasenya?",
+                text = stringResource(id = R.string.login_forgot_password),
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Medium
             )
@@ -133,7 +134,7 @@ fun LoginScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
-            Text("Iniciar sessió", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(id = R.string.login_button), fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -142,12 +143,12 @@ fun LoginScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "No tens compte?",
+                text = stringResource(id = R.string.login_no_account),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
             TextButton(onClick = { /* TODO: Crear compte */ }) {
                 Text(
-                    text = "Registra't",
+                    text = stringResource(id = R.string.login_signup),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )

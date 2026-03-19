@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,11 @@ import com.example.odyway.ui.theme.OdyWayTheme
 @Composable
 fun ProfileScreen(onNavigateToSettings: () -> Unit) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Recent", "Favorites", "Stats")
+    val tabs = listOf(
+        stringResource(id = R.string.profile_tab_recent),
+        stringResource(id = R.string.profile_tab_favorites),
+        stringResource(id = R.string.profile_tab_stats)
+    )
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -40,7 +45,7 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         Icons.Default.Settings,
-                        contentDescription = "Settings",
+                        contentDescription = stringResource(id = R.string.profile_settings_desc),
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(38.dp)
                     )
@@ -65,7 +70,7 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                     Box(contentAlignment = Alignment.BottomEnd) {
                         Image(
                             painter = painterResource(id = R.drawable.icon_odyway),
-                            contentDescription = "Profile Picture",
+                            contentDescription = stringResource(id = R.string.profile_pic_desc),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(124.dp)
@@ -81,7 +86,7 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                         ) {
                             Icon(
                                 Icons.Default.Edit,
-                                contentDescription = "Edit",
+                                contentDescription = stringResource(id = R.string.profile_edit_desc),
                                 tint = Color.White,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -91,13 +96,13 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Xavi Xabon",
+                        text = "Xavi",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
-                        text = "@mamwebo_travels",
+                        text = "@xgiralt64",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -110,9 +115,9 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                     .padding(24.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStatItem("Trips", "12")
-                ProfileStatItem("Countries", "5")
-                ProfileStatItem("Photos", "148")
+                ProfileStatItem(stringResource(id = R.string.profile_trips_label), "12")
+                ProfileStatItem(stringResource(id = R.string.profile_countries_label), "5")
+                ProfileStatItem(stringResource(id = R.string.profile_photos_label), "148")
             }
 
             TabRow(
@@ -148,9 +153,9 @@ fun ProfileScreen(onNavigateToSettings: () -> Unit) {
                 contentAlignment = Alignment.TopCenter
             ) {
                 when (selectedTabIndex) {
-                    0 -> Text("No recent trips found", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
-                    1 -> Text("You haven't added favorites yet", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
-                    2 -> Text("Travel statistics coming soon", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    0 -> Text(stringResource(id = R.string.profile_no_recent_trips), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    1 -> Text(stringResource(id = R.string.profile_no_favorites), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    2 -> Text(stringResource(id = R.string.profile_stats_coming_soon), color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
                 }
             }
         }

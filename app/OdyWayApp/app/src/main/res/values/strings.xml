@@ -28,4 +28,93 @@
     <string name="home_section_recommendations">Recommendations for you</string>
     <string name="home_live_badge">LIVE</string>
 
+    <!-- loginscreen -->
+    <string name="login_logo_desc">Logo</string>
+    <string name="login_welcome">Welcome to OdyWay</string>
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="login_username_label">Username</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="login_button">Log In</string>
+    <string name="login_no_account">Don\'t have an account?</string>
+    <string name="login_signup">Sign Up</string>
+
+    <!-- profilescreen -->
+    <string name="profile_settings_desc">Settings</string>
+    <string name="profile_pic_desc">Profile Picture</string>
+    <string name="profile_edit_desc">Edit</string>
+    <string name="profile_trips_label">Trips</string>
+    <string name="profile_countries_label">Countries</string>
+    <string name="profile_photos_label">Photos</string>
+    <string name="profile_tab_recent">Recent</string>
+    <string name="profile_tab_favorites">Favorites</string>
+    <string name="profile_tab_stats">Stats</string>
+    <string name="profile_no_recent_trips">No recent trips found</string>
+    <string name="profile_no_favorites">You haven\'t added favorites yet</string>
+    <string name="profile_stats_coming_soon">Travel statistics coming soon</string>
+
+    <!-- preferencesscreen -->
+    <string name="prefs_section_general">GENERAL</string>
+    <string name="prefs_section_notifications">NOTIFICATIONS</string>
+    <string name="prefs_push_notifications">Push Notifications</string>
+    <string name="prefs_expand_desc">Expand</string>
+
+    <!-- settingsscreen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_group_account">Account &amp; Preferences</string>
+    <string name="settings_account_info">Account Information</string>
+    <string name="settings_account_info_sub">Manage your personal data</string>
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_preferences_sub">Language, Theme, Notifications</string>
+    <string name="settings_group_support">Support &amp; Information</string>
+    <string name="settings_help">Help &amp; Support</string>
+    <string name="settings_help_sub">FAQ and contact</string>
+    <string name="settings_about">About OdyWay</string>
+    <string name="settings_about_sub">Version, Team info</string>
+    <string name="settings_terms">Terms &amp; Conditions</string>
+    <string name="settings_terms_sub">Legal agreements</string>
+    <string name="settings_group_actions">Actions</string>
+    <string name="settings_logout">Log Out</string>
+    <string name="settings_logout_sub">Sign out of your account</string>
+    <string name="settings_go_desc">Go</string>
+
+    <!-- splashscreen -->
+    <string name="splash_logo_desc">OdyWay Logo</string>
+    <string name="splash_loading">Loading...</string>
+    <string name="splash_version">v1.0.0 - Sprint 01</string>
+
+    <!-- termsconditionsscreen -->
+    <string name="terms_title">Terms &amp; Conditions</string>
+    <string name="terms_headline">Terms And Conditions</string>
+    <string name="terms_legal_text">Last updated: March 2026\n\n1. Acceptance of the Terms\nBy accessing and using the OdyWay application, you agree to be bound by these terms and conditions. If you do not agree with any part of the terms, you may not use the service.\n\n2. Use of the Service\nOdyWay is a tool for planning trips. We reserve the right to modify or suspend the service at any time without prior notice.\n\n3. Privacy and Data\nYour privacy is important to us. We collect and use personal information in accordance with our Privacy Policy.\n\n4. Intellectual Property\nAll content, design, logos, and code of the application are the exclusive property of the OdyWay developers.\n\n5. Limitation of Liability\nWe are not responsible for any losses, damages, or issues that may arise during your trips planned with our application.\n\n6. Modifications\nWe reserve the right to revise these terms at any time. By continuing to use the application after such revisions, you agree to the updated terms.</string>
+    <string name="terms_reject">Reject</string>
+    <string name="terms_accept">Accept</string>
+
+    <!-- tripsscreen -->
+    <string name="trips_tab_itinerary">Itinerary</string>
+    <string name="trips_tab_gallery">Gallery</string>
+    <string name="trips_tab_costs">Costs</string>
+    <string name="trips_dates_desc">Dates</string>
+    <string name="trips_costs_stats_placeholder">Detailed spending statistics</string>
+    <string name="trips_stat_budget">Budget</string>
+    <string name="trips_stat_wasted">Wasted</string>
+    <string name="trips_stat_remaining">Remaining</string>
+    <string name="trips_hour_desc">Hour</string>
+    <string name="trips_cost_desc">Cost</string>
+    <string name="trips_gallery_title">Photos of the trip</string>
+    <string name="trips_sort_desc">Sort</string>
+    <string name="trips_add_photo_desc">Add photo</string>
+    <string name="trips_photo_desc">Gallery photo</string>
+    <string name="trips_delete_desc">Delete</string>
+
+    <!-- navbar -->
+    <string name="nav_home">Home</string>
+    <string name="nav_trips">Trips</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- languages -->
+    <string name="lang_ca">Catalan</string>
+    <string name="lang_es">Spanish</string>
+    <string name="lang_en">English</string>
+
 </resources>

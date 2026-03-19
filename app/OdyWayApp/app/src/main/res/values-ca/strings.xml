@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">OdyWay</string>
     <string name="preferences_title">Preferències</string>
-    <string name="dark_mode">Mode Fost</string>
+    <string name="dark_mode">Mode Fosc</string>
     <string name="language">Idioma</string>
 
     <!-- AboutPageScreen -->
@@ -26,4 +26,94 @@
     <string name="home_section_upcoming">Pròxims viatges</string>
     <string name="home_section_recommendations">Recomanacions per a tu</string>
     <string name="home_live_badge">EN VIU</string>
+
+    <!-- loginscreen -->
+    <string name="login_logo_desc">Logotip</string>
+    <string name="login_welcome">Benvingut a OdyWay</string>
+    <string name="login_subtitle">Inicia sessió per continuar</string>
+    <string name="login_username_label">Usuari</string>
+    <string name="login_password_label">Contrasenya</string>
+    <string name="login_forgot_password">Has oblidat la contrasenya?</string>
+    <string name="login_button">Iniciar sessió</string>
+    <string name="login_no_account">No tens compte?</string>
+    <string name="login_signup">Registra\'t</string>
+
+    <!-- profilescreen -->
+    <string name="profile_settings_desc">Configuració</string>
+    <string name="profile_pic_desc">Foto de perfil</string>
+    <string name="profile_edit_desc">Editar</string>
+    <string name="profile_trips_label">Viatges</string>
+    <string name="profile_countries_label">Països</string>
+    <string name="profile_photos_label">Fotos</string>
+    <string name="profile_tab_recent">Recents</string>
+    <string name="profile_tab_favorites">Preferits</string>
+    <string name="profile_tab_stats">Estadístiques</string>
+    <string name="profile_no_recent_trips">No s\'han trobat viatges recents</string>
+    <string name="profile_no_favorites">Encara no has afegit preferits</string>
+    <string name="profile_stats_coming_soon">Les estadístiques de viatge estaran disponibles aviat</string>
+
+    <!-- preferencesscreen -->
+    <string name="prefs_section_general">GENERAL</string>
+    <string name="prefs_section_notifications">NOTIFICACIONS</string>
+    <string name="prefs_push_notifications">Notificacions Push</string>
+    <string name="prefs_expand_desc">Expandir</string>
+
+    <!-- settingsscreen -->
+    <string name="settings_title">Configuració</string>
+    <string name="settings_group_account">Compte i Preferències</string>
+    <string name="settings_account_info">Informació del compte</string>
+    <string name="settings_account_info_sub">Gestiona les teves dades personals</string>
+    <string name="settings_preferences">Preferències</string>
+    <string name="settings_preferences_sub">Idioma, Tema, Notificacions</string>
+    <string name="settings_group_support">Suport i Informació</string>
+    <string name="settings_help">Ajuda i Suport</string>
+    <string name="settings_help_sub">FAQ i contacte</string>
+    <string name="settings_about">Sobre OdyWay</string>
+    <string name="settings_about_sub">Versió, informació de l\'equip</string>
+    <string name="settings_terms">Termes i Condicions</string>
+    <string name="settings_terms_sub">Acords legals</string>
+    <string name="settings_group_actions">Accions</string>
+    <string name="settings_logout">Tancar sessió</string>
+    <string name="settings_logout_sub">Surt del teu compte</string>
+    <string name="settings_go_desc">Anar</string>
+
+    <!-- splashscreen -->
+    <string name="splash_logo_desc">Logotip d\'OdyWay</string>
+    <string name="splash_loading">Carregant...</string>
+    <string name="splash_version">v1.0.0 - Sprint 01</string>
+
+    <!-- termsconditionsscreen -->
+    <string name="terms_title">Termes i Condicions</string>
+    <string name="terms_headline">Termes i Condicions</string>
+    <string name="terms_legal_text">Darrera actualització: Març 2026\n\n1. Acceptació dels Termes\nEn accedir i utilitzar l\'aplicació OdyWay, acceptes quedar vinculat per aquests termes i condicions. Si no estàs d\'acord amb alguna part dels termes, no pots utilitzar el servei.\n\n2. Ús del Servei\nOdyWay és una eina per planificar viatges. Ens reservem el dret de modificar o suspendre el servei en qualsevol moment sense previ avís.\n\n3. Privadesa i Dades\nLa teva privadesa és important per a nosaltres. Recollim i utilitzem la informació personal d\'acord amb la nostra Política de Privadesa.\n\n4. Propietat Intel·lectual\nTot el contingut, disseny, logotips i codi de l\'aplicació són propietat exclusiva dels desenvolupadors d\'OdyWay.\n\n5. Limitació de Responsabilitat\nNo ens fem responsables de cap pèrdua, dany o problema que pugui sorgir durant els teus viatges planificats amb la nostra aplicació.\n\n6. Modificacions\nEns reservem el dret de revisar aquests termes en qualsevol moment. En continuar utilitzant l\'aplicació després d\'aquestes revisions, acceptes els termes actualitzats.</string>
+    <string name="terms_reject">Rebutjar</string>
+    <string name="terms_accept">Acceptar</string>
+
+    <!-- tripsscreen -->
+    <string name="trips_tab_itinerary">Itinerari</string>
+    <string name="trips_tab_gallery">Galeria</string>
+    <string name="trips_tab_costs">Despeses</string>
+    <string name="trips_dates_desc">Dates</string>
+    <string name="trips_costs_stats_placeholder">Estadístiques detallades de despeses</string>
+    <string name="trips_stat_budget">Pressupost</string>
+    <string name="trips_stat_wasted">Gastat</string>
+    <string name="trips_stat_remaining">Restant</string>
+    <string name="trips_hour_desc">Hora</string>
+    <string name="trips_cost_desc">Cost</string>
+    <string name="trips_gallery_title">Fotos del viatge</string>
+    <string name="trips_sort_desc">Ordenar</string>
+    <string name="trips_add_photo_desc">Afegir foto</string>
+    <string name="trips_photo_desc">Foto de la galeria</string>
+    <string name="trips_delete_desc">Eliminar</string>
+
+    <!-- navbar -->
+    <string name="nav_home">Inici</string>
+    <string name="nav_trips">Viatges</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- languages -->
+    <string name="lang_ca">Català</string>
+    <string name="lang_es">Castellà</string>
+    <string name="lang_en">Anglès</string>
+
 </resources>
