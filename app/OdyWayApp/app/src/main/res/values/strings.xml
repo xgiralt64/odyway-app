@@ -124,6 +124,7 @@
     <string name="account_info_email">Email</string>
     <string name="account_info_full_name">Full Name</string>
     <string name="account_info_bio">Bio</string>
+    <string name="account_info_birth_date">Birth Date</string>
     <string name="account_info_section_personal">Personal Data</string>
     <string name="account_info_section_public">Public Profile</string>
 

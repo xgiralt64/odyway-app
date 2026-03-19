@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
+import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.screens.*
 import com.example.odyway.ui.theme.MapPinRed
 import com.example.odyway.ui.theme.NavyBlue
@@ -42,7 +43,7 @@ sealed class Screen(
 }
 
 @Composable
-fun NavGraph() {
+fun NavGraph(settingsManager: SettingsManager) {
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -96,6 +97,7 @@ fun NavGraph() {
 
             composable(Screen.Profile.route) {
                 ProfileScreen(
+                    settingsManager = settingsManager,
                     onNavigateToSettings = {
                         navController.navigate(Screen.Settings.route)
                     }
@@ -112,6 +114,7 @@ fun NavGraph() {
             }
             composable(Screen.AccountInfo.route) {
                 AccountInfoScreen(
+                    settingsManager = settingsManager,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
