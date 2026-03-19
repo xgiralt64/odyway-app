@@ -38,6 +38,7 @@ sealed class Screen(
     data object Preferences : Screen("preferences")
     data object About : Screen("about")
     data object TermsConditions : Screen("termsconditions")
+    data object AccountInfo : Screen("accountinfo")
 }
 
 @Composable
@@ -103,9 +104,15 @@ fun NavGraph() {
             composable(Screen.Settings.route) {
                 SettingsScreen(
                     onNavigateBack = { navController.popBackStack() },
+                    onNavigateToAccountInfo = { navController.navigate(Screen.AccountInfo.route) },
                     onNavigateToPreferences = { navController.navigate(Screen.Preferences.route) },
                     onNavigateToAbout = { navController.navigate(Screen.About.route) },
                     onNavigateToTerms = { navController.navigate(Screen.TermsConditions.route) }
+                )
+            }
+            composable(Screen.AccountInfo.route) {
+                AccountInfoScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
             composable(Screen.Preferences.route) {

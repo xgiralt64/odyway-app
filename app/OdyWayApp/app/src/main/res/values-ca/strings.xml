@@ -4,6 +4,7 @@
     <string name="preferences_title">Preferències</string>
     <string name="dark_mode">Mode Fosc</string>
     <string name="language">Idioma</string>
+    <string name="save_button">Desar canvis</string>
 
     <!-- AboutPageScreen -->
     <string name="back_button">Enrere</string>
@@ -115,5 +116,14 @@
     <string name="lang_ca">Català</string>
     <string name="lang_es">Castellà</string>
     <string name="lang_en">Anglès</string>
+
+    <!-- accountinfo -->
+    <string name="account_info_title">Informació del compte</string>
+    <string name="account_info_username">Nom d\'usuari</string>
+    <string name="account_info_email">Correu electrònic</string>
+    <string name="account_info_full_name">Nom complet</string>
+    <string name="account_info_bio">Biografia</string>
+    <string name="account_info_section_personal">Dades personals</string>
+    <string name="account_info_section_public">Perfil públic</string>
 
 </resources>
