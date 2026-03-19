@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OdyWay</string>
+    <string name="preferences_title">Preferències</string>
+    <string name="dark_mode">Mode Fost</string>
+    <string name="language">Idioma</string>
+
+    <!-- AboutPageScreen -->
+    <string name="back_button">Enrere</string>
+    <string name="about_title">Sobre OdyWay</string>
+    <string name="logo_desc">Logotip d\'OdyWay</string>
+    <string name="app_name_display">OdyWay</string>
+    <string name="version_text">Versió 0.2.0 (Sprint 02)</string>
+    <string name="dev_team_title">Equip de Desenvolupament</string>
+    <string name="dev_team_info">Jonas Obando\nXavier Giralt</string>
+    <string name="tech_info_title">Informació Tècnica</string>
+    <string name="tech_info_info">Construït amb Android Jetpack Compose\nKotlin i Material Design 3\nAPI 35</string>
+    <string name="license_title">Llicència</string>
+    <string name="license_info">OdyWay © 2025\nTots els drets reservats.\nUdL - Sprint 02</string>
+
+    <!-- homescreen -->
+    <string name="home_logo_desc">Logotip d\'OdyWay</string>
+    <string name="home_search_desc">Buscar viatge</string>
+    <string name="home_add_desc">Afegir</string>
+    <string name="home_section_in_progress">En progrés</string>
+    <string name="home_section_upcoming">Pròxims viatges</string>
+    <string name="home_section_recommendations">Recomanacions per a tu</string>
+    <string name="home_live_badge">EN VIU</string>
+</resources>

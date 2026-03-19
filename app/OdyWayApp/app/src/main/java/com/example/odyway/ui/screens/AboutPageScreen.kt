@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,13 +39,13 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back_button),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "About OdyWay",
+                    text = stringResource(R.string.about_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
@@ -63,7 +64,7 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
             // LOGO Y NOMBRE
             Image(
                 painter = painterResource(id = R.drawable.icon_odyway),
-                contentDescription = "OdyWay Logo",
+                contentDescription = stringResource(R.string.logo_desc),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(100.dp)
@@ -71,7 +72,7 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Ody Way",
+                text = stringResource(R.string.app_name_display),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -79,7 +80,7 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
 
             // VERSIÓN -
             Text(
-                text = "Version 0.1.0 (Sprint 01)",
+                text = stringResource(R.string.version_text),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -96,15 +97,24 @@ fun AboutScreen(onNavigateBack: () -> Unit) {
                     modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    AboutInfoSection(title = "Development Team", info = "Jonas Obando\nXavier Giralt")
+                    AboutInfoSection(
+                        title = stringResource(R.string.dev_team_title),
+                        info = stringResource(R.string.dev_team_info)
+                    )
 
                     Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
 
-                    AboutInfoSection(title = "Technical Information", info = "Built con Android Jetpack Compose\nKotlin & Material Design 3\nAPI 35")
+                    AboutInfoSection(
+                        title = stringResource(R.string.tech_info_title),
+                        info = stringResource(R.string.tech_info_info)
+                    )
 
                     Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
 
-                    AboutInfoSection(title = "License", info = "OdyWay © 2025\nAll rights reserved.\nUdL - Sprint 01")
+                    AboutInfoSection(
+                        title = stringResource(R.string.license_title),
+                        info = stringResource(R.string.license_info)
+                    )
                 }
             }
         }

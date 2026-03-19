@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,12 +70,12 @@ fun HomeScreen() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.icon_odyway),
-                        contentDescription = "Logo OdyWay",
+                        contentDescription = stringResource(R.string.home_logo_desc),
                         modifier = Modifier.size(64.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "OdyWay",
+                        text = stringResource(R.string.app_name),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge,
                         // onPrimary siempre será blanco para contrastar con la barra
@@ -86,7 +87,7 @@ fun HomeScreen() {
                 IconButton(onClick = { /* TODO: Acción de búsqueda */ }) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Buscar viaje",
+                        contentDescription = stringResource(R.string.home_search_desc),
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp)
                     )
@@ -99,7 +100,7 @@ fun HomeScreen() {
                 containerColor = MaterialTheme.colorScheme.error, // MapPinRed
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "add")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.home_add_desc))
             }
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -116,7 +117,7 @@ fun HomeScreen() {
 
             // Viaje en proceso
             item {
-                SectionHeader("En progreso", Icons.Default.FlightTakeoff)
+                SectionHeader(stringResource(R.string.home_section_in_progress), Icons.Default.FlightTakeoff)
             }
             item {
                 ActiveTripCard(viajeEnCursoMock)
@@ -126,7 +127,7 @@ fun HomeScreen() {
 
             // Viajes planeados
             item {
-                SectionHeader("Próximos viajes", Icons.Default.Event)
+                SectionHeader(stringResource(R.string.home_section_upcoming), Icons.Default.Event)
             }
             items(misViajesMock) { trip ->
                 TripCard(trip)
@@ -136,7 +137,7 @@ fun HomeScreen() {
 
             // Recomendaciones
             item {
-                SectionHeader("Recomendaciones para ti", Icons.Default.Explore)
+                SectionHeader(stringResource(R.string.home_section_recommendations), Icons.Default.Explore)
             }
             items(recomendacionesMock) { recom ->
                 RecommendationCard(recom)
@@ -193,7 +194,11 @@ fun ActiveTripCard(trip: TripMock) {
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
                 Badge(containerColor = MaterialTheme.colorScheme.error) {
-                    Text("LIVE", color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.padding(horizontal = 4.dp))
+                    Text(
+                        text = stringResource(R.string.home_live_badge),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(4.dp))
