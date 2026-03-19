@@ -4,6 +4,7 @@
     <string name="preferences_title">Preferencias</string>
     <string name="dark_mode">Modo oscuro</string>
     <string name="language">Idioma</string>
+    <string name="save_button">Guardar cambios</string>
 
     <!-- AboutPageScreen -->
     <string name="back_button">Atrás</string>
@@ -115,5 +116,14 @@
     <string name="lang_ca">Catalán</string>
     <string name="lang_es">Español</string>
     <string name="lang_en">Inglés</string>
+
+    <!-- accountinfo -->
+    <string name="account_info_title">Información de la cuenta</string>
+    <string name="account_info_username">Nombre de usuario</string>
+    <string name="account_info_email">Correo electrónico</string>
+    <string name="account_info_full_name">Nombre completo</string>
+    <string name="account_info_bio">Biografía</string>
+    <string name="account_info_section_personal">Datos personales</string>
+    <string name="account_info_section_public">Perfil público</string>
 
 </resources>

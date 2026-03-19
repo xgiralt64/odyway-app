@@ -23,7 +23,8 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToPreferences: () -> Unit,
     onNavigateToAbout: () -> Unit,
-    onNavigateToTerms: () -> Unit
+    onNavigateToTerms: () -> Unit,
+    onNavigateToAccountInfo: () -> Unit
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -69,7 +70,7 @@ fun SettingsScreen(
                         icon = Icons.Filled.Person,
                         title = stringResource(id = R.string.settings_account_info),
                         subtitle = stringResource(id = R.string.settings_account_info_sub),
-                        onClick = { /* TODO */ }
+                        onClick = onNavigateToAccountInfo
                     )
                     ManualDivider()
                     SettingsItem(
@@ -225,7 +226,8 @@ fun SettingsScreenPreviewLight() {
             onNavigateBack = {},
             onNavigateToPreferences = {},
             onNavigateToAbout = {},
-            onNavigateToTerms = {}
+            onNavigateToTerms = {},
+            onNavigateToAccountInfo = {}
         )
     }
 }
@@ -238,7 +240,8 @@ fun SettingsScreenPreviewDark() {
             onNavigateBack = {},
             onNavigateToPreferences = {},
             onNavigateToAbout = {},
-            onNavigateToTerms = {}
+            onNavigateToTerms = {},
+            onNavigateToAccountInfo = {}
         )
     }
 }
