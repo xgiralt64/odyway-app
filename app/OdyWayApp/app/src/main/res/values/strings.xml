@@ -128,4 +128,17 @@
     <string name="account_info_section_personal">Personal Data</string>
     <string name="account_info_section_public">Public Profile</string>
 
+    <!-- accountinfo -->
+    <string name="itinerary_edit_title">Planificador</string>
+    <string name="day_label">Día</string>
+    <string name="add_activity_button">+ Añadir al día</string>
+    <string name="edit_activity_title">Editar Actividad</string>
+    <string name="new_activity_title">Nueva Actividad</string>
+    <string name="activity_name_hint">Título (ej. Visita al Museo)</string>
+    <string name="activity_desc_hint">Descripción corta</string>
+    <string name="activity_loc_hint">Ubicación</string>
+    <string name="select_time">Seleccionar Hora</string>
+    <string name="select_date">Seleccionar Fecha</string>
+    <string name="cancel_button">Cancelar</string>
+
 </resources>
