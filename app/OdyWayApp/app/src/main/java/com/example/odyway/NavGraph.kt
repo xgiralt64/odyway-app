@@ -107,8 +107,32 @@ fun NavGraph(
             }
 
 
+            //pantalla de lista de viajes
             composable(Screen.Trips.route) {
-                TripsScreen(tripViewModel = tripViewModel)
+                TripsScreen(
+                    tripViewModel = tripViewModel,
+                    onTripClick = { tripId ->
+                        // Cuando clicamos en una tarjeta, navegamos al detalle
+                        navController.navigate("trip_detail/$tripId")
+                    },
+                    onCreateTripClick = {
+                        // TODO: En el próximo paso navegaremos a AddTripScreen
+                    }
+                )
+            }
+
+            // Detalles del viaje
+            composable("trip_detail/{tripId}") { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getString("tripId")
+
+                LaunchedEffect(tripId) {
+                    tripId?.let { tripViewModel.loadItineraryForTrip(it) }
+                }
+
+                TripDetailScreen(
+                    tripViewModel = tripViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Profile.route) {
