@@ -36,7 +36,11 @@ object FakeTripDataSource {
     private fun loadFakeData() {
         val today = LocalDate.now()
 
-        // 1. VIAJE PRÓXIMO (Empieza en 5 días)
+        // ==========================================
+        // 1. VIAJES MOCK
+        // ==========================================
+
+        // VIAJE PRÓXIMO (Empieza en 5 días y dura 5 días)
         val fakeTripUpcoming = Trip(
             id = "trip-001",
             userId = "user-1",
@@ -49,7 +53,7 @@ object FakeTripDataSource {
             budget = 600.0
         )
 
-        // 2. VIAJE EN CURSO (Empezó hace 2 días y termina en 3 días)
+        // VIAJE EN CURSO (Empezó hace 2 días)
         val fakeTripActive = Trip(
             id = "trip-002",
             userId = "user-1",
@@ -57,98 +61,90 @@ object FakeTripDataSource {
             destination = "Roma, Italia",
             description = "Comiendo pasta y viendo el Coliseo.",
             status = "En curso",
-            startDate = today.minusDays(2),  // <-- ¡Empezó en el pasado!
-            endDate = today.plusDays(3),     // <-- ¡Termina en el futuro!
+            startDate = today.minusDays(2),
+            endDate = today.plusDays(3),
             budget = 800.0
         )
 
-        val fakeActivity_1 = ItineraryItem(
-            id = "act-001",
-            tripId = "trip-001",
-            date = today.plusDays(10),
-            time = LocalTime.of(10, 30),
-            title = "Visita Sagrada Familia",
-            description = "Entrada general reservada online. No olvidar cámara.",
-            location = "Carrer de Mallorca, 401",
-            isCompleted = false
+        // ==========================================
+        // 2. ACTIVIDADES MOCK (Para Barcelona: trip-001)
+        // ==========================================
+
+        // --- DÍA 1: Llegada y primer paseo (today + 5) ---
+        val act1 = ItineraryItem(
+            id = "act-001", tripId = "trip-001",
+            date = today.plusDays(5), time = LocalTime.of(9, 0),
+            title = "Vuelo Madrid - Barcelona",
+            description = "Terminal 4. Llevar tarjeta de embarque.",
+            location = "Aeropuerto",
+            isCompleted = false,
+            category = "Transport" // Icono Azul (Avión/Bus)
         )
 
-        val fakeActivity_2 = ItineraryItem(
-            id = "act-002",
-            tripId = "trip-001",
-            date = today.plusDays(10),
-            time = LocalTime.of(14, 0),
-            title = "Comida en el Mercado de la Boqueria",
+        val act2 = ItineraryItem(
+            id = "act-002", tripId = "trip-001",
+            date = today.plusDays(5), time = LocalTime.of(12, 30),
+            title = "Check-in Hotel",
+            description = "Dejar las maletas y hacer el registro en recepción.",
+            location = "Carrer de la Marina, 10",
+            isCompleted = false,
+            category = "Allotjament" // Icono Verde (Hotel)
+        )
+
+        val act3 = ItineraryItem(
+            id = "act-003", tripId = "trip-001",
+            date = today.plusDays(5), time = LocalTime.of(14, 0),
+            title = "Comida en Mercado de la Boqueria",
             description = "Tapas y productos frescos. Probar jamón ibérico.",
             location = "La Rambla, 91",
-            isCompleted = false
+            isCompleted = false,
+            category = "Menjar" // Icono Naranja (Cubiertos)
         )
 
-        val fakeActivity_3 = ItineraryItem(
-            id = "act-003",
-            tripId = "trip-001",
-            date = today.plusDays(10),
-            time = LocalTime.of(16, 30),
+        val act4 = ItineraryItem(
+            id = "act-004", tripId = "trip-001",
+            date = today.plusDays(5), time = LocalTime.of(16, 30),
             title = "Paseo por el Barrio Gótico",
             description = "Recorrer calles medievales y visitar la Catedral.",
             location = "Barri Gòtic",
-            isCompleted = false
+            isCompleted = false,
+            category = "Visita" // Icono Morado (Cámara)
         )
 
-        val fakeActivity_4 = ItineraryItem(
-            id = "act-004",
-            tripId = "trip-001",
-            date = today.plusDays(11),
-            time = LocalTime.of(9, 0),
-            title = "Park Güell",
-            description = "Entrada a las 9h. Llegar 15 min antes. Ver zona monumental.",
-            location = "Carrer d'Olot, s/n",
-            isCompleted = false
+        // --- DÍA 2: Turismo intenso (today + 6) ---
+        val act5 = ItineraryItem(
+            id = "act-005", tripId = "trip-001",
+            date = today.plusDays(6), time = LocalTime.of(10, 30),
+            title = "Visita Sagrada Familia",
+            description = "Entrada general reservada online. No olvidar cámara.",
+            location = "Carrer de Mallorca, 401",
+            isCompleted = false,
+            category = "Visita" // Icono Morado (Cámara)
         )
 
-        val fakeActivity_5 = ItineraryItem(
-            id = "act-005",
-            tripId = "trip-001",
-            date = today.plusDays(11),
-            time = LocalTime.of(12, 30),
-            title = "Casa Batlló",
-            description = "Audio guía incluida. Tour de 1 hora aprox.",
-            location = "Passeig de Gràcia, 43",
-            isCompleted = false
-        )
-
-        val fakeActivity_6 = ItineraryItem(
-            id = "act-006",
-            tripId = "trip-001",
-            date = today.plusDays(11),
-            time = LocalTime.of(20, 0),
-            title = "Cena en Barceloneta",
+        val act6 = ItineraryItem(
+            id = "act-006", tripId = "trip-001",
+            date = today.plusDays(6), time = LocalTime.of(14, 30),
+            title = "Paella en Barceloneta",
             description = "Restaurante frente al mar. Reserva confirmada para 4 personas.",
             location = "Passeig Marítim de la Barceloneta",
-            isCompleted = false
+            isCompleted = false,
+            category = "Menjar" // Icono Naranja (Cubiertos)
         )
 
-        val fakeActivity_7 = ItineraryItem(
-            id = "act-007",
-            tripId = "trip-001",
-            date = today.plusDays(12),
-            time = LocalTime.of(11, 0),
-            title = "Montjuïc y Pueblo Español",
-            description = "Teleférico + visita al castillo. Llevar calzado cómodo.",
-            location = "Montjuïc",
-            isCompleted = false
+        val act7 = ItineraryItem(
+            id = "act-007", tripId = "trip-001",
+            date = today.plusDays(6), time = LocalTime.of(19, 0),
+            title = "Espectáculo Fuente Mágica",
+            description = "Show de luces y música al atardecer. Es gratis.",
+            location = "Plaça d'Espanya",
+            isCompleted = false,
+            category = "Altres" // Icono Amarillo (Estrella)
         )
 
-        _trips.value = listOf(fakeTripUpcoming,fakeTripActive)
-        _itinerary.value = listOf(
-            fakeActivity_1,
-            fakeActivity_2,
-            fakeActivity_3,
-            fakeActivity_4,
-            fakeActivity_5,
-            fakeActivity_6,
-            fakeActivity_7
-        )
+        // Guardamos los datos en los StateFlows
+        _trips.value = listOf(fakeTripUpcoming, fakeTripActive)
+        _itinerary.value = listOf(act1, act2, act3, act4, act5, act6, act7)
     }
 
     // ==========================================
