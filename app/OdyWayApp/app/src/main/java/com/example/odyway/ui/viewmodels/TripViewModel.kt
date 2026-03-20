@@ -112,6 +112,19 @@ class TripViewModel(
         }
     }
 
+    fun updateItineraryItem(trip: Trip, item: ItineraryItem) {
+        // Validamos que los campos obligatorios y las fechas sean correctos
+        if (!validateActivityDateWithinTrip(trip, item.date) || !validateRequiredActivityFields(item)) {
+            return
+        }
+
+        viewModelScope.launch {
+            repository.updateItineraryItem(item).onFailure { error ->
+                showError(error.message ?: "Error al actualizar la actividad")
+            }
+        }
+    }
+
     // ==========================================
     // 4. LÓGICA DE VALIDACIÓN (REQUISITOS DEL PDF)
     // ==========================================

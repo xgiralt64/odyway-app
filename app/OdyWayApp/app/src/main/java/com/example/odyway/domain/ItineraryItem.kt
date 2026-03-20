@@ -14,7 +14,8 @@ data class ItineraryItem(
     val title: String,
     val description: String,
     val location: String,
-    val isCompleted: Boolean = false
+    val isCompleted: Boolean = false,
+    val category: String = "Visita"
 ) {
     fun isValid(): Boolean {
         // @TODO Implement strict validation for time formats and titles

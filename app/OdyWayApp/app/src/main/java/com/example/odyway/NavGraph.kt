@@ -131,6 +131,20 @@ fun NavGraph(
 
                 TripDetailScreen(
                     tripViewModel = tripViewModel,
+                    onModifyItineraryClick = { tripId ->
+                        navController.navigate("itinerary_edit/$tripId")
+                    },
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            //La pantalla del Planificador de Itinerario
+            composable("itinerary_edit/{tripId}") { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getString("tripId") ?: return@composable
+
+                ItineraryEditScreen(
+                    tripId = tripId,
+                    tripViewModel = tripViewModel,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
