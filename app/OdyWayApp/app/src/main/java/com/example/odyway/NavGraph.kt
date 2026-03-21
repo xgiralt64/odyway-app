@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.screens.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.navArgument
 import com.example.odyway.domain.TripRepository
 import com.example.odyway.ui.theme.OdyWayTheme
 import com.example.odyway.ui.viewmodels.TripViewModel
@@ -102,8 +103,11 @@ fun NavGraph(
             }
 
             composable(Screen.Home.route) {
-                // Le pasamos el cerebro a la Home
-                HomeScreen(tripViewModel = tripViewModel)
+                HomeScreen(
+                    tripViewModel = tripViewModel,
+                    onCreateTripClick = { navController.navigate("add_edit_trip") }
+
+                )
             }
 
 
@@ -112,29 +116,44 @@ fun NavGraph(
                 TripsScreen(
                     tripViewModel = tripViewModel,
                     onTripClick = { tripId ->
-                        // Cuando clicamos en una tarjeta, navegamos al detalle
                         navController.navigate("trip_detail/$tripId")
                     },
-                    onCreateTripClick = {
-                        // TODO: En el próximo paso navegaremos a AddTripScreen
-                    }
+                    onCreateTripClick = { navController.navigate("add_edit_trip") }, // ¡Corregido el nombre!
+                    onEditTripClick = { tripId -> navController.navigate("add_edit_trip?tripId=$tripId") }
+                )
+            }
+
+            // La pantalla para Crear Viajes
+            composable(
+                route = "add_edit_trip?tripId={tripId}",
+                arguments = listOf(navArgument("tripId") { nullable = true; defaultValue = null })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getString("tripId")
+
+                AddEditTripScreen(
+                    tripId = tripId,
+                    tripViewModel = tripViewModel,
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 
             // Detalles del viaje
             composable("trip_detail/{tripId}") { backStackEntry ->
-                val tripId = backStackEntry.arguments?.getString("tripId")
+                // Ponemos un fallback seguro por si el ID viene nulo
+                val tripId = backStackEntry.arguments?.getString("tripId") ?: return@composable
 
                 LaunchedEffect(tripId) {
-                    tripId?.let { tripViewModel.loadItineraryForTrip(it) }
+                    tripViewModel.loadItineraryForTrip(tripId)
                 }
 
                 TripDetailScreen(
+                    tripId = tripId, // <-- AÑADIMOS ESTA LÍNEA AQUÍ
                     tripViewModel = tripViewModel,
-                    onModifyItineraryClick = { tripId ->
+                    onModifyItineraryClick = {
                         navController.navigate("itinerary_edit/$tripId")
                     },
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    onEditTripClick = { navController.navigate("add_edit_trip?tripId=$tripId") }
                 )
             }
 

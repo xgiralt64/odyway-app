@@ -91,6 +91,8 @@ fun ItineraryEditScreen(
     var selectedDateForNewActivity by remember { mutableStateOf(tripDays.first()) }
     var suggestedTimeForNewActivity by remember { mutableStateOf(LocalTime.of(9, 0)) }
 
+    var activityIdToDelete by remember { mutableStateOf<String?>(null) }
+
     Scaffold(
         topBar = {
             Column {
@@ -170,7 +172,7 @@ fun ItineraryEditScreen(
                                         suggestedTimeForNewActivity = activity.time
                                         showFormDialog = true
                                     },
-                                    onDeleteClick = { tripViewModel.deleteItineraryItem(activity.id) }
+                                    onDeleteClick = { activityIdToDelete = activity.id }
                                 )
                             }
                         }
@@ -207,6 +209,24 @@ fun ItineraryEditScreen(
                 if (itemToEdit == null) tripViewModel.addItineraryItem(trip, newItem)
                 else tripViewModel.updateItineraryItem(trip, newItem)
                 showFormDialog = false
+            }
+        )
+    }
+
+    // DIÁLOGO DE CONFIRMACIÓN PARA BORRAR ACTIVIDAD
+    if (activityIdToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { activityIdToDelete = null },
+            title = { Text("Eliminar Activitat", fontWeight = FontWeight.Bold) },
+            text = { Text("Estàs segur que vols eliminar aquesta activitat de l'itinerari? Aquesta acció no es pot desfer.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    tripViewModel.deleteItineraryItem(activityIdToDelete!!)
+                    activityIdToDelete = null
+                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
+            },
+            dismissButton = {
+                TextButton(onClick = { activityIdToDelete = null }) { Text("Cancel·lar") }
             }
         )
     }

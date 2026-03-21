@@ -10,6 +10,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,21 +35,22 @@ import java.time.format.DateTimeFormatter
 fun TripsScreen(
     tripViewModel: TripViewModel,
     onTripClick: (String) -> Unit = {},
-    onCreateTripClick: () -> Unit = {}
+    onCreateTripClick: () -> Unit = {},
+    onEditTripClick: (String) -> Unit = {}
 ) {
-    // 1. Obtenemos los viajes reales desde el ViewModel
     val allTrips by tripViewModel.trips.collectAsState()
     val currentDate = LocalDate.now()
 
-    // 2. Estado para las pestañas de filtrado
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Tots", "Pròxims", "Passats") // Usamos catalán según tu base
+    val tabs = listOf("Tots", "Pròxims", "Passats")
 
-    // 3. Lógica de filtrado dinámico
+    // ESTADO PARA EL DIÁLOGO DE BORRAR
+    var tripIdToDelete by remember { mutableStateOf<String?>(null) }
+
     val filteredTrips = when (selectedTabIndex) {
-        1 -> allTrips.filter { it.startDate.isAfter(currentDate) || it.isTripActive(currentDate) } // Próximos o en curso
-        2 -> allTrips.filter { it.endDate.isBefore(currentDate) } // Ya terminados
-        else -> allTrips // Todos (0)
+        1 -> allTrips.filter { it.startDate.isAfter(currentDate) || it.isTripActive(currentDate) }
+        2 -> allTrips.filter { it.endDate.isBefore(currentDate) }
+        else -> allTrips
     }
 
     Scaffold(
@@ -54,7 +58,7 @@ fun TripsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.nav_trips), // "Els meus Viatges"
+                        text = stringResource(R.string.nav_trips),
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold
@@ -68,7 +72,7 @@ fun TripsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onCreateTripClick,
-                containerColor = MaterialTheme.colorScheme.error, // MapPinRed
+                containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 16.dp, end = 8.dp)
@@ -79,11 +83,8 @@ fun TripsScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
-            // Pestañas de filtrado
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -104,11 +105,8 @@ fun TripsScreen(
                 }
             }
 
-            // Lista de viajes
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -116,100 +114,109 @@ fun TripsScreen(
                 if (filteredTrips.isEmpty()) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = "No hi ha viatges en aquesta categoria.",
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                            )
+                            Text("No hi ha viatges en aquesta categoria.", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
                         }
                     }
                 } else {
                     items(filteredTrips) { trip ->
-                        TripCardList(trip = trip, onClick = { onTripClick(trip.id) })
+                        TripCardList(
+                            trip = trip,
+                            onClick = { onTripClick(trip.id) },
+                            onEditClick = { onEditTripClick(trip.id) },
+                            onDeleteClick = { tripIdToDelete = trip.id } // Activamos el Diálogo
+                        )
                     }
                 }
-
-                item { Spacer(modifier = Modifier.height(80.dp)) } // Espacio para la BottomBar
+                item { Spacer(modifier = Modifier.height(80.dp)) }
             }
         }
+    }
+
+    // DIÁLOGO DE CONFIRMACIÓN PARA BORRAR VIAJE
+    if (tripIdToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { tripIdToDelete = null },
+            title = { Text("Eliminar Viatge", fontWeight = FontWeight.Bold) },
+            text = { Text("Estàs segur que vols eliminar aquest viatge i tot el seu itinerari? Aquesta acció no es pot desfer.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    tripViewModel.deleteTrip(tripIdToDelete!!)
+                    tripIdToDelete = null
+                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
+            },
+            dismissButton = {
+                TextButton(onClick = { tripIdToDelete = null }) { Text("Cancel·lar") }
+            }
+        )
     }
 }
 
 @Composable
-fun TripCardList(trip: Trip, onClick: () -> Unit) {
+fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
+    // Estado para controlar si el menú flotante está abierto o cerrado
+    var expanded by remember { mutableStateOf(false) }
+
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(140.dp)
-            .clickable { onClick() }, // Hacemos la tarjeta clicable
+        modifier = Modifier.fillMaxWidth().height(140.dp).clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Imagen representativa del viaje a la izquierda
+        Row(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = painterResource(id = R.drawable.paris_example), // Mock: En el futuro puede venir de trip.coverImage
+                painter = painterResource(id = R.drawable.paris_example),
                 contentDescription = "Imatge del destí",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(120.dp)
+                modifier = Modifier.fillMaxHeight().width(120.dp)
             )
 
-            // Detalles del viaje a la derecha
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxSize().padding(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
-                    Text(
-                        text = trip.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "📍 ${trip.destination}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        maxLines = 1
-                    )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = trip.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, maxLines = 1)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "📍 ${trip.destination}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), maxLines = 1)
+                    }
+
+                    // MENÚ DE 3 PUNTOS
+                    Box {
+                        IconButton(onClick = { expanded = true }, modifier = Modifier.size(24.dp)) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Opcions", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Editar") },
+                                leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                                onClick = {
+                                    expanded = false
+                                    onEditClick()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Eliminar", color = MaterialTheme.colorScheme.error) },
+                                leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
+                                onClick = {
+                                    expanded = false
+                                    onDeleteClick()
+                                }
+                            )
+                        }
+                    }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    // Fechas
-                    Text(
-                        text = "📅 ${trip.startDate.format(formatter)}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    // Presupuesto
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
+                    Text(text = "📅 ${trip.startDate.format(formatter)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                     Column(horizontalAlignment = Alignment.End) {
-                        Text(
-                            text = "Pressupost",
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                            fontSize = 10.sp
-                        )
-                        Text(
-                            text = "${trip.budget}€",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.error, // Usamos tu rojo para destacar
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                        Text(text = "Pressupost", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 10.sp)
+                        Text(text = "${trip.budget}€", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.ExtraBold)
                     }
                 }
             }
