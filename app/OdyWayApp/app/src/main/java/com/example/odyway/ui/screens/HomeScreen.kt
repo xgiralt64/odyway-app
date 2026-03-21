@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Event
@@ -41,7 +42,7 @@ val recomendacionesMock = listOf(
 @Composable
 fun HomeScreen(
     tripViewModel: TripViewModel,
-    // onNavigateToAddTrip: () -> Unit // Lo usaremos pronto para el formulario
+    onCreateTripClick: () -> Unit
 ) {
     // 1. Recolectamos el flujo de viajes desde el ViewModel
     val trips by tripViewModel.trips.collectAsState()
@@ -90,9 +91,10 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Navegar al formulario de añadir viaje */ },
+                onClick = onCreateTripClick,
                 containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = CircleShape
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.home_add_desc))
             }
@@ -287,18 +289,4 @@ fun RecommendationCard(recom: RecommendationMock) {
     }
 }
 
-//@Preview(showBackground = true, name = "Home screen Light")
-//@Composable
-//fun HomeScreenPreviewLight() {
-//    OdyWayTheme(darkTheme = false) {
-//        HomeScreen()
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "Home screen Dark")
-//@Composable
-//fun HomeScreenPreviewDark() {
-//    OdyWayTheme(darkTheme = true) {
-//        HomeScreen()
-//    }
-//}
+
