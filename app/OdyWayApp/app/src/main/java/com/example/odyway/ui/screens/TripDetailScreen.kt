@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.odyway.R
@@ -50,20 +51,16 @@ val galeriaMock = listOf(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TripDetailScreen(
-    tripId: String, // <-- 1. AÑADIMOS ESTE PARÁMETRO
+    tripId: String,
     tripViewModel: TripViewModel,
     onNavigateBack: () -> Unit,
     onModifyItineraryClick: (String) -> Unit = {},
     onEditTripClick: () -> Unit = {}
 ) {
     val trips by tripViewModel.trips.collectAsState()
-
-    // <-- 2. BUSCAMOS EL VIAJE EXACTO POR SU ID -->
     val currentTrip = trips.find { it.id == tripId }
-
     val itinerary by tripViewModel.currentItinerary.collectAsState()
 
-    // ESTADO PARA EL DIÁLOGO DE BORRAR
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(currentTrip?.id) {
@@ -79,7 +76,7 @@ fun TripDetailScreen(
 
     if (currentTrip == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Cargando viaje...")
+            Text(stringResource(R.string.trip_loading), color = MaterialTheme.colorScheme.onBackground)
         }
         return
     }
@@ -97,7 +94,7 @@ fun TripDetailScreen(
                     trip = currentTrip,
                     onNavigateBack = onNavigateBack,
                     onEditTripClick = onEditTripClick,
-                    onDeleteTripClick = { showDeleteDialog = true } // Activamos el Diálogo
+                    onDeleteTripClick = { showDeleteDialog = true }
                 )
             }
 
@@ -137,21 +134,20 @@ fun TripDetailScreen(
         }
     }
 
-    // DIÁLOGO DE CONFIRMACIÓN PARA BORRAR VIAJE
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar Viatge", fontWeight = FontWeight.Bold) },
-            text = { Text("Estàs segur que vols eliminar aquest viatge i tot el seu itinerari? Aquesta acció no es pot desfer.") },
+            title = { Text(stringResource(R.string.dialog_delete_trip_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.dialog_delete_trip_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     tripViewModel.deleteTrip(currentTrip.id)
                     showDeleteDialog = false
-                    onNavigateBack() // ¡Súper importante! Nos devuelve a la lista de viajes
-                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
+                    onNavigateBack()
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel·lar") }
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -159,13 +155,12 @@ fun TripDetailScreen(
 
 @Composable
 fun TripDetailHeader(trip: Trip, onNavigateBack: () -> Unit, onEditTripClick: () -> Unit, onDeleteTripClick: () -> Unit) {
-    // ESTADO PARA EL MENÚ DESPLEGABLE
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
         Image(
             painter = painterResource(id = R.drawable.paris_example),
-            contentDescription = "Imagen del viaje",
+            contentDescription = stringResource(R.string.trips_photo_desc),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -178,79 +173,43 @@ fun TripDetailHeader(trip: Trip, onNavigateBack: () -> Unit, onEditTripClick: ()
             )
         )
 
-        // BOTÓN DE VOLVER ATRÁS (IZQUIERDA)
         IconButton(
             onClick = onNavigateBack,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 25.dp, start = 8.dp)
-                .background(Color.Black.copy(alpha = 0.4f), CircleShape)
+            modifier = Modifier.align(Alignment.TopStart).padding(top = 25.dp, start = 8.dp).background(Color.Black.copy(alpha = 0.4f), CircleShape)
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Tornar enrere", tint = Color.White)
+            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back_button), tint = Color.White)
         }
 
-        // MENÚ DE TRES PUNTOS (DERECHA - SIMÉTRICO Y ELEGANTE)
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 25.dp, end = 8.dp)
-        ) {
+        Box(modifier = Modifier.align(Alignment.TopEnd).padding(top = 25.dp, end = 8.dp)) {
             IconButton(
                 onClick = { expanded = true },
                 modifier = Modifier.background(Color.Black.copy(alpha = 0.4f), CircleShape)
             ) {
-                Icon(Icons.Default.MoreVert, tint = Color.White, contentDescription = "Opcions")
+                Icon(Icons.Default.MoreVert, tint = Color.White, contentDescription = stringResource(R.string.action_options))
             }
 
-            // El desplegable igual que en la lista
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(
-                    text = { Text("Editar") },
+                    text = { Text(stringResource(R.string.action_edit)) },
                     leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    onClick = {
-                        expanded = false
-                        onEditTripClick()
-                    }
+                    onClick = { expanded = false; onEditTripClick() }
                 )
                 DropdownMenuItem(
-                    text = { Text("Eliminar", color = MaterialTheme.colorScheme.error) },
+                    text = { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) },
                     leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                    onClick = {
-                        expanded = false
-                        onDeleteTripClick()
-                    }
+                    onClick = { expanded = false; onDeleteTripClick() }
                 )
             }
         }
 
-        // TÍTULO Y FECHAS
-        Column(
-            modifier = Modifier.align(Alignment.BottomStart).padding(16.dp)
-        ) {
-            Text(
-                text = trip.title,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+        Column(modifier = Modifier.align(Alignment.BottomStart).padding(16.dp)) {
+            Text(text = trip.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(16.dp)
-                )
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-                Text(
-                    text = "${trip.startDate.format(formatter)} - ${trip.endDate.format(formatter)}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+                Text(text = "${trip.startDate.format(formatter)} - ${trip.endDate.format(formatter)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }
@@ -261,24 +220,35 @@ fun androidx.compose.foundation.lazy.LazyListScope.itineraryTabContent(
     tripId: String,
     onModifyItineraryClick: (String) -> Unit
 ) {
-    // Cabecera del Itinerario
     item {
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Resum del Itinerari", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+            Text(text = stringResource(R.string.itinerary_summary_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             Row {
-                IconButton(onClick = { /* TODO: Ordenar */ }) { Icon(Icons.Default.Sort, contentDescription = "Ordenar", tint = MaterialTheme.colorScheme.primary) }
-                IconButton(onClick = { onModifyItineraryClick(tripId) }) { Icon(Icons.Default.Edit, contentDescription = "Modificar Itinerari", tint = MaterialTheme.colorScheme.error) }
+                IconButton(onClick = { /* TODO: Ordenar */ }) { Icon(Icons.Default.Sort, contentDescription = stringResource(R.string.trips_sort_desc), tint = MaterialTheme.colorScheme.secondary) } // Usamos secondary en vez de primary para modo oscuro
+                IconButton(onClick = { onModifyItineraryClick(tripId) }) { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_modify_itinerary), tint = MaterialTheme.colorScheme.error) }
             }
         }
     }
 
     if (itinerary.isEmpty()) {
-        item { Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) { Text("No tens activitats planificades.", color = Color.Gray) } }
+        item {
+            Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                Text(stringResource(R.string.itinerary_empty), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) // Adaptativo
+            }
+        }
     } else {
         val groupedItinerary = itinerary.groupBy { it.date }
         val dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM")
         groupedItinerary.forEach { (date, activities) ->
-            item { Text(text = date.format(dateFormatter).replaceFirstChar { it.uppercase() }, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) }
+            item {
+                Text(
+                    text = date.format(dateFormatter).replaceFirstChar { it.uppercase() },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.secondary // Secondary brilla mejor en modo oscuro
+                )
+            }
             items(activities) { activity -> ActivityCardSummary(activity) }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -296,15 +266,16 @@ fun ActivityCardSummary(activity: ItineraryItem) {
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(text = activity.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = activity.location, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+            Text(text = activity.location, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) // Adaptativo
         }
     }
-    Divider(modifier = Modifier.padding(start = 80.dp, end = 16.dp), color = Color.LightGray.copy(alpha = 0.3f))
+    Divider(modifier = Modifier.padding(start = 80.dp, end = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 }
 
 fun androidx.compose.foundation.lazy.LazyListScope.costsTabContent(trip: Trip, itinerary: List<ItineraryItem>) {
-    val totalSpent = 117.50 // Simulado
+    val totalSpent = 117.50
     val progress = (totalSpent / trip.budget).toFloat()
+
     item { Spacer(modifier = Modifier.height(16.dp)) }
     item {
         Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary), shape = RoundedCornerShape(16.dp)) {
@@ -313,24 +284,32 @@ fun androidx.compose.foundation.lazy.LazyListScope.costsTabContent(trip: Trip, i
                 Spacer(modifier = Modifier.height(8.dp))
                 LinearProgressIndicator(progress = progress, modifier = Modifier.fillMaxWidth().height(6.dp).clip(CircleShape), color = MaterialTheme.colorScheme.error, trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f))
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Pressupost: ${trip.budget} €", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f))
+                Text(text = "${stringResource(R.string.trips_stat_budget)}: ${trip.budget} €", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f))
             }
         }
     }
-    item { Text(text = "Desglossament", modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium) }
+    item {
+        Text(
+            text = stringResource(R.string.costs_breakdown),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
     items(itinerary) { activity ->
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.Restaurant, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                Icon(Icons.Default.Restaurant, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp)) // Adaptativo
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = activity.title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                Text(text = "Activitat", fontSize = 12.sp, color = Color.Gray)
+                Text(text = stringResource(R.string.costs_activity_label), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) // Adaptativo
             }
             Text(text = "35.00 €", fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onBackground)
         }
-        Divider(modifier = Modifier.padding(horizontal = 16.dp), color = Color.LightGray.copy(alpha = 0.3f))
+        Divider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     }
     item { Spacer(modifier = Modifier.height(60.dp)) }
 }
@@ -340,8 +319,8 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(images: Lis
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(id = R.string.trips_gallery_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             Row {
-                IconButton(onClick = { /* TODO: Ordenar */ }) { Icon(Icons.Default.Sort, contentDescription = "Ordenar", tint = MaterialTheme.colorScheme.primary) }
-                IconButton(onClick = { /* TODO: Añadir foto */ }) { Icon(Icons.Default.AddPhotoAlternate, contentDescription = "Afegeix foto", tint = MaterialTheme.colorScheme.error) }
+                IconButton(onClick = { /* TODO: Ordenar */ }) { Icon(Icons.Default.Sort, contentDescription = stringResource(R.string.trips_sort_desc), tint = MaterialTheme.colorScheme.secondary) } // Secundario para mejor visibilidad oscura
+                IconButton(onClick = { /* TODO: Añadir foto */ }) { Icon(Icons.Default.AddPhotoAlternate, contentDescription = stringResource(R.string.trips_add_photo_desc), tint = MaterialTheme.colorScheme.error) }
             }
         }
     }
@@ -349,9 +328,9 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(images: Lis
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             for (image in rowImages) {
                 Box(modifier = Modifier.weight(1f).aspectRatio(1f).clip(RoundedCornerShape(8.dp))) {
-                    Image(painter = painterResource(id = image.imageRes), contentDescription = "Foto", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                    Image(painter = painterResource(id = image.imageRes), contentDescription = stringResource(R.string.trips_photo_desc), contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                     IconButton(onClick = { /* TODO: Borrar foto */ }, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).background(Color.Black.copy(alpha = 0.5f), CircleShape).size(32.dp)) {
-                        Icon(Icons.Default.Delete, contentDescription = "Esborrar", tint = Color.White, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.trips_delete_desc), tint = Color.White, modifier = Modifier.size(16.dp))
                     }
                 }
             }
@@ -360,4 +339,35 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(images: Lis
         Spacer(modifier = Modifier.height(8.dp))
     }
     item { Spacer(modifier = Modifier.height(80.dp)) }
+}
+
+@Preview(showBackground = true, name = "Trip Detail - Light Mode")
+@Composable
+fun TripDetailScreenPreviewLight() {
+    com.example.odyway.ui.theme.OdyWayTheme(darkTheme = false) {
+        // NOTA: En un entorno real, aquí pasaríamos un MockViewModel.
+        // Si la preview crashea por el ViewModel, la práctica recomendada es
+        // extraer la UI pura a una función "Stateless" sin el ViewModel.
+        TripDetailScreen(
+            tripId = "trip-001",
+            tripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), // Puede requerir tu Factory
+            onNavigateBack = {},
+            onModifyItineraryClick = {},
+            onEditTripClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Trip Detail - Dark Mode")
+@Composable
+fun TripDetailScreenPreviewDark() {
+    com.example.odyway.ui.theme.OdyWayTheme(darkTheme = true) {
+        TripDetailScreen(
+            tripId = "trip-001",
+            tripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            onNavigateBack = {},
+            onModifyItineraryClick = {},
+            onEditTripClick = {}
+        )
+    }
 }
