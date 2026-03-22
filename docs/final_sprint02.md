@@ -96,7 +96,7 @@ Es va aplicar una neteja de codi a la UI, substituint colors estàtics per token
 
 ## 5. Autoavaluació de l'equip (0-10)
 
-**Nota:** 10 / 10
+**Nota:** 9 / 10
 
 **Justificació:**  
-L'equip ha superat el Sprint 02 amb un grau d'excel·lència notable. No només s'ha complert amb la integritat i validació de dades exigides per la rúbrica, sinó que s'ha cuidat extremadament la qualitat del codi intern (Clean Architecture), les proves unitàries automatitzades i la interfície d'usuari (UX/UI adaptativa). L'aplicació és completament funcional dins dels límits del seu backend simulat.
+Hem assolit complir amb la totalitat dels requisits tècnics demanats (CRUD en memòria, Validacions estrictes, DatePickers natius, Proves Unitàries amb MockK i Arquitectura MVVM). Tot i així, considerem que la gran extensió i complexitat tècnica de l'sprint ens ha limitat el temps, fent que no hàgim pogut polir al màxim certs detalls estètics del disseny visual (UI/UX) o afegir comentaris encara més exhaustius i tècnics en tot el codi. Hem prioritzat l'estabilitat i la solidesa del backend in-memory per sobre del perfeccionisme estètic, però el resultat funcional és molt robust.
