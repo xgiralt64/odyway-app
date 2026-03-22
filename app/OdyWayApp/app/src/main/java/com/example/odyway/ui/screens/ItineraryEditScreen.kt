@@ -1,5 +1,6 @@
 package com.example.odyway.ui.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -33,6 +34,11 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.odyway.R
 import com.example.odyway.domain.ItineraryItem
 import com.example.odyway.domain.Trip
+import com.example.odyway.ui.theme.CategoryAccommodation
+import com.example.odyway.ui.theme.CategoryFood
+import com.example.odyway.ui.theme.CategoryOthers
+import com.example.odyway.ui.theme.CategoryTransport
+import com.example.odyway.ui.theme.CategoryVisit
 import com.example.odyway.ui.viewmodels.TripViewModel
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -43,21 +49,24 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-// =======================================================
-// DICCIONARIO CENTRAL DE CATEGORÍAS (Iconos y Colores)
-// =======================================================
-data class CategoryData(val name: String, val icon: ImageVector, val color: Color)
-
-val categoryList = listOf(
-    CategoryData("Visita", Icons.Default.CameraAlt, Color(0xFF9C27B0)),       // Morado
-    CategoryData("Menjar", Icons.Default.Restaurant, Color(0xFFFF9800)),      // Naranja
-    CategoryData("Transport", Icons.Default.DirectionsBus, Color(0xFF2196F3)), // Azul
-    CategoryData("Allotjament", Icons.Default.Hotel, Color(0xFF4CAF50)),      // Verde
-    CategoryData("Altres", Icons.Default.Star, Color(0xFFFFC107))             // Amarillo
+// Categories centralitzades
+data class CategoryData(
+    val id: String,
+    @StringRes val nameRes: Int,
+    val icon: ImageVector,
+    val color: Color
 )
 
-fun getCategoryData(name: String): CategoryData {
-    return categoryList.find { it.name == name } ?: categoryList.last()
+val categoryList = listOf(
+    CategoryData("Visita", R.string.cat_visit, Icons.Default.CameraAlt, CategoryVisit),
+    CategoryData("Menjar", R.string.cat_food, Icons.Default.Restaurant, CategoryFood),
+    CategoryData("Transport", R.string.cat_transport, Icons.Default.DirectionsBus, CategoryTransport),
+    CategoryData("Allotjament", R.string.cat_accommodation, Icons.Default.Hotel, CategoryAccommodation),
+    CategoryData("Altres", R.string.cat_others, Icons.Default.Star, CategoryOthers)
+)
+
+fun getCategoryData(id: String): CategoryData {
+    return categoryList.find { it.id == id } ?: categoryList.last()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,6 +117,18 @@ fun ItineraryEditScreen(
                             Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back_button), tint = MaterialTheme.colorScheme.onPrimary)
                         }
                     },
+                    actions = {
+                        val isAllCollapsed = expandedDays.isEmpty()
+                        IconButton(onClick = {
+                            expandedDays = if (isAllCollapsed) tripDays.toSet() else emptySet()
+                        }) {
+                            Icon(
+                                imageVector = if (isAllCollapsed) Icons.Default.UnfoldMore else Icons.Default.UnfoldLess,
+                                contentDescription = stringResource(R.string.action_collapse_expand),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
                 )
 
@@ -143,7 +164,10 @@ fun ItineraryEditScreen(
 
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize().padding(paddingValues).background(MaterialTheme.colorScheme.background),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -164,13 +188,15 @@ fun ItineraryEditScreen(
                     exit = shrinkVertically(animationSpec = tween(300))
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp, bottom = 16.dp, top = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, bottom = 16.dp, top = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         if (dailyActivities.isEmpty()) {
                             Text(
-                                "Cap activitat. Afegeix alguna cosa!",
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f), // Adaptativo
+                                stringResource(R.string.itinerary_empty_day),
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                                 fontSize = 14.sp,
                                 modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
                             )
@@ -197,13 +223,22 @@ fun ItineraryEditScreen(
                                 suggestedTimeForNewActivity = lastActivityTime?.plusHours(1) ?: LocalTime.of(10, 0)
                                 showFormDialog = true
                             },
-                            modifier = Modifier.fillMaxWidth().height(45.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(45.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp, ))
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.add_activity_button),
-                                color = MaterialTheme.colorScheme.onSurface)
+                            Text(
+                                stringResource(R.string.add_activity_button),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         }
                     }
                 }
@@ -226,12 +261,12 @@ fun ItineraryEditScreen(
         )
     }
 
-    // DIÁLOGO DE CONFIRMACIÓN PARA BORRAR ACTIVIDAD
+    // Diàleg per eliminar
     if (activityIdToDelete != null) {
         AlertDialog(
             onDismissRequest = { activityIdToDelete = null },
-            title = { Text("Eliminar Activitat", fontWeight = FontWeight.Bold) },
-            text = { Text("Estàs segur que vols eliminar aquesta activitat de l'itinerari? Aquesta acció no es pot desfer.") },
+            title = { Text(stringResource(R.string.dialog_delete_activity_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.dialog_delete_activity_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     tripViewModel.deleteItineraryItem(activityIdToDelete!!)
@@ -245,16 +280,21 @@ fun ItineraryEditScreen(
     }
 }
 
+// Targeta de Dia
 @Composable
 fun DayHeaderCard(dayNumber: Int, date: LocalDate, isExpanded: Boolean, onClick: () -> Unit) {
     val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMM")
     Card(
-        modifier = Modifier.fillMaxWidth().clickable { onClick() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -263,7 +303,7 @@ fun DayHeaderCard(dayNumber: Int, date: LocalDate, isExpanded: Boolean, onClick:
                     text = "${stringResource(R.string.day_label)} $dayNumber",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.secondary // <-- CAMBIO A SECONDARY PARA CONTRASTAR EN DARK MODE
+                    color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
                     text = date.format(formatter).replaceFirstChar { it.uppercase() },
@@ -274,12 +314,13 @@ fun DayHeaderCard(dayNumber: Int, date: LocalDate, isExpanded: Boolean, onClick:
             Icon(
                 imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary // <-- CAMBIO A SECONDARY
+                tint = MaterialTheme.colorScheme.secondary
             )
         }
     }
 }
 
+// Targeta d'Activitat
 @Composable
 fun CategoryActivityCard(activity: ItineraryItem, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
     val catData = getCategoryData(activity.category)
@@ -289,15 +330,26 @@ fun CategoryActivityCard(activity: ItineraryItem, onEditClick: () -> Unit, onDel
         Spacer(modifier = Modifier.width(8.dp))
 
         Card(
-            modifier = Modifier.weight(1f).clickable { onEditClick() },
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onEditClick() },
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-                Box(modifier = Modifier.width(8.dp).fillMaxHeight().background(catData.color))
-                Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Box(modifier = Modifier.size(42.dp).background(catData.color.copy(alpha = 0.15f), CircleShape), contentAlignment = Alignment.Center) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)) {
+                Box(modifier = Modifier
+                    .width(8.dp)
+                    .fillMaxHeight()
+                    .background(catData.color))
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier
+                        .size(42.dp)
+                        .background(catData.color.copy(alpha = 0.15f), CircleShape), contentAlignment = Alignment.Center) {
                         Icon(catData.icon, contentDescription = null, tint = catData.color)
                     }
                     Spacer(modifier = Modifier.width(12.dp))
@@ -306,7 +358,7 @@ fun CategoryActivityCard(activity: ItineraryItem, onEditClick: () -> Unit, onDel
                         Text(
                             text = "📍 ${activity.location}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) // <-- CAMBIADO COLOR.GRAY POR ADAPTATIVO
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
                     IconButton(onClick = onDeleteClick, modifier = Modifier.size(24.dp)) {
@@ -318,9 +370,7 @@ fun CategoryActivityCard(activity: ItineraryItem, onEditClick: () -> Unit, onDel
     }
 }
 
-// =======================================================
-// FORMULARIO CON SELECTOR DE CATEGORÍA "CARRUSEL"
-// =======================================================
+// Formulari d'Activitat
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityFormFullScreenDialog(
@@ -343,7 +393,6 @@ fun ActivityFormFullScreenDialog(
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Scaffold(
             topBar = {
-                // <-- AÑADIDO COLORS AL TOPAPPBAR DEL DIALOG PARA MANTENER LA COHERENCIA
                 TopAppBar(
                     title = {
                         Column {
@@ -373,20 +422,25 @@ fun ActivityFormFullScreenDialog(
                 )
             }
         ) { padding ->
-            Column(modifier = Modifier.fillMaxSize().padding(padding).padding(top = 16.dp, start = 20.dp, end = 20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(top = 16.dp, start = 20.dp, end = 20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
                 OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text(stringResource(R.string.activity_name_hint)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
 
                 Column {
-                    Text("Categoria:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(bottom = 8.dp))
+                    Text(stringResource(R.string.category_label), fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(bottom = 8.dp))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(categoryList) { catData ->
-                            val isSelected = category == catData.name
+                            //Comparar ID con ID, no con el texto traducido
+                            val isSelected = category == catData.id
+
                             Surface(
-                                onClick = { category = catData.name },
+                                onClick = { category = catData.id },
                                 shape = RoundedCornerShape(16.dp),
                                 color = if (isSelected) catData.color else MaterialTheme.colorScheme.surface,
                                 border = if (!isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) else null,
@@ -404,7 +458,8 @@ fun ActivityFormFullScreenDialog(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = catData.name,
+                                        // Aquí mostramos el texto traducido al usuario
+                                        text = stringResource(id = catData.nameRes),
                                         color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                         fontSize = 13.sp
@@ -416,7 +471,9 @@ fun ActivityFormFullScreenDialog(
                 }
 
                 OutlinedCard(onClick = { showTimePicker = true }, modifier = Modifier.fillMaxWidth()) {
-                    Row(modifier = Modifier.padding(16.dp).fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Schedule, tint = MaterialTheme.colorScheme.error, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("${stringResource(R.string.trips_hour_desc)}: $time", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
@@ -424,22 +481,40 @@ fun ActivityFormFullScreenDialog(
                 }
 
                 OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text(stringResource(R.string.activity_loc_hint)) }, modifier = Modifier.fillMaxWidth(), leadingIcon = { Icon(Icons.Default.Place, contentDescription = null) })
-                OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text(stringResource(R.string.activity_desc_hint)) }, modifier = Modifier.fillMaxWidth().height(100.dp), maxLines = 3)
+                OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text(stringResource(R.string.activity_desc_hint)) }, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp), maxLines = 3)
             }
         }
     }
 
     if (showTimePicker) {
-        val timePickerState = rememberTimePickerState(initialHour = time.hour, initialMinute = time.minute)
+        val timePickerState =
+            rememberTimePickerState(initialHour = time.hour, initialMinute = time.minute)
         AlertDialog(
             onDismissRequest = { showTimePicker = false },
             confirmButton = {
                 TextButton(onClick = {
                     time = LocalTime.of(timePickerState.hour, timePickerState.minute)
                     showTimePicker = false
-                }) { Text(stringResource(R.string.action_ok)) }
+                }) {
+                    Text(
+                        stringResource(R.string.action_ok),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             },
-            dismissButton = { TextButton(onClick = { showTimePicker = false }) { Text(stringResource(R.string.action_cancel)) } },
+            dismissButton = {
+                TextButton(onClick = {
+                    showTimePicker = false
+                }) {
+                    Text(
+                        stringResource(R.string.action_cancel),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
             text = { TimePicker(state = timePickerState) }
         )
     }

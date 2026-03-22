@@ -82,7 +82,7 @@
     <!-- splashscreen -->
     <string name="splash_logo_desc">OdyWay Logo</string>
     <string name="splash_loading">Loading...</string>
-    <string name="splash_version">v1.0.0 - Sprint 01</string>
+    <string name="splash_version">v2.0.0 - Sprint 02</string>
 
     <!-- termsconditionsscreen -->
     <string name="terms_title">Terms &amp; Conditions</string>
@@ -163,16 +163,27 @@
     <string name="action_ok">OK</string>
 
     <!-- itineraryeditscreen -->
-    <string name="itinerary_edit_title">Planificador</string>
-    <string name="day_label">Día</string>
-    <string name="add_activity_button">Añadir al día</string>
-    <string name="edit_activity_title">Editar Actividad</string>
-    <string name="new_activity_title">Nueva Actividad</string>
-    <string name="activity_name_hint">Título (ej. Visita al Museo)</string>
-    <string name="activity_desc_hint">Descripción corta</string>
-    <string name="activity_loc_hint">Ubicación</string>
-    <string name="select_time">Seleccionar Hora</string>
-    <string name="select_date">Seleccionar Fecha</string>
-    <string name="cancel_button">Cancelar</string>
+    <string name="itinerary_edit_title">Planner</string>
+    <string name="day_label">Day</string>
+    <string name="add_activity_button">Add to day</string>
+    <string name="edit_activity_title">Edit Activity</string>
+    <string name="new_activity_title">New Activity</string>
+    <string name="activity_name_hint">Title (e.g. Museum Visit)</string>
+    <string name="activity_desc_hint">Short description</string>
+    <string name="activity_loc_hint">Location</string>
+    <string name="select_time">Select Time</string>
+    <string name="select_date">Select Date</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="action_collapse_expand">Collapse/Expand all</string>
+    <string name="itinerary_empty_day">No activities. Add something!</string>
+    <string name="dialog_delete_activity_title">Delete Activity</string>
+    <string name="dialog_delete_activity_text">Are you sure you want to delete this activity from the itinerary? This action cannot be undone.</string>
+    <string name="category_label">Category:</string>
+
+    <string name="cat_visit">Visit</string>
+    <string name="cat_food">Food</string>
+    <string name="cat_transport">Transport</string>
+    <string name="cat_accommodation">Accommodation</string>
+    <string name="cat_others">Others</string>
 
 </resources>

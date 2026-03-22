@@ -3,7 +3,6 @@ package com.example.odyway.ui.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.odyway.domain.Activity
 import com.example.odyway.domain.ItineraryItem
 import com.example.odyway.domain.Trip
 import com.example.odyway.domain.TripRepository
@@ -19,13 +18,13 @@ class TripViewModel(
     private val repository: TripRepository
 ) : ViewModel() {
 
-    private val TAG = "TripViewModel"
+    // Cambiado a minúscula ("tag") para evitar el warning amarillo de Android Studio
+    private val tag = "TripViewModel_LOG"
 
     // ==========================================
     // 1. ESTADOS DE LA INTERFAZ (UI STATE)
     // ==========================================
 
-    // Lista de viajes (Sobrevive a la rotación gracias a stateIn)
     val trips: StateFlow<List<Trip>> = repository.getAllTrips()
         .stateIn(
             scope = viewModelScope,
@@ -33,13 +32,15 @@ class TripViewModel(
             initialValue = emptyList()
         )
 
-    // Lista del itinerario del viaje actualmente seleccionado
     private val _currentItinerary = MutableStateFlow<List<ItineraryItem>>(emptyList())
     val currentItinerary: StateFlow<List<ItineraryItem>> = _currentItinerary.asStateFlow()
 
-    // Estado para mostrar errores en la pantalla (Ej: "La fecha es inválida")
     private val _uiErrorMessage = MutableStateFlow<String?>(null)
     val uiErrorMessage: StateFlow<String?> = _uiErrorMessage.asStateFlow()
+
+    init {
+        Log.d(tag, "Inicializando TripViewModel...")
+    }
 
     // ==========================================
     // 2. OPERACIONES DE VIAJES (TRIPS)
@@ -47,13 +48,18 @@ class TripViewModel(
 
     fun addTrip(trip: Trip) {
         if (!validateTripDates(trip.startDate, trip.endDate) || !validateRequiredTripFields(trip)) {
-            return // Si la validación falla, detenemos la operación
+            return
         }
 
         viewModelScope.launch {
-            repository.addTrip(trip).onFailure { error ->
-                showError(error.message ?: "Error desconocido al crear el viaje")
-            }
+            Log.d(tag, "Intentando añadir nuevo viaje: ${trip.title}")
+            repository.addTrip(trip)
+                .onFailure { error ->
+                    showError(error.message ?: "Error desconocido al crear el viaje")
+                }
+                .onSuccess {
+                    Log.i(tag, "Viaje añadido con éxito: ${trip.id}")
+                }
         }
     }
 
@@ -63,17 +69,27 @@ class TripViewModel(
         }
 
         viewModelScope.launch {
-            repository.updateTrip(trip).onFailure { error ->
-                showError(error.message ?: "Error al actualizar el viaje")
-            }
+            Log.d(tag, "Intentando actualizar viaje: ${trip.id}")
+            repository.updateTrip(trip)
+                .onFailure { error ->
+                    showError(error.message ?: "Error al actualizar el viaje")
+                }
+                .onSuccess {
+                    Log.i(tag, "Viaje actualizado con éxito: ${trip.title}")
+                }
         }
     }
 
     fun deleteTrip(tripId: String) {
         viewModelScope.launch {
-            repository.deleteTrip(tripId).onFailure { error ->
-                showError(error.message ?: "Error al borrar el viaje")
-            }
+            Log.d(tag, "Intentando borrar viaje con ID: $tripId")
+            repository.deleteTrip(tripId)
+                .onFailure { error ->
+                    showError(error.message ?: "Error al borrar el viaje")
+                }
+                .onSuccess {
+                    Log.i(tag, "Viaje y su itinerario borrados con éxito.")
+                }
         }
     }
 
@@ -81,13 +97,12 @@ class TripViewModel(
     // 3. OPERACIONES DE ITINERARIO (ACTIVIDADES)
     // ==========================================
 
-    /**
-     * Carga el itinerario de un viaje específico para mostrarlo en la pantalla de detalle.
-     */
     fun loadItineraryForTrip(tripId: String) {
         viewModelScope.launch {
+            Log.d(tag, "Cargando itinerario para el viaje: $tripId")
             repository.getItineraryForTrip(tripId).collect { items ->
                 _currentItinerary.value = items
+                Log.i(tag, "Itinerario cargado. Total de actividades: ${items.size}")
             }
         }
     }
@@ -98,40 +113,54 @@ class TripViewModel(
         }
 
         viewModelScope.launch {
-            repository.addItineraryItem(item).onFailure { error ->
-                showError(error.message ?: "Error al añadir la actividad")
-            }
-        }
-    }
-
-    fun deleteItineraryItem(itemId: String) {
-        viewModelScope.launch {
-            repository.deleteItineraryItem(itemId).onFailure { error ->
-                showError(error.message ?: "Error al borrar la actividad")
-            }
+            Log.d(tag, "Añadiendo actividad '${item.title}' al viaje ${trip.id}")
+            repository.addItineraryItem(item)
+                .onFailure { error ->
+                    showError(error.message ?: "Error al añadir la actividad")
+                }
+                .onSuccess {
+                    Log.i(tag, "Actividad añadida con éxito.")
+                }
         }
     }
 
     fun updateItineraryItem(trip: Trip, item: ItineraryItem) {
-        // Validamos que los campos obligatorios y las fechas sean correctos
         if (!validateActivityDateWithinTrip(trip, item.date) || !validateRequiredActivityFields(item)) {
             return
         }
 
         viewModelScope.launch {
-            repository.updateItineraryItem(item).onFailure { error ->
-                showError(error.message ?: "Error al actualizar la actividad")
-            }
+            Log.d(tag, "Actualizando actividad: ${item.id}")
+            repository.updateItineraryItem(item)
+                .onFailure { error ->
+                    showError(error.message ?: "Error al actualizar la actividad")
+                }
+                .onSuccess {
+                    Log.i(tag, "Actividad actualizada con éxito.")
+                }
+        }
+    }
+
+    fun deleteItineraryItem(itemId: String) {
+        viewModelScope.launch {
+            Log.d(tag, "Borrando actividad con ID: $itemId")
+            repository.deleteItineraryItem(itemId)
+                .onFailure { error ->
+                    showError(error.message ?: "Error al borrar la actividad")
+                }
+                .onSuccess {
+                    Log.i(tag, "Actividad borrada con éxito.")
+                }
         }
     }
 
     // ==========================================
-    // 4. LÓGICA DE VALIDACIÓN (REQUISITOS DEL PDF)
+    // 4. LÓGICA DE VALIDACIÓN (REQUISITOS DEL PDF T3.1)
     // ==========================================
 
     private fun validateRequiredTripFields(trip: Trip): Boolean {
-        if (trip.title.isBlank() || trip.description.isBlank() || trip.destination.isBlank()) {
-            showError("El título, destino y descripción son obligatorios.")
+        if (trip.title.isBlank() || trip.destination.isBlank()) {
+            showError("El título y el destino son obligatorios.")
             return false
         }
         return true
@@ -146,8 +175,8 @@ class TripViewModel(
     }
 
     private fun validateRequiredActivityFields(item: ItineraryItem): Boolean {
-        if (item.title.isBlank() || item.description.isBlank()) {
-            showError("El título y la descripción de la actividad son obligatorios.")
+        if (item.title.isBlank()) {
+            showError("El título de la actividad es obligatorio.")
             return false
         }
         return true
@@ -162,17 +191,14 @@ class TripViewModel(
     }
 
     // ==========================================
-    // 5. GESTIÓN DE ERRORES UI
+    // 5. GESTIÓN DE ERRORES UI Y LOGS
     // ==========================================
 
     private fun showError(message: String) {
-        Log.e(TAG, "Validation/UI Error: $message")
+        Log.e(tag, "Error de Validación/Operación: $message")
         _uiErrorMessage.value = message
     }
 
-    /**
-     * La UI debe llamar a esta función después de mostrar el error (ej. al cerrar un Snackbar)
-     */
     fun clearErrorMessage() {
         _uiErrorMessage.value = null
     }

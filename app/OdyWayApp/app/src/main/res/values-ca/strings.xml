@@ -81,7 +81,7 @@
     <!-- splashscreen -->
     <string name="splash_logo_desc">Logotip d\'OdyWay</string>
     <string name="splash_loading">Carregant...</string>
-    <string name="splash_version">v1.0.0 - Sprint 01</string>
+    <string name="splash_version">v2.0.0 - Sprint 02</string>
 
     <!-- termsconditionsscreen -->
     <string name="terms_title">Termes i Condicions</string>
@@ -163,15 +163,26 @@
 
     <!-- itineraryeditScreen -->
     <string name="itinerary_edit_title">Planificador</string>
-    <string name="day_label">Día</string>
-    <string name="add_activity_button">Añadir al día</string>
-    <string name="edit_activity_title">Editar Actividad</string>
-    <string name="new_activity_title">Nueva Actividad</string>
-    <string name="activity_name_hint">Título (ej. Visita al Museo)</string>
-    <string name="activity_desc_hint">Descripción corta</string>
-    <string name="activity_loc_hint">Ubicación</string>
+    <string name="day_label">Dia</string>
+    <string name="add_activity_button">Afegir al dia</string>
+    <string name="edit_activity_title">Editar Activitat</string>
+    <string name="new_activity_title">Nova Activitat</string>
+    <string name="activity_name_hint">Títol (ex. Visita al Museu)</string>
+    <string name="activity_desc_hint">Descripció curta</string>
+    <string name="activity_loc_hint">Ubicació</string>
     <string name="select_time">Seleccionar Hora</string>
-    <string name="select_date">Seleccionar Fecha</string>
-    <string name="cancel_button">Cancelar</string>
+    <string name="select_date">Seleccionar Data</string>
+    <string name="cancel_button">Cancel·lar</string>
+    <string name="action_collapse_expand">Col·lapsar/Expandir tot</string>
+    <string name="itinerary_empty_day">Cap activitat. Afegeix alguna cosa!</string>
+    <string name="dialog_delete_activity_title">Eliminar Activitat</string>
+    <string name="dialog_delete_activity_text">Estàs segur que vols eliminar aquesta activitat de l\'itinerari? Aquesta acció no es pot desfer.</string>
+    <string name="category_label">Categoria:</string>
+
+    <string name="cat_visit">Visita</string>
+    <string name="cat_food">Menjar</string>
+    <string name="cat_transport">Transport</string>
+    <string name="cat_accommodation">Allotjament</string>
+    <string name="cat_others">Altres</string>
 
 </resources>

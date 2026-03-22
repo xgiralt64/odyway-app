@@ -85,7 +85,7 @@ fun AddEditTripScreen(
                                 title = title,
                                 destination = destination,
                                 description = description,
-                                status = tripToEdit?.status ?: "Próxim", // Podrías poner esto en strings también si quisieras
+                                status = tripToEdit?.status ?: "Próxim",
                                 startDate = startDate,
                                 endDate = endDate,
                                 budget = budgetStr.toDoubleOrNull() ?: 0.0
@@ -99,7 +99,9 @@ fun AddEditTripScreen(
                             onNavigateBack()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().height(55.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -142,7 +144,8 @@ fun AddEditTripScreen(
                 label = { Text(stringResource(R.string.trip_destination_label)) },
                 placeholder = { Text(stringResource(R.string.trip_destination_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                // CAMBIO A SECONDARY
+                leadingIcon = { Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.secondary) },
                 singleLine = true,
                 isError = showError && destination.isBlank()
             )
@@ -150,14 +153,14 @@ fun AddEditTripScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedCard(onClick = { showStartDatePicker = true }, modifier = Modifier.weight(1f)) {
                     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        // AQUÍ CAMBIAMOS EL COLOR GRAY
                         Text(
                             text = stringResource(R.string.trip_start_date),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        Icon(Icons.Default.DateRange, tint = MaterialTheme.colorScheme.primary, contentDescription = null)
+
+                        Icon(Icons.Default.DateRange, tint = MaterialTheme.colorScheme.secondary, contentDescription = null)
                         Text(
                             text = startDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                             fontWeight = FontWeight.Bold,
@@ -167,13 +170,13 @@ fun AddEditTripScreen(
                 }
                 OutlinedCard(onClick = { showEndDatePicker = true }, modifier = Modifier.weight(1f)) {
                     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        // AQUÍ CAMBIAMOS EL COLOR GRAY
                         Text(
                             text = stringResource(R.string.trip_end_date),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
+                        // Este ya era error (rojo), contrasta bien, lo dejamos
                         Icon(Icons.Default.Event, tint = MaterialTheme.colorScheme.error, contentDescription = null)
                         Text(
                             text = endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
@@ -191,7 +194,8 @@ fun AddEditTripScreen(
                 placeholder = { Text(stringResource(R.string.trip_budget_placeholder)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+
+                leadingIcon = { Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.secondary) },
                 singleLine = true,
                 isError = showError && budgetStr.isBlank()
             )
@@ -200,7 +204,9 @@ fun AddEditTripScreen(
                 value = description,
                 onValueChange = { description = it },
                 label = { Text(stringResource(R.string.trip_description_label)) },
-                modifier = Modifier.fillMaxWidth().height(120.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
                 maxLines = 4
             )
 
@@ -209,28 +215,57 @@ fun AddEditTripScreen(
     }
 
     if (showStartDatePicker) {
-        val startDatePickerState = rememberDatePickerState(initialSelectedDateMillis = startDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
+        val startDatePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = startDate.atStartOfDay(ZoneOffset.UTC).toInstant()
+                .toEpochMilli()
+        )
         DatePickerDialog(
             onDismissRequest = { showStartDatePicker = false },
             confirmButton = {
                 TextButton(onClick = {
                     startDatePickerState.selectedDateMillis?.let { millis ->
-                        startDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+                        startDate =
+                            Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
                         if (startDate.isAfter(endDate)) endDate = startDate.plusDays(1)
                     }
                     showStartDatePicker = false
-                }) { Text(stringResource(R.string.action_ok)) }
+                }) {
+                    Text(
+                        stringResource(R.string.action_ok),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             },
-            dismissButton = { TextButton(onClick = { showStartDatePicker = false }) { Text(stringResource(R.string.action_cancel)) } }
-        ) { DatePicker(state = startDatePickerState) }
+            dismissButton = {
+                TextButton(onClick = { showStartDatePicker = false }) {
+                    Text(
+                        stringResource(R.string.action_cancel),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        ) {
+            DatePicker(
+                state = startDatePickerState,
+                colors = DatePickerDefaults.colors(
+                    selectedDayContainerColor = MaterialTheme.colorScheme.secondary, // Círculo de día seleccionado
+                    selectedDayContentColor = MaterialTheme.colorScheme.onSecondary, // Texto del día seleccionado
+                    todayDateBorderColor = MaterialTheme.colorScheme.secondary,      // Anillo de "Hoy"
+                    todayContentColor = MaterialTheme.colorScheme.secondary          // Texto de "Hoy"
+                )
+            )
+        }
     }
 
     if (showEndDatePicker) {
         val endDatePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = endDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
+            initialSelectedDateMillis = endDate.atStartOfDay(ZoneOffset.UTC).toInstant()
+                .toEpochMilli(),
             selectableDates = object : SelectableDates {
                 override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                    val checkDate = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
+                    val checkDate =
+                        Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
                     return !checkDate.isBefore(startDate)
                 }
             }
@@ -239,12 +274,37 @@ fun AddEditTripScreen(
             onDismissRequest = { showEndDatePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    endDatePickerState.selectedDateMillis?.let { millis -> endDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate() }
+                    endDatePickerState.selectedDateMillis?.let { millis ->
+                        endDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+                    }
                     showEndDatePicker = false
-                }) { Text(stringResource(R.string.action_ok)) }
+                }) {
+                    Text(
+                        stringResource(R.string.action_ok),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             },
-            dismissButton = { TextButton(onClick = { showEndDatePicker = false }) { Text(stringResource(R.string.action_cancel)) } }
-        ) { DatePicker(state = endDatePickerState) }
+            dismissButton = {
+                TextButton(onClick = { showEndDatePicker = false }) {
+                    Text(
+                        stringResource(R.string.action_cancel),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        ) {
+            DatePicker(
+                state = endDatePickerState,
+                colors = DatePickerDefaults.colors(
+                    selectedDayContainerColor = MaterialTheme.colorScheme.secondary,
+                    selectedDayContentColor = MaterialTheme.colorScheme.onSecondary,
+                    todayDateBorderColor = MaterialTheme.colorScheme.secondary,
+                    todayContentColor = MaterialTheme.colorScheme.secondary
+                )
+            )
+        }
     }
 }
 

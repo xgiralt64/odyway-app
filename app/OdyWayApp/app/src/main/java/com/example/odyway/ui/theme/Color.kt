@@ -10,3 +10,10 @@ val MountainGreen = Color(0xFF2A9D8F) // Montañas / Etiquetas
 val BackgroundLight = Color(0xFFF8F9FA) // Fondo general de la app
 val White = Color(0xFFFFFFFF) // Color usado generalmente para destacar en fondos oscuros
 val DarkNavy = Color(0xFF081018) //Fondo general para Modo Oscuro
+
+// Colores para las Categorías del Itinerario
+val CategoryVisit = Color(0xFF9C27B0)         // Morado
+val CategoryFood = Color(0xFFFF9800)          // Naranja
+val CategoryTransport = Color(0xFF2196F3)     // Azul
+val CategoryAccommodation = Color(0xFF4CAF50) // Verde
+val CategoryOthers = Color(0xFFFFC107)        // Amarillo
