@@ -81,7 +81,7 @@
     <!-- splashscreen -->
     <string name="splash_logo_desc">Logotipo de OdyWay</string>
     <string name="splash_loading">Cargando...</string>
-    <string name="splash_version">v1.0.0 - Sprint 01</string>
+    <string name="splash_version">v2.0.0 - Sprint 02</string>
 
     <!-- termsconditionsscreen -->
     <string name="terms_title">Términos y Condiciones</string>
@@ -173,5 +173,16 @@
     <string name="select_time">Seleccionar Hora</string>
     <string name="select_date">Seleccionar Fecha</string>
     <string name="cancel_button">Cancelar</string>
+    <string name="action_collapse_expand">Colapsar/Expandir todo</string>
+    <string name="itinerary_empty_day">Ninguna actividad. ¡Añade algo!</string>
+    <string name="dialog_delete_activity_title">Eliminar Actividad</string>
+    <string name="dialog_delete_activity_text">¿Estás seguro de que quieres eliminar esta actividad del itinerario? Esta acción no se puede deshacer.</string>
+    <string name="category_label">Categoría:</string>
+
+    <string name="cat_visit">Visita</string>
+    <string name="cat_food">Comida</string>
+    <string name="cat_transport">Transporte</string>
+    <string name="cat_accommodation">Alojamiento</string>
+    <string name="cat_others">Otros</string>
 
 </resources>
