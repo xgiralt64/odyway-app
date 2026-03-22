@@ -26,19 +26,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // --- INICIO DE LA PRUEBA DEL PASO 1 ---
-        val testRepository = TripRepositoryImpl()
-
-        // Lanzamos una pequeña corrutina porque Flow necesita recolectarse
-        lifecycleScope.launch {
-            testRepository.getAllTrips().collect { trips ->
-                Log.w("PRUEBA_PASO1", "¡Funciona! Hay ${trips.size} viajes en la memoria.")
-                trips.forEach { trip ->
-                    Log.w("PRUEBA_PASO1", "-> Viaje: ${trip.title} (Destino: ${trip.destination})")
-                }
-            }
-        }
-
         setContent {
             val context = LocalContext.current
             val settingsManager = remember { SettingsManager(context) }

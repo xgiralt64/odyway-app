@@ -42,9 +42,14 @@ fun TripsScreen(
     val currentDate = LocalDate.now()
 
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Tots", "Pròxims", "Passats")
 
-    // ESTADO PARA EL DIÁLOGO DE BORRAR
+    // TEXTOS DINÁMICOS DESDE strings.xml
+    val tabs = listOf(
+        stringResource(R.string.trips_filter_all),
+        stringResource(R.string.trips_filter_upcoming),
+        stringResource(R.string.trips_filter_past)
+    )
+
     var tripIdToDelete by remember { mutableStateOf<String?>(null) }
 
     val filteredTrips = when (selectedTabIndex) {
@@ -77,7 +82,7 @@ fun TripsScreen(
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 16.dp, end = 8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Afegeix Viatge", modifier = Modifier.size(32.dp))
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.home_add_desc), modifier = Modifier.size(32.dp))
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -114,7 +119,10 @@ fun TripsScreen(
                 if (filteredTrips.isEmpty()) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                            Text("No hi ha viatges en aquesta categoria.", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                            Text(
+                                text = stringResource(R.string.trips_empty_list),
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                            )
                         }
                     }
                 } else {
@@ -123,7 +131,7 @@ fun TripsScreen(
                             trip = trip,
                             onClick = { onTripClick(trip.id) },
                             onEditClick = { onEditTripClick(trip.id) },
-                            onDeleteClick = { tripIdToDelete = trip.id } // Activamos el Diálogo
+                            onDeleteClick = { tripIdToDelete = trip.id }
                         )
                     }
                 }
@@ -132,20 +140,19 @@ fun TripsScreen(
         }
     }
 
-    // DIÁLOGO DE CONFIRMACIÓN PARA BORRAR VIAJE
     if (tripIdToDelete != null) {
         AlertDialog(
             onDismissRequest = { tripIdToDelete = null },
-            title = { Text("Eliminar Viatge", fontWeight = FontWeight.Bold) },
-            text = { Text("Estàs segur que vols eliminar aquest viatge i tot el seu itinerari? Aquesta acció no es pot desfer.") },
+            title = { Text(stringResource(R.string.dialog_delete_trip_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.dialog_delete_trip_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     tripViewModel.deleteTrip(tripIdToDelete!!)
                     tripIdToDelete = null
-                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
-                TextButton(onClick = { tripIdToDelete = null }) { Text("Cancel·lar") }
+                TextButton(onClick = { tripIdToDelete = null }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -154,8 +161,6 @@ fun TripsScreen(
 @Composable
 fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-
-    // Estado para controlar si el menú flotante está abierto o cerrado
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -167,7 +172,7 @@ fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDel
         Row(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(id = R.drawable.paris_example),
-                contentDescription = "Imatge del destí",
+                contentDescription = stringResource(R.string.trips_photo_desc),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxHeight().width(120.dp)
             )
@@ -183,17 +188,16 @@ fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDel
                         Text(text = "📍 ${trip.destination}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), maxLines = 1)
                     }
 
-                    // MENÚ DE 3 PUNTOS
                     Box {
                         IconButton(onClick = { expanded = true }, modifier = Modifier.size(24.dp)) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "Opcions", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.action_options), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                         }
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Editar") },
+                                text = { Text(stringResource(R.string.action_edit)) },
                                 leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                                 onClick = {
                                     expanded = false
@@ -201,7 +205,7 @@ fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDel
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Eliminar", color = MaterialTheme.colorScheme.error) },
+                                text = { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) },
                                 leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
                                 onClick = {
                                     expanded = false
@@ -215,7 +219,7 @@ fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDel
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
                     Text(text = "📅 ${trip.startDate.format(formatter)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                     Column(horizontalAlignment = Alignment.End) {
-                        Text(text = "Pressupost", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 10.sp)
+                        Text(text = stringResource(R.string.trips_stat_budget), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 10.sp)
                         Text(text = "${trip.budget}€", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.ExtraBold)
                     }
                 }

@@ -90,7 +90,7 @@
     <string name="terms_reject">Rebutjar</string>
     <string name="terms_accept">Acceptar</string>
 
-    <!-- tripsscreen -->
+    <!-- tripdetailscreen -->
     <string name="trips_tab_itinerary">Itinerari</string>
     <string name="trips_tab_gallery">Galeria</string>
     <string name="trips_tab_costs">Despeses</string>
@@ -106,6 +106,13 @@
     <string name="trips_add_photo_desc">Afegir foto</string>
     <string name="trips_photo_desc">Foto de la galeria</string>
     <string name="trips_delete_desc">Eliminar</string>
+
+    <string name="trip_loading">Carregant viatge...</string>
+    <string name="itinerary_summary_title">Resum de l\'Itinerari</string>
+    <string name="action_modify_itinerary">Modificar Itinerari</string>
+    <string name="itinerary_empty">No tens activitats planificades.</string>
+    <string name="costs_breakdown">Desglossament</string>
+    <string name="costs_activity_label">Activitat</string>
 
     <!-- navbar -->
     <string name="nav_home">Inici</string>
@@ -127,10 +134,37 @@
     <string name="account_info_section_personal">Dades personals</string>
     <string name="account_info_section_public">Perfil públic</string>
 
-    <!-- accountinfo -->
+    <!-- tripsscreen -->
+    <string name="trips_filter_all">Tots</string>
+    <string name="trips_filter_upcoming">Pròxims</string>
+    <string name="trips_filter_past">Passats</string>
+    <string name="trips_empty_list">No hi ha viatges en aquesta categoria.</string>
+    <string name="dialog_delete_trip_title">Eliminar Viatge</string>
+    <string name="dialog_delete_trip_text">Estàs segur que vols eliminar aquest viatge i tot el seu itinerari? Aquesta acció no es pot desfer.</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_cancel">Cancel·lar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_options">Opcions</string>
+
+    <!-- addEdittripScreen -->
+    <string name="edit_trip_title">Editar Viatge</string>
+    <string name="new_trip_title">Nou Viatge</string>
+    <string name="error_mandatory_fields">Si us plau, omple els camps obligatoris.</string>
+    <string name="trip_title_label">Títol del Viatge *</string>
+    <string name="trip_title_placeholder">Ex: Ruta pels Alps</string>
+    <string name="trip_destination_label">Destí *</string>
+    <string name="trip_destination_placeholder">Ex: Suïssa</string>
+    <string name="trip_start_date">Data d\'Inici</string>
+    <string name="trip_end_date">Data de Fi</string>
+    <string name="trip_budget_label">Pressupost Total (€) *</string>
+    <string name="trip_budget_placeholder">Ex: 1200</string>
+    <string name="trip_description_label">Descripció (Opcional)</string>
+    <string name="action_ok">D\'acord</string>
+
+    <!-- itineraryeditScreen -->
     <string name="itinerary_edit_title">Planificador</string>
     <string name="day_label">Día</string>
-    <string name="add_activity_button">+ Añadir al día</string>
+    <string name="add_activity_button">Añadir al día</string>
     <string name="edit_activity_title">Editar Actividad</string>
     <string name="new_activity_title">Nueva Actividad</string>
     <string name="activity_name_hint">Título (ej. Visita al Museo)</string>

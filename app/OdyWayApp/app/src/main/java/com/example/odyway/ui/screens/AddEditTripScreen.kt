@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.odyway.R
@@ -30,15 +31,13 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTripScreen(
-    tripId: String? = null, // NUEVO: Si es null = Crear, Si tiene texto = Editar
+    tripId: String? = null,
     tripViewModel: TripViewModel,
     onNavigateBack: () -> Unit
 ) {
-    // Buscamos si existe el viaje a editar
     val trips by tripViewModel.trips.collectAsState()
     val tripToEdit = trips.find { it.id == tripId }
 
-    // Estados precargados si estamos editando, o vacíos si es nuevo
     var title by remember { mutableStateOf(tripToEdit?.title ?: "") }
     var destination by remember { mutableStateOf(tripToEdit?.destination ?: "") }
     var description by remember { mutableStateOf(tripToEdit?.description ?: "") }
@@ -55,10 +54,16 @@ fun AddEditTripScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                // Cambiamos el título dinámicamente
-                title = { Text(if (isEditing) "Editar Viatge" else "Nou Viatge", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = stringResource(if (isEditing) R.string.edit_trip_title else R.string.new_trip_title),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Tornar") }
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back_button))
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -75,18 +80,17 @@ fun AddEditTripScreen(
                             showError = true
                         } else {
                             val newOrUpdatedTrip = Trip(
-                                id = tripToEdit?.id ?: UUID.randomUUID().toString(), // Mantenemos ID si editamos
+                                id = tripToEdit?.id ?: UUID.randomUUID().toString(),
                                 userId = "user-1",
                                 title = title,
                                 destination = destination,
                                 description = description,
-                                status = tripToEdit?.status ?: "Próxim",
+                                status = tripToEdit?.status ?: "Próxim", // Podrías poner esto en strings también si quisieras
                                 startDate = startDate,
                                 endDate = endDate,
                                 budget = budgetStr.toDoubleOrNull() ?: 0.0
                             )
 
-                            // Llamamos a actualizar o añadir según toque
                             if (isEditing) {
                                 tripViewModel.updateTrip(newOrUpdatedTrip)
                             } else {
@@ -104,42 +108,106 @@ fun AddEditTripScreen(
             }
         }
     ) { paddingValues ->
-        // ... (Todo el contenido del Column con los OutlinedTextFields y DatePickers se queda exactamente igual que en el paso anterior)
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).background(MaterialTheme.colorScheme.background).verticalScroll(rememberScrollState()).padding(20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (showError) Text("Si us plau, omple els camps obligatoris.", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 8.dp))
+            if (showError) {
+                Text(
+                    text = stringResource(R.string.error_mandatory_fields),
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
 
-            OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Títol del Viatge *") }, modifier = Modifier.fillMaxWidth(), singleLine = true, isError = showError && title.isBlank())
-            OutlinedTextField(value = destination, onValueChange = { destination = it }, label = { Text("Destí *") }, modifier = Modifier.fillMaxWidth(), leadingIcon = { Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }, singleLine = true, isError = showError && destination.isBlank())
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text(stringResource(R.string.trip_title_label)) },
+                placeholder = { Text(stringResource(R.string.trip_title_placeholder)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                isError = showError && title.isBlank()
+            )
+
+            OutlinedTextField(
+                value = destination,
+                onValueChange = { destination = it },
+                label = { Text(stringResource(R.string.trip_destination_label)) },
+                placeholder = { Text(stringResource(R.string.trip_destination_placeholder)) },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                singleLine = true,
+                isError = showError && destination.isBlank()
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedCard(onClick = { showStartDatePicker = true }, modifier = Modifier.weight(1f)) {
                     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Data d'Inici", fontSize = 12.sp, color = Color.Gray)
+                        // AQUÍ CAMBIAMOS EL COLOR GRAY
+                        Text(
+                            text = stringResource(R.string.trip_start_date),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
                         Spacer(modifier = Modifier.height(4.dp))
                         Icon(Icons.Default.DateRange, tint = MaterialTheme.colorScheme.primary, contentDescription = null)
-                        Text(startDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")), fontWeight = FontWeight.Bold)
+                        Text(
+                            text = startDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
                 OutlinedCard(onClick = { showEndDatePicker = true }, modifier = Modifier.weight(1f)) {
                     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Data de Fi", fontSize = 12.sp, color = Color.Gray)
+                        // AQUÍ CAMBIAMOS EL COLOR GRAY
+                        Text(
+                            text = stringResource(R.string.trip_end_date),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
                         Spacer(modifier = Modifier.height(4.dp))
                         Icon(Icons.Default.Event, tint = MaterialTheme.colorScheme.error, contentDescription = null)
-                        Text(endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")), fontWeight = FontWeight.Bold)
+                        Text(
+                            text = endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
 
-            OutlinedTextField(value = budgetStr, onValueChange = { budgetStr = it }, label = { Text("Pressupost Total (€) *") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), modifier = Modifier.fillMaxWidth(), leadingIcon = { Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }, singleLine = true, isError = showError && budgetStr.isBlank())
-            OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Descripció (Opcional)") }, modifier = Modifier.fillMaxWidth().height(120.dp), maxLines = 4)
+            OutlinedTextField(
+                value = budgetStr,
+                onValueChange = { budgetStr = it },
+                label = { Text(stringResource(R.string.trip_budget_label)) },
+                placeholder = { Text(stringResource(R.string.trip_budget_placeholder)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                singleLine = true,
+                isError = showError && budgetStr.isBlank()
+            )
+
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text(stringResource(R.string.trip_description_label)) },
+                modifier = Modifier.fillMaxWidth().height(120.dp),
+                maxLines = 4
+            )
+
             Spacer(modifier = Modifier.height(60.dp))
         }
     }
 
-    // (Los bloques if (showStartDatePicker) y if (showEndDatePicker) se quedan igual)
     if (showStartDatePicker) {
         val startDatePickerState = rememberDatePickerState(initialSelectedDateMillis = startDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
         DatePickerDialog(
@@ -151,9 +219,9 @@ fun AddEditTripScreen(
                         if (startDate.isAfter(endDate)) endDate = startDate.plusDays(1)
                     }
                     showStartDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel·lar") } }
+            dismissButton = { TextButton(onClick = { showStartDatePicker = false }) { Text(stringResource(R.string.action_cancel)) } }
         ) { DatePicker(state = startDatePickerState) }
     }
 
@@ -173,9 +241,33 @@ fun AddEditTripScreen(
                 TextButton(onClick = {
                     endDatePickerState.selectedDateMillis?.let { millis -> endDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate() }
                     showEndDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel·lar") } }
+            dismissButton = { TextButton(onClick = { showEndDatePicker = false }) { Text(stringResource(R.string.action_cancel)) } }
         ) { DatePicker(state = endDatePickerState) }
+    }
+}
+
+@Preview(showBackground = true, name = "Add/Edit Trip - Light Mode")
+@Composable
+fun AddEditTripScreenPreviewLight() {
+    com.example.odyway.ui.theme.OdyWayTheme(darkTheme = false) {
+        AddEditTripScreen(
+            tripId = null,
+            tripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            onNavigateBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Add/Edit Trip - Dark Mode")
+@Composable
+fun AddEditTripScreenPreviewDark() {
+    com.example.odyway.ui.theme.OdyWayTheme(darkTheme = true) {
+        AddEditTripScreen(
+            tripId = "trip-001",
+            tripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            onNavigateBack = {}
+        )
     }
 }

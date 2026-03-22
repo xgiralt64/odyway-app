@@ -91,7 +91,7 @@
     <string name="terms_reject">Reject</string>
     <string name="terms_accept">Accept</string>
 
-    <!-- tripsscreen -->
+    <!-- tripdetailscreen -->
     <string name="trips_tab_itinerary">Itinerary</string>
     <string name="trips_tab_gallery">Gallery</string>
     <string name="trips_tab_costs">Costs</string>
@@ -107,6 +107,13 @@
     <string name="trips_add_photo_desc">Add photo</string>
     <string name="trips_photo_desc">Gallery photo</string>
     <string name="trips_delete_desc">Delete</string>
+
+    <string name="trip_loading">Loading trip...</string>
+    <string name="itinerary_summary_title">Itinerary Summary</string>
+    <string name="action_modify_itinerary">Modify Itinerary</string>
+    <string name="itinerary_empty">No activities planned yet.</string>
+    <string name="costs_breakdown">Breakdown</string>
+    <string name="costs_activity_label">Activity</string>
 
     <!-- navbar -->
     <string name="nav_home">Home</string>
@@ -128,10 +135,37 @@
     <string name="account_info_section_personal">Personal Data</string>
     <string name="account_info_section_public">Public Profile</string>
 
-    <!-- accountinfo -->
+    <!-- tripsscreen -->
+    <string name="trips_filter_all">All</string>
+    <string name="trips_filter_upcoming">Upcoming</string>
+    <string name="trips_filter_past">Past</string>
+    <string name="trips_empty_list">No trips in this category.</string>
+    <string name="dialog_delete_trip_title">Delete Trip</string>
+    <string name="dialog_delete_trip_text">Are you sure you want to delete this trip and its entire itinerary? This action cannot be undone.</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_options">Options</string>
+
+    <!-- addEdittripScreen -->
+    <string name="edit_trip_title">Edit Trip</string>
+    <string name="new_trip_title">New Trip</string>
+    <string name="error_mandatory_fields">Please fill in the required fields.</string>
+    <string name="trip_title_label">Trip Title *</string>
+    <string name="trip_title_placeholder">E.g. Alps Roadtrip</string>
+    <string name="trip_destination_label">Destination *</string>
+    <string name="trip_destination_placeholder">E.g. Switzerland</string>
+    <string name="trip_start_date">Start Date</string>
+    <string name="trip_end_date">End Date</string>
+    <string name="trip_budget_label">Total Budget (€) *</string>
+    <string name="trip_budget_placeholder">E.g. 1200</string>
+    <string name="trip_description_label">Description (Optional)</string>
+    <string name="action_ok">OK</string>
+
+    <!-- itineraryeditscreen -->
     <string name="itinerary_edit_title">Planificador</string>
     <string name="day_label">Día</string>
-    <string name="add_activity_button">+ Añadir al día</string>
+    <string name="add_activity_button">Añadir al día</string>
     <string name="edit_activity_title">Editar Actividad</string>
     <string name="new_activity_title">Nueva Actividad</string>
     <string name="activity_name_hint">Título (ej. Visita al Museo)</string>

@@ -63,7 +63,7 @@ fun SettingsScreen(
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
 
-            // account preferences
+            // --- GRUPO 1: ACCOUNT & PREFERENCES ---
             item {
                 SettingsGroup(title = stringResource(id = R.string.settings_group_account)) {
                     SettingsItem(
@@ -108,14 +108,14 @@ fun SettingsScreen(
                 }
             }
 
-            // actions
+            // --- GRUPO 3: ACTIONS ---
             item {
                 SettingsGroup(title = stringResource(id = R.string.settings_group_actions)) {
                     SettingsItem(
                         icon = Icons.Filled.Warning,
                         title = stringResource(id = R.string.settings_logout),
                         subtitle = stringResource(id = R.string.settings_logout_sub),
-                        iconTint = MaterialTheme.colorScheme.error,
+                        iconTint = MaterialTheme.colorScheme.error, // El rojo se ve bien en ambos fondos
                         titleColor = MaterialTheme.colorScheme.error,
                         onClick = { /* TODO */ }
                     )
@@ -127,7 +127,9 @@ fun SettingsScreen(
     }
 }
 
-// reutilizables
+// =====================================
+// COMPONENTES REUTILIZABLES
+// =====================================
 
 @Composable
 fun SettingsGroup(
@@ -157,20 +159,20 @@ fun SettingsItem(
     icon: ImageVector,
     title: String,
     subtitle: String? = null,
-    iconTint: Color = MaterialTheme.colorScheme.primary,
+    // ¡AQUÍ ESTÁ LA MAGIA! Cambiado de primary a onSurface
+    iconTint: Color = MaterialTheme.colorScheme.onSurface,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
     onClick: () -> Unit
 ) {
-    // Surface genera un efecto de onda Ripple rectangular perfecto y nativo
     Surface(
         onClick = onClick,
-        color = Color.Transparent, // Transparente para respetar el color de la tarjeta
+        color = Color.Transparent,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp), // El padding va dentro del Surface para que la onda llegue a los bordes
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -207,7 +209,6 @@ fun SettingsItem(
     }
 }
 
-// Separador
 @Composable
 fun ManualDivider() {
     Box(
@@ -218,30 +219,30 @@ fun ManualDivider() {
     )
 }
 
-@Preview(showBackground = true, name = "Settings Mode Light")
-@Composable
-fun SettingsScreenPreviewLight() {
-    OdyWayTheme(darkTheme = false) {
-        SettingsScreen(
-            onNavigateBack = {},
-            onNavigateToPreferences = {},
-            onNavigateToAbout = {},
-            onNavigateToTerms = {},
-            onNavigateToAccountInfo = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Settings Mode Dark")
-@Composable
-fun SettingsScreenPreviewDark() {
-    OdyWayTheme(darkTheme = true) {
-        SettingsScreen(
-            onNavigateBack = {},
-            onNavigateToPreferences = {},
-            onNavigateToAbout = {},
-            onNavigateToTerms = {},
-            onNavigateToAccountInfo = {}
-        )
-    }
-}
+//@Preview(showBackground = true, name = "Settings Mode Light")
+//@Composable
+//fun SettingsScreenPreviewLight() {
+//    OdyWayTheme(darkTheme = false) {
+//        SettingsScreen(
+//            onNavigateBack = {},
+//            onNavigateToPreferences = {},
+//            onNavigateToAbout = {},
+//            onNavigateToTerms = {},
+//            onNavigateToAccountInfo = {}
+//        )
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "Settings Mode Dark")
+//@Composable
+//fun SettingsScreenPreviewDark() {
+//    OdyWayTheme(darkTheme = true) {
+//        SettingsScreen(
+//            onNavigateBack = {},
+//            onNavigateToPreferences = {},
+//            onNavigateToAbout = {},
+//            onNavigateToTerms = {},
+//            onNavigateToAccountInfo = {}
+//        )
+//    }
+//}

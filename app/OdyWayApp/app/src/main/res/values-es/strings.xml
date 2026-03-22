@@ -90,7 +90,7 @@
     <string name="terms_reject">Rechazar</string>
     <string name="terms_accept">Aceptar</string>
 
-    <!-- tripsscreen -->
+    <!-- tripDetailscreen -->
     <string name="trips_tab_itinerary">Itinerario</string>
     <string name="trips_tab_gallery">Galería</string>
     <string name="trips_tab_costs">Gastos</string>
@@ -106,6 +106,13 @@
     <string name="trips_add_photo_desc">Añadir foto</string>
     <string name="trips_photo_desc">Foto de la galería</string>
     <string name="trips_delete_desc">Eliminar</string>
+
+    <string name="trip_loading">Cargando viaje...</string>
+    <string name="itinerary_summary_title">Resumen del Itinerario</string>
+    <string name="action_modify_itinerary">Modificar Itinerario</string>
+    <string name="itinerary_empty">No tienes actividades planificadas.</string>
+    <string name="costs_breakdown">Desglose</string>
+    <string name="costs_activity_label">Actividad</string>
 
     <!-- navbar -->
     <string name="nav_home">Inicio</string>
@@ -127,10 +134,37 @@
     <string name="account_info_section_personal">Datos personales</string>
     <string name="account_info_section_public">Perfil público</string>
 
-    <!-- accountinfo -->
+    <!-- tripsscreen -->
+    <string name="trips_filter_all">Todos</string>
+    <string name="trips_filter_upcoming">Próximos</string>
+    <string name="trips_filter_past">Pasados</string>
+    <string name="trips_empty_list">No hay viajes en esta categoría.</string>
+    <string name="dialog_delete_trip_title">Eliminar Viaje</string>
+    <string name="dialog_delete_trip_text">¿Estás seguro de que quieres eliminar este viaje y todo su itinerario? Esta acción no se puede deshacer.</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_options">Opciones</string>
+
+    <!-- addEdittripScreen -->
+    <string name="edit_trip_title">Editar Viaje</string>
+    <string name="new_trip_title">Nuevo Viaje</string>
+    <string name="error_mandatory_fields">Por favor, rellena los campos obligatorios.</string>
+    <string name="trip_title_label">Título del Viaje *</string>
+    <string name="trip_title_placeholder">Ej: Ruta por los Alpes</string>
+    <string name="trip_destination_label">Destino *</string>
+    <string name="trip_destination_placeholder">Ej: Suiza</string>
+    <string name="trip_start_date">Fecha de Inicio</string>
+    <string name="trip_end_date">Fecha de Fin</string>
+    <string name="trip_budget_label">Presupuesto Total (€) *</string>
+    <string name="trip_budget_placeholder">Ej: 1200</string>
+    <string name="trip_description_label">Descripción (Opcional)</string>
+    <string name="action_ok">OK</string>
+
+    <!-- itineraryeditScreen -->
     <string name="itinerary_edit_title">Planificador</string>
     <string name="day_label">Día</string>
-    <string name="add_activity_button">+ Añadir al día</string>
+    <string name="add_activity_button">Añadir al día</string>
     <string name="edit_activity_title">Editar Actividad</string>
     <string name="new_activity_title">Nueva Actividad</string>
     <string name="activity_name_hint">Título (ej. Visita al Museo)</string>
@@ -139,4 +173,5 @@
     <string name="select_time">Seleccionar Hora</string>
     <string name="select_date">Seleccionar Fecha</string>
     <string name="cancel_button">Cancelar</string>
+
 </resources>

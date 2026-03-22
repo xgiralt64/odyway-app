@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -56,7 +56,6 @@ val categoryList = listOf(
     CategoryData("Altres", Icons.Default.Star, Color(0xFFFFC107))             // Amarillo
 )
 
-// Helper para encontrar la info de una categoría por nombre
 fun getCategoryData(name: String): CategoryData {
     return categoryList.find { it.name == name } ?: categoryList.last()
 }
@@ -97,9 +96,17 @@ fun ItineraryEditScreen(
         topBar = {
             Column {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.itinerary_edit_title), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary) },
+                    title = {
+                        Text(
+                            stringResource(R.string.itinerary_edit_title),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onPrimary) }
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back_button), tint = MaterialTheme.colorScheme.onPrimary)
+                        }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
                 )
@@ -123,7 +130,7 @@ fun ItineraryEditScreen(
                             },
                             text = {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text("Día ${index + 1}", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("${stringResource(R.string.day_label)} ${index + 1}", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                     Text(date.format(formatter), fontSize = 12.sp, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
                                 }
                             }
@@ -161,7 +168,12 @@ fun ItineraryEditScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         if (dailyActivities.isEmpty()) {
-                            Text("Cap activitat. Afegeix alguna cosa!", color = Color.Gray, fontSize = 14.sp, modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
+                            Text(
+                                "Cap activitat. Afegeix alguna cosa!",
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f), // Adaptativo
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                            )
                         } else {
                             dailyActivities.forEach { activity ->
                                 CategoryActivityCard(
@@ -188,9 +200,10 @@ fun ItineraryEditScreen(
                             modifier = Modifier.fillMaxWidth().height(45.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp, ))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.add_activity_button))
+                            Text(stringResource(R.string.add_activity_button),
+                                color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
@@ -223,10 +236,10 @@ fun ItineraryEditScreen(
                 TextButton(onClick = {
                     tripViewModel.deleteItineraryItem(activityIdToDelete!!)
                     activityIdToDelete = null
-                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
-                TextButton(onClick = { activityIdToDelete = null }) { Text("Cancel·lar") }
+                TextButton(onClick = { activityIdToDelete = null }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -246,21 +259,33 @@ fun DayHeaderCard(dayNumber: Int, date: LocalDate, isExpanded: Boolean, onClick:
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = "Día $dayNumber", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
-                Text(text = date.format(formatter).replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f))
+                Text(
+                    text = "${stringResource(R.string.day_label)} $dayNumber",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.secondary // <-- CAMBIO A SECONDARY PARA CONTRASTAR EN DARK MODE
+                )
+                Text(
+                    text = date.format(formatter).replaceFirstChar { it.uppercase() },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                )
             }
-            Icon(imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Icon(
+                imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary // <-- CAMBIO A SECONDARY
+            )
         }
     }
 }
 
 @Composable
 fun CategoryActivityCard(activity: ItineraryItem, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
-    // Usamos el Helper centralizado
     val catData = getCategoryData(activity.category)
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = activity.time.toString(), fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, modifier = Modifier.width(55.dp))
+        Text(text = activity.time.toString(), fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.width(55.dp))
         Spacer(modifier = Modifier.width(8.dp))
 
         Card(
@@ -277,11 +302,15 @@ fun CategoryActivityCard(activity: ItineraryItem, onEditClick: () -> Unit, onDel
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = activity.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        Text(text = "📍 ${activity.location}", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                        Text(text = activity.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                        Text(
+                            text = "📍 ${activity.location}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) // <-- CAMBIADO COLOR.GRAY POR ADAPTATIVO
+                        )
                     }
                     IconButton(onClick = onDeleteClick, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.Delete, contentDescription = "Borrar", tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f))
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f))
                     }
                 }
             }
@@ -314,15 +343,16 @@ fun ActivityFormFullScreenDialog(
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Scaffold(
             topBar = {
+                // <-- AÑADIDO COLORS AL TOPAPPBAR DEL DIALOG PARA MANTENER LA COHERENCIA
                 TopAppBar(
                     title = {
                         Column {
-                            Text(if (itemToEdit == null) "Nova Activitat" else "Editar Activitat", fontWeight = FontWeight.Bold)
-                            Text(dateAssigned.format(formatter), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                            Text(stringResource(if (itemToEdit == null) R.string.new_activity_title else R.string.edit_activity_title), fontWeight = FontWeight.Bold)
+                            Text(dateAssigned.format(formatter), fontSize = 14.sp, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, contentDescription = "Cancelar") }
+                        IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_cancel)) }
                     },
                     actions = {
                         TextButton(onClick = {
@@ -332,9 +362,14 @@ fun ActivityFormFullScreenDialog(
                                 description = description, location = location, category = category
                             ))
                         }) {
-                            Text(stringResource(R.string.save_button), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(stringResource(R.string.save_button), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 )
             }
         ) { padding ->
@@ -342,11 +377,8 @@ fun ActivityFormFullScreenDialog(
 
                 OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text(stringResource(R.string.activity_name_hint)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
 
-                // =======================================================
-                // NUEVO CARRUSEL DE CATEGORÍAS (Visual y Escalable)
-                // =======================================================
                 Column {
-                    Text("Categoria:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 8.dp))
+                    Text("Categoria:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(bottom = 8.dp))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -356,7 +388,6 @@ fun ActivityFormFullScreenDialog(
                             Surface(
                                 onClick = { category = catData.name },
                                 shape = RoundedCornerShape(16.dp),
-                                // Si está seleccionado, se pinta entero. Si no, es transparente con el borde
                                 color = if (isSelected) catData.color else MaterialTheme.colorScheme.surface,
                                 border = if (!isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) else null,
                                 modifier = Modifier.height(40.dp)
@@ -388,7 +419,7 @@ fun ActivityFormFullScreenDialog(
                     Row(modifier = Modifier.padding(16.dp).fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Schedule, tint = MaterialTheme.colorScheme.error, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Hora: $time", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("${stringResource(R.string.trips_hour_desc)}: $time", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
@@ -406,10 +437,34 @@ fun ActivityFormFullScreenDialog(
                 TextButton(onClick = {
                     time = LocalTime.of(timePickerState.hour, timePickerState.minute)
                     showTimePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showTimePicker = false }) { Text("Cancel·lar") } },
+            dismissButton = { TextButton(onClick = { showTimePicker = false }) { Text(stringResource(R.string.action_cancel)) } },
             text = { TimePicker(state = timePickerState) }
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Itinerary Edit - Light Mode")
+@Composable
+fun ItineraryEditScreenPreviewLight() {
+    com.example.odyway.ui.theme.OdyWayTheme(darkTheme = false) {
+        ItineraryEditScreen(
+            tripId = "trip-001",
+            tripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            onNavigateBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Itinerary Edit - Dark Mode")
+@Composable
+fun ItineraryEditScreenPreviewDark() {
+    com.example.odyway.ui.theme.OdyWayTheme(darkTheme = true) {
+        ItineraryEditScreen(
+            tripId = "trip-001",
+            tripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            onNavigateBack = {}
         )
     }
 }
