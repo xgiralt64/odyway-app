@@ -16,26 +16,27 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.odyway.R
-import com.example.odyway.data.local.SettingsManager
-import com.example.odyway.ui.theme.OdyWayTheme
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.odyway.ui.viewmodels.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountInfoScreen(settingsManager: SettingsManager, onNavigateBack: () -> Unit) {
-    val savedUsername by settingsManager.usernameFlow.collectAsState()
-    val savedBirthDate by settingsManager.birthDateFlow.collectAsState()
+fun AccountInfoScreen(
+    onNavigateBack: () -> Unit,
+    settingsViewModel: SettingsViewModel = hiltViewModel()
+) {
+    val savedUsername by settingsViewModel.username.collectAsState()
+    val savedBirthDate by settingsViewModel.birthDate.collectAsState()
 
     var username by remember(savedUsername) { mutableStateOf(savedUsername) }
     var birthDateMillis by remember(savedBirthDate) { mutableStateOf(savedBirthDate) }
-    
+
     var email by remember { mutableStateOf("xavier@xgiralt.com") }
     var fullName by remember { mutableStateOf("Xavier Giralt") }
     var bio by remember { mutableStateOf("Passionat pels viatges i la tecnologia.") }
@@ -204,8 +205,8 @@ fun AccountInfoScreen(settingsManager: SettingsManager, onNavigateBack: () -> Un
 
             Button(
                 onClick = {
-                    settingsManager.username = username
-                    settingsManager.birthDate = birthDateMillis
+                    settingsViewModel.updateUsername(username)
+                    settingsViewModel.updateBirthDate(birthDateMillis)
                     onNavigateBack()
                 },
                 modifier = Modifier
@@ -222,23 +223,5 @@ fun AccountInfoScreen(settingsManager: SettingsManager, onNavigateBack: () -> Un
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, name = "Account Info Light")
-@Composable
-fun AccountInfoScreenPreviewLight() {
-    val context = LocalContext.current
-    OdyWayTheme(darkTheme = false) {
-        AccountInfoScreen(settingsManager = SettingsManager(context), onNavigateBack = {})
-    }
-}
-
-@Preview(showBackground = true, name = "Account Info Dark")
-@Composable
-fun AccountInfoScreenPreviewDark() {
-    val context = LocalContext.current
-    OdyWayTheme(darkTheme = true) {
-        AccountInfoScreen(settingsManager = SettingsManager(context), onNavigateBack = {})
     }
 }

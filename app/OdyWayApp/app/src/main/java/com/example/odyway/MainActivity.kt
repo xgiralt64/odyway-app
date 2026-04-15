@@ -1,9 +1,7 @@
 package com.example.odyway
-
-import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,14 +11,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.lifecycleScope
 import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.data.repository.TripRepositoryImpl
 import com.example.odyway.ui.theme.OdyWayTheme
-import kotlinx.coroutines.launch
 import java.util.Locale
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    // Hilt inyectará el SettingsManager aquí directamente
+    @Inject lateinit var settingsManager: SettingsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +29,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val context = LocalContext.current
-            val settingsManager = remember { SettingsManager(context) }
 
-            val tripRepository = remember { TripRepositoryImpl() }
-            
             // Observem tant el mode fosc com l'idioma
             val isDarkMode by settingsManager.isDarkModeFlow.collectAsState()
             val languageCode by settingsManager.languageFlow.collectAsState()
@@ -45,16 +43,20 @@ class MainActivity : ComponentActivity() {
             
             // Creem un context localitzat perquè stringResource utilitzi l'idioma correcte
             val localizedContext = context.createConfigurationContext(config)
-            
+
+            // Creamos un Wrapper.
+            // Hilt vera la Activity base (context), pero Compose usará los recursos traducidos
+            val hiltSafeContext = object : ContextWrapper(context) {
+                override fun getResources(): android.content.res.Resources {
+                    return localizedContext.resources
+                }
+            }
             CompositionLocalProvider(
                 LocalConfiguration provides config,
-                LocalContext provides localizedContext
+                LocalContext provides hiltSafeContext
             ) {
                 OdyWayTheme(darkTheme = isDarkMode) {
-                    NavGraph(
-                        settingsManager = settingsManager,
-                        tripRepository = tripRepository
-                    )
+                    NavGraph()
 
                 }
             }

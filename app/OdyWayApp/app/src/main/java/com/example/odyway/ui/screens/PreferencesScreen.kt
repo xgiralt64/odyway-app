@@ -18,20 +18,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.theme.OdyWayTheme
+import com.example.odyway.ui.viewmodels.SettingsViewModel
 
 @Composable
-fun PreferencesScreen(onNavigateBack: () -> Unit) {
-    val context = LocalContext.current
-    val settingsManager = remember { SettingsManager(context) }
+fun PreferencesScreen(onNavigateBack: () -> Unit, settingsViewModel: SettingsViewModel = hiltViewModel()) {
 
-    // Variables de estado persistentes usando SettingsManager
-    var isDarkMode by remember { mutableStateOf(settingsManager.isDarkMode) }
-    var currentLanguageCode by remember { mutableStateOf(settingsManager.language ?: "ca") }
+    // Escuchamos los flujos del ViewModel
+    val isDarkMode by settingsViewModel.isDarkMode.collectAsState()
+    val currentLanguageCode by settingsViewModel.languageCode.collectAsState()
+
     var notificationsEnabled by remember { mutableStateOf(true) }
-
     var expanded by remember { mutableStateOf(false) }
+
     val languages = listOf(
         "ca" to stringResource(id = R.string.lang_ca),
         "es" to stringResource(id = R.string.lang_es),
@@ -134,8 +135,7 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                                 DropdownMenuItem(
                                     text = { Text(name) },
                                     onClick = {
-                                        currentLanguageCode = code
-                                        settingsManager.language = code
+                                        settingsViewModel.updateLanguage(code)
                                         expanded = false
                                     }
                                 )
@@ -161,9 +161,8 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
                         )
                         Switch(
                             checked = isDarkMode,
-                            onCheckedChange = { 
-                                isDarkMode = it
-                                settingsManager.isDarkMode = it
+                            onCheckedChange = { isDark ->
+                                settingsViewModel.updateDarkMode(isDark)
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
@@ -221,18 +220,3 @@ fun PreferencesScreen(onNavigateBack: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true, name = "Preferences Mode Light")
-@Composable
-fun PreferencesScreenPreviewLight() {
-    OdyWayTheme(darkTheme = false) {
-        PreferencesScreen(onNavigateBack = {})
-    }
-}
-
-@Preview(showBackground = true, name = "Preferences Mode Dark")
-@Composable
-fun PreferencesScreenPreviewDark() {
-    OdyWayTheme(darkTheme = true) {
-        PreferencesScreen(onNavigateBack = {})
-    }
-}

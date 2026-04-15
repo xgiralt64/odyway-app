@@ -15,22 +15,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
-import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.ui.screens.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.navArgument
-import com.example.odyway.domain.TripRepository
-import com.example.odyway.ui.theme.OdyWayTheme
 import com.example.odyway.ui.viewmodels.TripViewModel
-import com.example.odyway.ui.viewmodels.TripViewModelFactory
+
+import androidx.hilt.navigation.compose.hiltViewModel
 
 // sealed class amb resource IDs per a la traducció
 sealed class Screen(
@@ -51,21 +44,16 @@ sealed class Screen(
 }
 
 @Composable
-fun NavGraph(
-    settingsManager: SettingsManager,
-    tripRepository: TripRepository
-) {
+fun NavGraph() {
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Usamos las constantes de tu sealed class para evitar errores de tipeo
-    val routesWithBottomBar = listOf(Screen.Home.route, Screen.Trips.route, Screen.Profile.route)
+    //crea el ViewModel y le inyecta el Repositorio automaticamente
+    val tripViewModel: TripViewModel = hiltViewModel()
 
-    val tripViewModel: TripViewModel = viewModel(
-        factory = TripViewModelFactory(tripRepository)
-    )
+    val routesWithBottomBar = listOf(Screen.Home.route, Screen.Trips.route, Screen.Profile.route)
 
     Scaffold(
         bottomBar = {
@@ -170,7 +158,6 @@ fun NavGraph(
 
             composable(Screen.Profile.route) {
                 ProfileScreen(
-                    settingsManager = settingsManager,
                     onNavigateToSettings = {
                         navController.navigate(Screen.Settings.route)
                     }
@@ -187,7 +174,6 @@ fun NavGraph(
             }
             composable(Screen.AccountInfo.route) {
                 AccountInfoScreen(
-                    settingsManager = settingsManager,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
@@ -253,20 +239,3 @@ fun BottomNavigationBar(
         }
     }
 }
-//
-//@Preview(showBackground = true, name = "Profile Mode Light")
-//@Composable
-//fun NavScreenPreviewLight() {
-//    OdyWayTheme(darkTheme = false) {
-//        BottomNavigationBar{}
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "Profile Mode Dark")
-//@Composable
-//fun NavScreenPreviewDark() {
-//    val context = LocalContext.current
-//    OdyWayTheme(darkTheme = true) {
-//        BottomNavigationBar{}
-//    }
-//}

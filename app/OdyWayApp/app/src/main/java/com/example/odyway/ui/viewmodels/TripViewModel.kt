@@ -13,8 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TripViewModel(
+@HiltViewModel
+class TripViewModel @Inject constructor(
     private val repository: TripRepository
 ) : ViewModel() {
 

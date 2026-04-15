@@ -15,24 +15,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.odyway.R
-import com.example.odyway.data.local.SettingsManager
-import com.example.odyway.ui.theme.OdyWayTheme
+import com.example.odyway.ui.viewmodels.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun ProfileScreen(settingsManager: SettingsManager, onNavigateToSettings: () -> Unit) {
-    val username by settingsManager.usernameFlow.collectAsState()
-    val birthDate by settingsManager.birthDateFlow.collectAsState()
+fun ProfileScreen(
+    onNavigateToSettings: () -> Unit,
+    settingsViewModel: SettingsViewModel = hiltViewModel()
+) {
+    val username by settingsViewModel.username.collectAsState()
+    val birthDate by settingsViewModel.birthDate.collectAsState()
 
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
         stringResource(id = R.string.profile_tab_recent),
         stringResource(id = R.string.profile_tab_favorites),
@@ -206,20 +207,3 @@ fun ProfileStatItem(label: String, value: String) {
     }
 }
 
-@Preview(showBackground = true, name = "Profile Mode Light")
-@Composable
-fun ProfileScreenPreviewLight() {
-    val context = LocalContext.current
-    OdyWayTheme(darkTheme = false) {
-        ProfileScreen(settingsManager = SettingsManager(context), onNavigateToSettings = {})
-    }
-}
-
-@Preview(showBackground = true, name = "Profile Mode Dark")
-@Composable
-fun ProfileScreenPreviewDark() {
-    val context = LocalContext.current
-    OdyWayTheme(darkTheme = true) {
-        ProfileScreen(settingsManager = SettingsManager(context), onNavigateToSettings = {})
-    }
-}

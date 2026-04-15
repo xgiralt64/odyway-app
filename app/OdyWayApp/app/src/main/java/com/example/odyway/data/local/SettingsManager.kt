@@ -1,13 +1,13 @@
 package com.example.odyway.data.local
-
 import android.content.Context
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SettingsManager(context: Context) {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("odyway_settings", Context.MODE_PRIVATE)
+@Singleton
+class SettingsManager @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     private val _isDarkModeFlow = MutableStateFlow(getBoolean(KEY_DARK_MODE, false))
     val isDarkModeFlow: StateFlow<Boolean> = _isDarkModeFlow
