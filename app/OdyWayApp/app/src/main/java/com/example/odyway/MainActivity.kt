@@ -8,11 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import com.example.odyway.data.local.SettingsManager
-import com.example.odyway.data.repository.TripRepositoryImpl
+import com.example.odyway.data.SettingsManager
 import com.example.odyway.ui.theme.OdyWayTheme
 import java.util.Locale
 import dagger.hilt.android.AndroidEntryPoint

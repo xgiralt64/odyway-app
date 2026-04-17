@@ -2,7 +2,7 @@ package com.example.odyway.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.odyway.data.local.SettingsManager
+import com.example.odyway.data.SettingsManager
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
