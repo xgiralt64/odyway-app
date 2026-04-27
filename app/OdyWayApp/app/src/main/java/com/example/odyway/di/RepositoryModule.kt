@@ -1,7 +1,9 @@
 package com.example.odyway.di
 
+import com.example.odyway.data.repository.AuthRepositoryImpl
 import com.example.odyway.data.repository.ItineraryRepositoryImpl
 import com.example.odyway.data.repository.TripRepositoryImpl
+import com.example.odyway.domain.AuthRepository
 import com.example.odyway.domain.ItineraryRepository
 import com.example.odyway.domain.TripRepository
 import dagger.Binds
@@ -27,4 +29,10 @@ abstract class RepositoryModule {
     abstract fun bindItineraryRepository(
         itineraryRepositoryImpl: ItineraryRepositoryImpl
     ): ItineraryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
 }

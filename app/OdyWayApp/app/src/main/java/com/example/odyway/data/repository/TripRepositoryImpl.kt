@@ -9,7 +9,9 @@ import com.example.odyway.data.local.mapper.toDomain
 import com.example.odyway.data.local.mapper.toEntity
 import com.example.odyway.domain.Trip
 import com.example.odyway.domain.TripRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,10 +34,17 @@ class TripRepositoryImpl @Inject constructor(
     // IMPLEMENTACIÓN DE VIAJES (ROOM)
     // ==========================================
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAllTrips(): Flow<List<Trip>> {
-        Log.d(TAG, "Recuperando todos los viajes desde Room para usuario: $currentUserId")
-        return tripDao.getTripsByUser(currentUserId).map { entities ->
-            entities.map { it.toDomain() }
+        // MAGIA REACTIVA: Observamos el flujo del usuario. Si cambia de "Invitado" a "Xavi",
+        // automáticamente hace una nueva consulta a la base de datos (Room).
+        return settingsManager.usernameFlow.flatMapLatest { username ->
+            val uid = if (username.isNullOrBlank()) "default_user" else username
+            Log.d(TAG, "Recuperando viajes desde Room para usuario: $uid")
+
+            tripDao.getTripsByUser(uid).map { entities ->
+                entities.map { it.toDomain() }
+            }
         }
     }
 

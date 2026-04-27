@@ -33,6 +33,7 @@ sealed class Screen(
 ) {
     data object Home : Screen("home", R.string.nav_home, Icons.Filled.Home)
     data object Login : Screen("login", R.string.login_button, Icons.Filled.Login)
+    data object Register : Screen("register")
     data object Trips : Screen("trips", R.string.nav_trips, Icons.Filled.Place)
     data object Profile : Screen("profile", R.string.nav_profile, Icons.Filled.Person)
     data object Splash : Screen("splash")
@@ -86,6 +87,24 @@ fun NavGraph() {
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
+                    },
+                    onNavigateToRegister = { // Manejamos la navegacion hacia registro
+                        navController.navigate(Screen.Register.route)
+                    }
+                )
+            }
+
+            composable(Screen.Register.route) {
+                RegisterScreen(
+                    onRegisterSuccess = {
+                        navController.navigate(Screen.Home.route) {
+                            // Si se registra con exito, borramos todo y vamos a Home
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    },
+                    onNavigateToLogin = {
+                        // Vuelve atras a la pantalla de Login
+                        navController.popBackStack()
                     }
                 )
             }

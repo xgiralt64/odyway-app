@@ -18,19 +18,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.odyway.R
-import com.example.odyway.ui.theme.OdyWayTheme
+import com.example.odyway.ui.viewmodels.AuthViewModel
 
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit, // <-- Añadido parámetro para navegar a Registro
+    authViewModel: AuthViewModel = hiltViewModel() // <-- Añadido ViewModel
 ) {
-
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") } // Cambiado a email por coherencia
     var password by remember { mutableStateOf("") }
+
+    // Observamos el estado del ViewModel
+    val errorMessage by authViewModel.errorMessage.collectAsState()
+    val isLoading by authViewModel.isLoading.collectAsState()
 
     Column(
         modifier = Modifier
@@ -64,18 +69,31 @@ fun LoginScreen(
             text = stringResource(id = R.string.login_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            modifier = Modifier.padding(bottom = 32.dp, top = 8.dp)
+            modifier = Modifier.padding(bottom = 24.dp, top = 8.dp)
         )
 
-        // Camp usuari
+        // Mostrar Error si lo hay
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage!!,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
+        // Camp usuari / email
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text(stringResource(id = R.string.login_username_label)) },
+            value = email,
+            onValueChange = {
+                email = it
+                authViewModel.clearError()
+            },
+            label = { Text("Correo electrónico") }, // Ajuste temporal hasta strings.xml
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Person,
-                    contentDescription = stringResource(id = R.string.login_username_label),
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -89,12 +107,15 @@ fun LoginScreen(
         // Camp contrasenya
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                authViewModel.clearError()
+            },
             label = { Text(stringResource(id = R.string.login_password_label)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Lock,
-                    contentDescription = stringResource(id = R.string.login_password_label),
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -122,9 +143,10 @@ fun LoginScreen(
         // Botó iniciar sessió
         Button(
             onClick = {
-                // De moment sense comprovar res
-                onLoginSuccess()
+                // Llamamos al viewModel en lugar de onSuccess directamente
+                authViewModel.login(email, password, onSuccess = onLoginSuccess)
             },
+            enabled = !isLoading, // Desactivar si está cargando
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -134,7 +156,11 @@ fun LoginScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
-            Text(stringResource(id = R.string.login_button), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            if (isLoading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+            } else {
+                Text(stringResource(id = R.string.login_button), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -146,7 +172,7 @@ fun LoginScreen(
                 text = stringResource(id = R.string.login_no_account),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
-            TextButton(onClick = { /* TODO: Crear compte */ }) {
+            TextButton(onClick = onNavigateToRegister) { // <-- Usar el parámetro de navegación
                 Text(
                     text = stringResource(id = R.string.login_signup),
                     color = MaterialTheme.colorScheme.onSurface,
@@ -154,21 +180,5 @@ fun LoginScreen(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, name = "Login Mode Light")
-@Composable
-fun LoginScreenPreviewLight() {
-    OdyWayTheme(darkTheme = false) {
-        LoginScreen(onLoginSuccess = {})
-    }
-}
-
-@Preview(showBackground = true, name = "Login Mode Dark")
-@Composable
-fun LoginScreenPreviewDark() {
-    OdyWayTheme(darkTheme = true) {
-        LoginScreen(onLoginSuccess = {})
     }
 }
