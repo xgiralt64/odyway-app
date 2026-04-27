@@ -1,102 +1,88 @@
 package com.example.odyway.data.repository
 
 import android.util.Log
-import com.example.odyway.data.fakeDB.FakeTripDataSource
-import com.example.odyway.domain.ItineraryItem
+import com.example.odyway.data.local.SettingsManager
+import com.example.odyway.data.local.dao.TripDao
+import com.example.odyway.data.local.dao.UserAndLogDao
+import com.example.odyway.data.local.entity.UserEntity
+import com.example.odyway.data.local.mapper.toDomain
+import com.example.odyway.data.local.mapper.toEntity
 import com.example.odyway.domain.Trip
 import com.example.odyway.domain.TripRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-/**
- * Implementación del repositorio conectada a la base de datos en memoria.
- * Retorna Flow para lectura y Result para las escrituras, logueando cada acción.
- */
-class TripRepositoryImpl(
-    private val dataSource: FakeTripDataSource = FakeTripDataSource
+@Singleton
+class TripRepositoryImpl @Inject constructor(
+    private val tripDao: TripDao,
+    private val userAndLogDao: UserAndLogDao,
+    private val settingsManager: SettingsManager
 ) : TripRepository {
 
     private companion object {
         const val TAG = "TripRepositoryImpl"
     }
 
+    private val currentUserId: String
+        get() = settingsManager.username ?: "default_user"
+
     // ==========================================
-    // IMPLEMENTACIÓN DE VIAJES
+    // IMPLEMENTACIÓN DE VIAJES (ROOM)
     // ==========================================
 
     override fun getAllTrips(): Flow<List<Trip>> {
-        Log.d(TAG, "Recuperando todos los viajes")
-        return dataSource.trips
+        Log.d(TAG, "Recuperando todos los viajes desde Room para usuario: $currentUserId")
+        return tripDao.getTripsByUser(currentUserId).map { entities ->
+            entities.map { it.toDomain() }
+        }
     }
 
     override suspend fun getTripById(id: String): Trip? {
-        return dataSource.getTripById(id)
+        Log.d(TAG, "Recuperando viaje por ID: $id")
+        return tripDao.getTripById(id)?.toDomain()
     }
 
     override suspend fun addTrip(trip: Trip): Result<Unit> {
         Log.d(TAG, "Intentando añadir viaje: ${trip.title}")
-        val success = dataSource.addTrip(trip)
-        return if (success) {
-            Log.i(TAG, "Viaje añadido correctamente: ${trip.id}")
+        return try {
+            // HACK TEMPORAL: Asegurar que el usuario existe en DB para la Foreign Key
+            val user = userAndLogDao.getUserById(currentUserId)
+            if (user == null) {
+                userAndLogDao.insertUser(UserEntity(currentUserId, currentUserId, currentUserId, "email@test.com", null, 0L))
+            }
+
+            tripDao.insertTrip(trip.toEntity(currentUserId))
+            Log.i(TAG, "Viaje añadido correctamente a Room: ${trip.id}")
             Result.success(Unit)
-        } else {
-            Log.e(TAG, "Error al añadir: El viaje con ID ${trip.id} ya existe")
-            Result.failure(Exception("El viaje ya existe"))
+        } catch (e: Exception) {
+            Log.e(TAG, "Error al añadir viaje en Room: ${e.message}")
+            Result.failure(Exception("Error guardando el viaje en base de datos"))
         }
     }
 
     override suspend fun updateTrip(trip: Trip): Result<Unit> {
         Log.d(TAG, "Intentando actualizar viaje: ${trip.id}")
-        val success = dataSource.updateTrip(trip)
-        return if (success) {
-            Log.i(TAG, "Viaje actualizado correctamente: ${trip.id}")
+        return try {
+            tripDao.updateTrip(trip.toEntity(currentUserId))
+            Log.i(TAG, "Viaje actualizado correctamente en Room: ${trip.id}")
             Result.success(Unit)
-        } else {
-            Log.e(TAG, "Error al actualizar: Viaje no encontrado")
-            Result.failure(Exception("Viaje no encontrado"))
+        } catch (e: Exception) {
+            Log.e(TAG, "Error al actualizar viaje en Room: ${e.message}")
+            Result.failure(Exception("Error actualizando el viaje"))
         }
     }
 
     override suspend fun deleteTrip(id: String): Result<Unit> {
         Log.d(TAG, "Intentando borrar viaje: $id")
-        val success = dataSource.deleteTrip(id)
-        return if (success) {
-            Log.i(TAG, "Viaje y sus actividades borrados correctamente")
+        return try {
+            tripDao.deleteTrip(id)
+            Log.i(TAG, "Viaje borrado correctamente de Room")
             Result.success(Unit)
-        } else {
-            Log.e(TAG, "Error al borrar: Viaje no encontrado")
-            Result.failure(Exception("Viaje no encontrado"))
+        } catch (e: Exception) {
+            Log.e(TAG, "Error al borrar viaje en Room: ${e.message}")
+            Result.failure(Exception("Error borrando el viaje"))
         }
-    }
-
-    // ==========================================
-    // IMPLEMENTACIÓN DE ITINERARIO
-    // ==========================================
-
-    override fun getItineraryForTrip(tripId: String): Flow<List<ItineraryItem>> {
-        Log.d(TAG, "Recuperando itinerario para el viaje: $tripId")
-        return dataSource.itinerary.map { list ->
-            list.filter { it.tripId == tripId }.sortedBy { it.date.atTime(it.time) }
-        }
-    }
-
-    override suspend fun addItineraryItem(item: ItineraryItem): Result<Unit> {
-        val success = dataSource.addItineraryItem(item)
-        return if (success) {
-            Log.i(TAG, "Actividad añadida: ${item.title}")
-            Result.success(Unit)
-        } else {
-            Result.failure(Exception("La actividad ya existe"))
-        }
-    }
-
-    override suspend fun updateItineraryItem(item: ItineraryItem): Result<Unit> {
-        val success = dataSource.updateItineraryItem(item)
-        return if (success) Result.success(Unit) else Result.failure(Exception("Actividad no encontrada"))
-    }
-
-    override suspend fun deleteItineraryItem(itemId: String): Result<Unit> {
-        val success = dataSource.deleteItineraryItem(itemId)
-        return if (success) Result.success(Unit) else Result.failure(Exception("Actividad no encontrada"))
     }
 }

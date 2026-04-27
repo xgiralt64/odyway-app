@@ -9,16 +9,10 @@ import kotlinx.coroutines.flow.Flow
  */
 interface TripRepository {
 
-    // --- Operaciones de Viajes (Trips) ---
+    // Operaciones de Viajes Trips
     fun getAllTrips(): Flow<List<Trip>>
     suspend fun getTripById(id: String): Trip?
     suspend fun addTrip(trip: Trip): Result<Unit>
     suspend fun updateTrip(trip: Trip): Result<Unit>
     suspend fun deleteTrip(id: String): Result<Unit>
-
-    // --- Operaciones de Itinerario (Activities) ---
-    fun getItineraryForTrip(tripId: String): Flow<List<ItineraryItem>>
-    suspend fun addItineraryItem(item: ItineraryItem): Result<Unit>
-    suspend fun updateItineraryItem(item: ItineraryItem): Result<Unit>
-    suspend fun deleteItineraryItem(itemId: String): Result<Unit>
 }

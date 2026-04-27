@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.odyway.domain.ItineraryItem
+import com.example.odyway.domain.ItineraryRepository
 import com.example.odyway.domain.Trip
 import com.example.odyway.domain.TripRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TripViewModel @Inject constructor(
-    private val repository: TripRepository
+    private val tripRepository: TripRepository,
+    private val itineraryRepository: ItineraryRepository
 ) : ViewModel() {
 
     // Cambiado a minúscula ("tag") para evitar el warning amarillo de Android Studio
@@ -28,7 +30,7 @@ class TripViewModel @Inject constructor(
     // 1. ESTADOS DE LA INTERFAZ (UI STATE)
     // ==========================================
 
-    val trips: StateFlow<List<Trip>> = repository.getAllTrips()
+    val trips: StateFlow<List<Trip>> = tripRepository.getAllTrips()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -56,7 +58,7 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch {
             Log.d(tag, "Intentando añadir nuevo viaje: ${trip.title}")
-            repository.addTrip(trip)
+            tripRepository.addTrip(trip)
                 .onFailure { error ->
                     showError(error.message ?: "Error desconocido al crear el viaje")
                 }
@@ -73,7 +75,7 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch {
             Log.d(tag, "Intentando actualizar viaje: ${trip.id}")
-            repository.updateTrip(trip)
+            tripRepository.updateTrip(trip)
                 .onFailure { error ->
                     showError(error.message ?: "Error al actualizar el viaje")
                 }
@@ -86,7 +88,7 @@ class TripViewModel @Inject constructor(
     fun deleteTrip(tripId: String) {
         viewModelScope.launch {
             Log.d(tag, "Intentando borrar viaje con ID: $tripId")
-            repository.deleteTrip(tripId)
+            tripRepository.deleteTrip(tripId)
                 .onFailure { error ->
                     showError(error.message ?: "Error al borrar el viaje")
                 }
@@ -103,7 +105,7 @@ class TripViewModel @Inject constructor(
     fun loadItineraryForTrip(tripId: String) {
         viewModelScope.launch {
             Log.d(tag, "Cargando itinerario para el viaje: $tripId")
-            repository.getItineraryForTrip(tripId).collect { items ->
+            itineraryRepository.getItineraryForTrip(tripId).collect { items ->
                 _currentItinerary.value = items
                 Log.i(tag, "Itinerario cargado. Total de actividades: ${items.size}")
             }
@@ -117,7 +119,7 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch {
             Log.d(tag, "Añadiendo actividad '${item.title}' al viaje ${trip.id}")
-            repository.addItineraryItem(item)
+            itineraryRepository.addItineraryItem(item)
                 .onFailure { error ->
                     showError(error.message ?: "Error al añadir la actividad")
                 }
@@ -134,7 +136,7 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch {
             Log.d(tag, "Actualizando actividad: ${item.id}")
-            repository.updateItineraryItem(item)
+            itineraryRepository.updateItineraryItem(item)
                 .onFailure { error ->
                     showError(error.message ?: "Error al actualizar la actividad")
                 }
@@ -147,7 +149,7 @@ class TripViewModel @Inject constructor(
     fun deleteItineraryItem(itemId: String) {
         viewModelScope.launch {
             Log.d(tag, "Borrando actividad con ID: $itemId")
-            repository.deleteItineraryItem(itemId)
+            itineraryRepository.deleteItineraryItem(itemId)
                 .onFailure { error ->
                     showError(error.message ?: "Error al borrar la actividad")
                 }
