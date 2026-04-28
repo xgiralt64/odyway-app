@@ -4,7 +4,7 @@ plugins {
 
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    //alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -95,6 +95,6 @@ dependencies {
     ksp(libs.room.compiler)
 
     //FIREBASE
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation("com.google.firebase:firebase-auth")
 }

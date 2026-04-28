@@ -24,7 +24,8 @@ fun SettingsScreen(
     onNavigateToPreferences: () -> Unit,
     onNavigateToAbout: () -> Unit,
     onNavigateToTerms: () -> Unit,
-    onNavigateToAccountInfo: () -> Unit
+    onNavigateToAccountInfo: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -117,7 +118,7 @@ fun SettingsScreen(
                         subtitle = stringResource(id = R.string.settings_logout_sub),
                         iconTint = MaterialTheme.colorScheme.error, // El rojo se ve bien en ambos fondos
                         titleColor = MaterialTheme.colorScheme.error,
-                        onClick = { /* TODO */ }
+                        onClick = onLogoutClick
                     )
                 }
             }

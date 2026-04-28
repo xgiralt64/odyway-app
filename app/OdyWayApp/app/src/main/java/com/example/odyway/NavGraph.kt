@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import com.example.odyway.ui.viewmodels.TripViewModel
 
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.odyway.ui.viewmodels.AuthViewModel
 
 // sealed class amb resource IDs per a la traducció
 sealed class Screen(
@@ -54,7 +55,12 @@ fun NavGraph() {
     //crea el ViewModel y le inyecta el Repositorio automaticamente
     val tripViewModel: TripViewModel = hiltViewModel()
 
+    // Instanciamos el AuthViewModel aquí para poder cerrar sesión
+    val authViewModel: AuthViewModel = hiltViewModel()
+
     val routesWithBottomBar = listOf(Screen.Home.route, Screen.Trips.route, Screen.Profile.route)
+
+
 
     Scaffold(
         bottomBar = {
@@ -188,7 +194,18 @@ fun NavGraph() {
                     onNavigateToAccountInfo = { navController.navigate(Screen.AccountInfo.route) },
                     onNavigateToPreferences = { navController.navigate(Screen.Preferences.route) },
                     onNavigateToAbout = { navController.navigate(Screen.About.route) },
-                    onNavigateToTerms = { navController.navigate(Screen.TermsConditions.route) }
+                    onNavigateToTerms = { navController.navigate(Screen.TermsConditions.route) },
+                    onLogoutClick = {
+                        // Llamamos a la función de Firebase
+                        authViewModel.logout(
+                            onSuccess = {
+                                // Navegamos al Login y borramos todo el historial (BackStack)
+                                navController.navigate(Screen.Login.route) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
                 )
             }
             composable(Screen.AccountInfo.route) {

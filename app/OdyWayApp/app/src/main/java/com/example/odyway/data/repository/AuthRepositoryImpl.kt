@@ -1,71 +1,116 @@
 package com.example.odyway.data.repository
 
-import com.example.odyway.data.local.SettingsManager
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.example.odyway.domain.AuthRepository
 import com.example.odyway.domain.User
-import kotlinx.coroutines.delay
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
-    private val settingsManager: SettingsManager
+    private val firebaseAuth: FirebaseAuth // Hilt inyecta Firebase automáticamente
 ) : AuthRepository {
 
-    // Fingimos el estado de sesión mirando si hay un "username" guardado
-    // (En la versión final de Firebase, esto mirará el FirebaseAuth.instance.currentUser)
-    override val currentUser: Flow<User?> = settingsManager.usernameFlow.map { username ->
-        if (username.isNotBlank() && username != "Invitado") {
-            User(
-                id = username, // Usamos el nombre como ID temporal
-                name = username,
-                username = username,
-                email = "$username@odyway.com",
-                profileImageUrl = null
-            )
-        } else {
-            null
+    // MAGIA REACTIVA: Creamos un flujo que escucha a Firebase.
+    // Si la sesión caduca o el usuario cierra sesión, esto avisa a toda la app al instante.
+    override val currentUser: Flow<User?> = callbackFlow {
+        val authStateListener = FirebaseAuth.AuthStateListener { auth ->
+            val firebaseUser = auth.currentUser
+            if (firebaseUser != null) {
+                // Transformamos el usuario de Firebase a nuestro modelo de Dominio
+                val user = User(
+                    id = firebaseUser.uid, // El ID único e irrompible de Firebase
+                    name = firebaseUser.displayName ?: "Viajero",
+                    username = firebaseUser.displayName ?: "viajero",
+                    email = firebaseUser.email ?: "",
+                    profileImageUrl = firebaseUser.photoUrl?.toString()
+                )
+                trySend(user)
+            } else {
+                trySend(null)
+            }
         }
+
+        firebaseAuth.addAuthStateListener(authStateListener)
+        awaitClose { firebaseAuth.removeAuthStateListener(authStateListener) }
     }
 
     override suspend fun login(email: String, password: String): Result<Unit> {
-        // Simulamos retardo de red
-        delay(1000)
-
-        // Validación súper básica de prueba
-        if (email.isNotBlank() && password.length >= 6) {
-            // "Logueamos" al usuario guardando su nombre en preferencias
-            val fakeUsername = email.substringBefore("@").replaceFirstChar { it.uppercase() }
-            settingsManager.username = fakeUsername
-            return Result.success(Unit)
+        return try {
+            // El .await() espera a que Firebase termine la operación por red
+            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            // Firebase devuelve mensajes útiles (ej. "Contraseña incorrecta", "Usuario no existe")
+            Result.failure(Exception(e.localizedMessage ?: "Error al iniciar sesión"))
         }
-        return Result.failure(Exception("Credenciales incorrectas. (Prueba con cualquier email y pass>5 chars)"))
     }
 
     override suspend fun register(email: String, password: String, username: String, fullName: String): Result<Unit> {
-        delay(1000)
-        if (email.isNotBlank() && password.length >= 6 && username.isNotBlank()) {
-            // Autologueamos después de registrar
-            settingsManager.username = username
-            return Result.success(Unit)
+        return try {
+            // 1. Creamos la cuenta en Firebase
+            val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+
+            // 2. Firebase Auth solo tiene un campo básico para el nombre ("displayName").
+            // Le guardamos ahí el nombre de usuario para poder mostrarlo luego.
+            val user = authResult.user
+            if (user != null) {
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
+                user.updateProfile(profileUpdates).await()
+            }
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(e.localizedMessage ?: "Error al registrarse"))
         }
-        return Result.failure(Exception("Revisa que los campos no estén vacíos y la contraseña sea segura."))
     }
 
     override suspend fun logout(): Result<Unit> {
-        delay(500)
-        // Borramos el usuario para "cerrar sesión"
-        settingsManager.username = "Invitado"
-        return Result.success(Unit)
+        return try {
+            firebaseAuth.signOut()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(e.localizedMessage ?: "Error al cerrar sesión"))
+        }
     }
 
     override suspend fun resetPassword(email: String): Result<Unit> {
-        delay(1000)
-        if (email.isNotBlank()) {
-            return Result.success(Unit)
+        return try {
+            // Manda el email de recuperación automáticamente
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(e.localizedMessage ?: "Error al enviar el correo"))
         }
-        return Result.failure(Exception("Introduce un email válido"))
+    }
+
+    // --- NUEVAS FUNCIONES DE VERIFICACIÓN (T3.2) ---
+    override suspend fun sendEmailVerification(): Result<Unit> {
+        return try {
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                user.sendEmailVerification().await()
+                Log.i(TAG, "Email de verificación enviado a ${user.email}")
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("No hay usuario logueado"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error enviando email de verificación: ${e.message}", e)
+            Result.failure(Exception(e.localizedMessage ?: "Error enviando verificación"))
+        }
+    }
+
+    override fun isEmailVerified(): Boolean {
+        return firebaseAuth.currentUser?.isEmailVerified ?: false
     }
 }
