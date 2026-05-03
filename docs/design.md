@@ -32,7 +32,7 @@ com.example.odyway/
 │   │   └── mapper/       # Conversió Entity <-> Domain
 │   └── repository/       # Implementacions (AuthRepositoryImpl connectat a Firebase i Room)
 └── di/                   # Mòduls de Hilt (AppModule, DatabaseModule, FirebaseModule)
-
+```
 
 ## Esquema de Base de Dades (Room SQLite)
 
