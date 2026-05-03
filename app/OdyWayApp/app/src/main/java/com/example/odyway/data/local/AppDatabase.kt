@@ -18,10 +18,10 @@ import com.example.odyway.data.local.entity.UserEntity
         ItineraryItemEntity::class,
         AccessLogEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
-@TypeConverters(Converters::class) // Le indicamos a Room cmmo manejar las fechas
+@TypeConverters(TypeConverter::class) // Le indicamos a Room cmmo manejar las fechas
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun tripDao(): TripDao

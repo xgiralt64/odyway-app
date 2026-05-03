@@ -27,10 +27,11 @@ import com.example.odyway.ui.viewmodels.AuthViewModel
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    onNavigateToRegister: () -> Unit, // <-- Añadido parámetro para navegar a Registro
-    authViewModel: AuthViewModel = hiltViewModel() // <-- Añadido ViewModel
+    onNavigateToRegister: () -> Unit,
+    onNavigateToRecoverPassword: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") } // Cambiado a email por coherencia
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     // Observamos el estado del ViewModel
@@ -128,7 +129,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(
-            onClick = { /* TODO: Recuperar contrasenya */ },
+            onClick = onNavigateToRecoverPassword,
             modifier = Modifier.align(Alignment.End)
         ) {
             Text(

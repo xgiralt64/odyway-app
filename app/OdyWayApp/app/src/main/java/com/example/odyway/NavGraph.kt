@@ -35,6 +35,7 @@ sealed class Screen(
     data object Home : Screen("home", R.string.nav_home, Icons.Filled.Home)
     data object Login : Screen("login", R.string.login_button, Icons.Filled.Login)
     data object Register : Screen("register")
+    data object RecoverPassword : Screen("recover_password")
     data object Trips : Screen("trips", R.string.nav_trips, Icons.Filled.Place)
     data object Profile : Screen("profile", R.string.nav_profile, Icons.Filled.Person)
     data object Splash : Screen("splash")
@@ -94,24 +95,40 @@ fun NavGraph() {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     },
-                    onNavigateToRegister = { // Manejamos la navegacion hacia registro
+                    onNavigateToRegister = {
                         navController.navigate(Screen.Register.route)
+                    },
+                    onNavigateToRecoverPassword = {
+                        navController.navigate(Screen.RecoverPassword.route)
                     }
                 )
             }
 
             composable(Screen.Register.route) {
+                // mostrar el Toast
+                val context = androidx.compose.ui.platform.LocalContext.current
+
                 RegisterScreen(
                     onRegisterSuccess = {
-                        navController.navigate(Screen.Home.route) {
-                            // Si se registra con exito, borramos todo y vamos a Home
-                            popUpTo(Screen.Splash.route) { inclusive = true }
-                        }
+                        //mostramos un mensaje nativo de Android
+                        android.widget.Toast.makeText(
+                            context,
+                            "Registro exitoso. ¡Revisa tu email para verificar la cuenta!",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+
+                        // Le mandamos de vuelta a la pantalla de Login
+                        navController.popBackStack()
                     },
                     onNavigateToLogin = {
-                        // Vuelve atras a la pantalla de Login
                         navController.popBackStack()
                     }
+                )
+            }
+
+            composable(Screen.RecoverPassword.route) {
+                RecoverPasswordScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 

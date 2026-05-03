@@ -1,1 +1,55 @@
-/build
+# Android Studio
+*.iml
+.idea/
+.gradle/
+local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# Build
+build/
+app/build/
+captures/
+output.json
+
+# NDK / C++
+.externalNativeBuild/
+.cxx/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Gradle
+.gradle/
+gradle-app.setting
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Logs
+*.log
+
+# Keystores
+*.jks
+*.keystore
+*.pem
+*.p12
+
+# Firebase
+app/google-services.json
+google-services.json
+
+# Jetpack Compose previews
+*.preview.cache
+
+# Kotlin
+*.kotlin_module
+
+# Misc
+*.apk
+*.aab
+*.hprof

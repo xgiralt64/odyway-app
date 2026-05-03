@@ -61,6 +61,20 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resetPassword(email: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            authRepository.resetPassword(email).fold(
+                onSuccess = { onSuccess() },
+                onFailure = { error -> _errorMessage.value = error.message }
+            )
+
+            _isLoading.value = false
+        }
+    }
+
     fun logout(onSuccess: () -> Unit) {
         viewModelScope.launch {
             authRepository.logout()
@@ -71,4 +85,6 @@ class AuthViewModel @Inject constructor(
     fun clearError() {
         _errorMessage.value = null
     }
+
+
 }

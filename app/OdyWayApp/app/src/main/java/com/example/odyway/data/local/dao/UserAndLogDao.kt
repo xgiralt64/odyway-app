@@ -14,4 +14,7 @@ interface UserAndLogDao {
 
     @Insert
     suspend fun insertAccessLog(log: AccessLogEntity)
+
+    @Query("SELECT COUNT(*) FROM users WHERE username = :username COLLATE NOCASE")
+    suspend fun countByUsername(username: String): Int
 }

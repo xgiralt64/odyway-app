@@ -1,17 +1,17 @@
 package com.example.odyway.data.repository
 
 import android.util.Log
-import com.example.odyway.data.local.SettingsManager
 import com.example.odyway.data.local.dao.TripDao
-import com.example.odyway.data.local.dao.UserAndLogDao
-import com.example.odyway.data.local.entity.UserEntity
 import com.example.odyway.data.local.mapper.toDomain
 import com.example.odyway.data.local.mapper.toEntity
+import com.example.odyway.domain.AuthRepository
 import com.example.odyway.domain.Trip
 import com.example.odyway.domain.TripRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,49 +19,56 @@ import javax.inject.Singleton
 @Singleton
 class TripRepositoryImpl @Inject constructor(
     private val tripDao: TripDao,
-    private val userAndLogDao: UserAndLogDao,
-    private val settingsManager: SettingsManager
+    private val authRepository: AuthRepository, //escuchamos el estado real de Firebase
+    private val firebaseAuth: FirebaseAuth //paara obtener el ID al guardar
 ) : TripRepository {
 
     private companion object {
         const val TAG = "TripRepositoryImpl"
     }
 
-    private val currentUserId: String
-        get() = settingsManager.username ?: "default_user"
-
-    // ==========================================
-    // IMPLEMENTACIÓN DE VIAJES (ROOM)
-    // ==========================================
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAllTrips(): Flow<List<Trip>> {
-        // MAGIA REACTIVA: Observamos el flujo del usuario. Si cambia de "Invitado" a "Xavi",
-        // automáticamente hace una nueva consulta a la base de datos (Room).
-        return settingsManager.usernameFlow.flatMapLatest { username ->
-            val uid = if (username.isNullOrBlank()) "default_user" else username
-            Log.d(TAG, "Recuperando viajes desde Room para usuario: $uid")
-
-            tripDao.getTripsByUser(uid).map { entities ->
-                entities.map { it.toDomain() }
+        //si hay usuario logueado, traemos sus viajes. si no, devolvemos lista vacia
+        return authRepository.currentUser.flatMapLatest { user ->
+            if (user != null) {
+                Log.d(TAG, "Recuperando viajes para usuario real: ${user.id}")
+                tripDao.getTripsByUser(user.id).map { entities ->
+                    entities.map { it.toDomain() }
+                }
+            } else {
+                flowOf(emptyList())
             }
         }
     }
 
     override suspend fun getTripById(id: String): Trip? {
-        Log.d(TAG, "Recuperando viaje por ID: $id")
         return tripDao.getTripById(id)?.toDomain()
     }
 
     override suspend fun addTrip(trip: Trip): Result<Unit> {
-        Log.d(TAG, "Intentando añadir viaje: ${trip.title}")
         return try {
-            // HACK TEMPORAL: Asegurar que el usuario existe en DB para la Foreign Key
-            val user = userAndLogDao.getUserById(currentUserId)
-            if (user == null) {
-                userAndLogDao.insertUser(UserEntity(currentUserId, currentUserId, currentUserId, "email@test.com", null, 0L))
+            val currentUserId = firebaseAuth.currentUser?.uid ?: throw Exception("No hay usuario logueado")
+
+            if (trip.title.trim().isEmpty()) {
+                Log.w(TAG, "Validación fallida: Título vacío")
+                return Result.failure(Exception("El nombre del viaje no puede estar vacío"))
             }
 
+            if (trip.endDate != null && trip.startDate > trip.endDate) {
+                Log.w(TAG, "Validación fallida: Fechas incongruentes")
+                return Result.failure(Exception("La fecha de inicio no puede ser posterior a la fecha de fin"))
+            }
+
+            val duplicateCount = tripDao.countTripsByTitle(currentUserId, trip.title.trim())
+            if (duplicateCount > 0) {
+                Log.w(TAG, "Validación fallida: Viaje duplicado (${trip.title})")
+                return Result.failure(Exception("Ya tienes un viaje guardado con el nombre '${trip.title}'"))
+            }
+
+            // ------------
+
+            // Si pasa todas las validaciones, lo guardamos
             tripDao.insertTrip(trip.toEntity(currentUserId))
             Log.i(TAG, "Viaje añadido correctamente a Room: ${trip.id}")
             Result.success(Unit)
@@ -72,25 +79,38 @@ class TripRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTrip(trip: Trip): Result<Unit> {
-        Log.d(TAG, "Intentando actualizar viaje: ${trip.id}")
         return try {
+            val currentUserId = firebaseAuth.currentUser?.uid ?: throw Exception("No hay usuario logueado")
+
+            // Validamos Fechas en la actualizacion
+            if (trip.endDate != null && trip.startDate > trip.endDate) {
+                Log.w(TAG, "Validación fallida al actualizar: Fechas incongruentes")
+                return Result.failure(Exception("La fecha de inicio no puede ser posterior a la fecha de fin"))
+            }
+
+            // Validar duplicados al actualizar (excluyendo el propio viaje que estamos editando)
+            val existingTrip = tripDao.getTripById(trip.id)
+            if (existingTrip != null && existingTrip.title.lowercase() != trip.title.trim().lowercase()) {
+                val duplicateCount = tripDao.countTripsByTitle(currentUserId, trip.title.trim())
+                if (duplicateCount > 0) {
+                    return Result.failure(Exception("Ya tienes otro viaje con el nombre '${trip.title}'"))
+                }
+            }
+
             tripDao.updateTrip(trip.toEntity(currentUserId))
             Log.i(TAG, "Viaje actualizado correctamente en Room: ${trip.id}")
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error al actualizar viaje en Room: ${e.message}")
+            Log.e(TAG, "Error al actualizar viaje: ${e.message}")
             Result.failure(Exception("Error actualizando el viaje"))
         }
     }
 
     override suspend fun deleteTrip(id: String): Result<Unit> {
-        Log.d(TAG, "Intentando borrar viaje: $id")
         return try {
             tripDao.deleteTrip(id)
-            Log.i(TAG, "Viaje borrado correctamente de Room")
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error al borrar viaje en Room: ${e.message}")
             Result.failure(Exception("Error borrando el viaje"))
         }
     }

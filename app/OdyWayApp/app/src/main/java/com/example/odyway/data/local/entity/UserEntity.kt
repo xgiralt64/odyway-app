@@ -10,5 +10,10 @@ data class UserEntity(
     val username: String,
     val email: String,
     val profileImageUrl: String?,
-    val birthDate: Long
+    val birthDate: Long,
+    val login: String = email,
+    val address: String = "",
+    val country: String = "",
+    val phone: String = "",
+    val acceptEmails: Boolean = false
 )

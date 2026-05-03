@@ -34,6 +34,7 @@ object DatabaseModule {
         ).fallbackToDestructiveMigration().build()
     }
 
+
     @Provides
     fun provideTripDao(database: AppDatabase): TripDao = database.tripDao()
 
