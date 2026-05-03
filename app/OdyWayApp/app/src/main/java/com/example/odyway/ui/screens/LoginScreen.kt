@@ -90,7 +90,7 @@ fun LoginScreen(
                 email = it
                 authViewModel.clearError()
             },
-            label = { Text("Correo electrónico") }, // Ajuste temporal hasta strings.xml
+            label = { Text(stringResource(id = R.string.email_label))}, // Ajuste temporal hasta strings.xml
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Person,
@@ -173,7 +173,7 @@ fun LoginScreen(
                 text = stringResource(id = R.string.login_no_account),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
-            TextButton(onClick = onNavigateToRegister) { // <-- Usar el parámetro de navegación
+            TextButton(onClick = onNavigateToRegister) { //
                 Text(
                     text = stringResource(id = R.string.login_signup),
                     color = MaterialTheme.colorScheme.onSurface,

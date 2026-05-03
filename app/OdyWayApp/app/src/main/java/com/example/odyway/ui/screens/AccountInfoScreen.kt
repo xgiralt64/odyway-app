@@ -57,12 +57,12 @@ fun AccountInfoScreen(
                     birthDateMillis = datePickerState.selectedDateMillis ?: birthDateMillis
                     showDatePicker = false
                 }) {
-                    Text("OK")
+                    Text(stringResource(id = R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         ) {

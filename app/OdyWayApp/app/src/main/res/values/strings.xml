@@ -126,6 +126,8 @@
     <string name="lang_en">English</string>
 
     <!-- accountinfo -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="account_info_title">Account Information</string>
     <string name="account_info_username">Username</string>
     <string name="account_info_email">Email</string>
@@ -185,5 +187,26 @@
     <string name="cat_transport">Transport</string>
     <string name="cat_accommodation">Accommodation</string>
     <string name="cat_others">Others</string>
+
+
+    <!-- RecoverPasswordScreen -->
+    <string name="recover_password_title">Recover password</string>
+    <string name="back">Back</string>
+    <string name="recover_password_description">
+    Enter the email address associated with your account. We will send you a link to reset your password.
+</string>
+    <string name="email_label">Email address</string>
+    <string name="password_recovery_sent">Recovery email sent</string>
+    <string name="send_link">Send link</string>
+
+
+    <string name="register_title">Create Account</string>
+    <string name="full_name_label">Full name</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="register_button">Sign up</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="login_here">Log in</string>
+
 
 </resources>

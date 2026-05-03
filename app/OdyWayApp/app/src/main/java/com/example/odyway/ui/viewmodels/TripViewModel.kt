@@ -7,14 +7,17 @@ import com.example.odyway.domain.ItineraryItem
 import com.example.odyway.domain.ItineraryRepository
 import com.example.odyway.domain.Trip
 import com.example.odyway.domain.TripRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +26,6 @@ class TripViewModel @Inject constructor(
     private val itineraryRepository: ItineraryRepository
 ) : ViewModel() {
 
-    // Cambiado a minúscula ("tag") para evitar el warning amarillo de Android Studio
     private val tag = "TripViewModel_LOG"
 
     // ==========================================
@@ -37,8 +39,26 @@ class TripViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    private val _currentItinerary = MutableStateFlow<List<ItineraryItem>>(emptyList())
-    val currentItinerary: StateFlow<List<ItineraryItem>> = _currentItinerary.asStateFlow()
+    // guardamos el id del viaje que el usuario esta mirando ahora mismo
+    private val _currentTripId = MutableStateFlow<String?>(null)
+
+    // escuchamos los cambios de ese id.  si cambia o se borra, pedimos los datos nuevos a Room al instante
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val currentItinerary: StateFlow<List<ItineraryItem>> = _currentTripId
+        .flatMapLatest { tripId ->
+            if (tripId != null) {
+                Log.d(tag, "Conectando flujo de itinerario para: $tripId")
+                itineraryRepository.getItineraryForTrip(tripId)
+            } else {
+                Log.d(tag, "No hay viaje seleccionado. Limpiando itinerario.")
+                flowOf(emptyList()) // Si no hay viaje, lista vacía inmediata
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private val _uiErrorMessage = MutableStateFlow<String?>(null)
     val uiErrorMessage: StateFlow<String?> = _uiErrorMessage.asStateFlow()
@@ -59,12 +79,8 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(tag, "Intentando añadir nuevo viaje: ${trip.title}")
             tripRepository.addTrip(trip)
-                .onFailure { error ->
-                    showError(error.message ?: "Error desconocido al crear el viaje")
-                }
-                .onSuccess {
-                    Log.i(tag, "Viaje añadido con éxito: ${trip.id}")
-                }
+                .onFailure { error -> showError(error.message ?: "Error desconocido al crear el viaje") }
+                .onSuccess { Log.i(tag, "Viaje añadido con éxito: ${trip.id}") }
         }
     }
 
@@ -76,12 +92,8 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(tag, "Intentando actualizar viaje: ${trip.id}")
             tripRepository.updateTrip(trip)
-                .onFailure { error ->
-                    showError(error.message ?: "Error al actualizar el viaje")
-                }
-                .onSuccess {
-                    Log.i(tag, "Viaje actualizado con éxito: ${trip.title}")
-                }
+                .onFailure { error -> showError(error.message ?: "Error al actualizar el viaje") }
+                .onSuccess { Log.i(tag, "Viaje actualizado con éxito: ${trip.title}") }
         }
     }
 
@@ -89,11 +101,13 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(tag, "Intentando borrar viaje con ID: $tripId")
             tripRepository.deleteTrip(tripId)
-                .onFailure { error ->
-                    showError(error.message ?: "Error al borrar el viaje")
-                }
+                .onFailure { error -> showError(error.message ?: "Error al borrar el viaje") }
                 .onSuccess {
                     Log.i(tag, "Viaje y su itinerario borrados con éxito.")
+                    // Si el viaje borrado es el que estabamos mirando, limpiamos la pantalla
+                    if (_currentTripId.value == tripId) {
+                        clearCurrentItinerary()
+                    }
                 }
         }
     }
@@ -103,13 +117,12 @@ class TripViewModel @Inject constructor(
     // ==========================================
 
     fun loadItineraryForTrip(tripId: String) {
-        viewModelScope.launch {
-            Log.d(tag, "Cargando itinerario para el viaje: $tripId")
-            itineraryRepository.getItineraryForTrip(tripId).collect { items ->
-                _currentItinerary.value = items
-                Log.i(tag, "Itinerario cargado. Total de actividades: ${items.size}")
-            }
-        }
+        _currentTripId.value = tripId
+    }
+
+    // Función extra para limpiar la pantalla al salir de Detalles o al cerrar sesión
+    fun clearCurrentItinerary() {
+        _currentTripId.value = null
     }
 
     fun addItineraryItem(trip: Trip, item: ItineraryItem) {
@@ -120,12 +133,8 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(tag, "Añadiendo actividad '${item.title}' al viaje ${trip.id}")
             itineraryRepository.addItineraryItem(item)
-                .onFailure { error ->
-                    showError(error.message ?: "Error al añadir la actividad")
-                }
-                .onSuccess {
-                    Log.i(tag, "Actividad añadida con éxito.")
-                }
+                .onFailure { error -> showError(error.message ?: "Error al añadir la actividad") }
+                .onSuccess { Log.i(tag, "Actividad añadida con éxito.") }
         }
     }
 
@@ -137,12 +146,8 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(tag, "Actualizando actividad: ${item.id}")
             itineraryRepository.updateItineraryItem(item)
-                .onFailure { error ->
-                    showError(error.message ?: "Error al actualizar la actividad")
-                }
-                .onSuccess {
-                    Log.i(tag, "Actividad actualizada con éxito.")
-                }
+                .onFailure { error -> showError(error.message ?: "Error al actualizar la actividad") }
+                .onSuccess { Log.i(tag, "Actividad actualizada con éxito.") }
         }
     }
 
@@ -150,19 +155,14 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(tag, "Borrando actividad con ID: $itemId")
             itineraryRepository.deleteItineraryItem(itemId)
-                .onFailure { error ->
-                    showError(error.message ?: "Error al borrar la actividad")
-                }
-                .onSuccess {
-                    Log.i(tag, "Actividad borrada con éxito.")
-                }
+                .onFailure { error -> showError(error.message ?: "Error al borrar la actividad") }
+                .onSuccess { Log.i(tag, "Actividad borrada con éxito.") }
         }
     }
 
     // ==========================================
-    // 4. LÓGICA DE VALIDACIÓN (REQUISITOS DEL PDF T3.1)
+    // 4. LÓGICA DE VALIDACIÓN
     // ==========================================
-
     private fun validateRequiredTripFields(trip: Trip): Boolean {
         if (trip.title.isBlank() || trip.destination.isBlank()) {
             showError("El título y el destino son obligatorios.")

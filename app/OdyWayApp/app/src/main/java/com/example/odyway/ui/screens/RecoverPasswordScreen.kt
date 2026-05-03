@@ -12,11 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.odyway.R
 import com.example.odyway.ui.viewmodels.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +35,7 @@ fun RecoverPasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Recuperar contraseña") },
+                title = { stringResource(id = R.string.recover_password_title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
@@ -54,7 +56,7 @@ fun RecoverPasswordScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Introduce tu correo electrónico asociado a la cuenta. Te enviaremos un enlace para restablecer tu contraseña.",
+                text = stringResource(id = R.string.recover_password_description),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
@@ -75,7 +77,7 @@ fun RecoverPasswordScreen(
                     email = it
                     authViewModel.clearError()
                 },
-                label = { Text("Correo electrónico") },
+                label = { stringResource(id = R.string.email_label) },
                 leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -87,7 +89,7 @@ fun RecoverPasswordScreen(
             Button(
                 onClick = {
                     authViewModel.resetPassword(email, onSuccess = {
-                        Toast.makeText(context, "Correo de recuperación enviado", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.password_recovery_sent), Toast.LENGTH_LONG).show()
                         onNavigateBack() // Volvemos al login tras enviarlo
                     })
                 },
@@ -100,7 +102,7 @@ fun RecoverPasswordScreen(
                 if (isLoading) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
                 } else {
-                    Text("Enviar enlace", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.send_link), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

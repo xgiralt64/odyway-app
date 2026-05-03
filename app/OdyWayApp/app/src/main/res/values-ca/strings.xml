@@ -125,6 +125,9 @@
     <string name="lang_en">Anglès</string>
 
     <!-- accountinfo -->
+    <string name="ok">D\'acord</string>
+    <string name="cancel">Cancel·lar</string>
+
     <string name="account_info_title">Informació del compte</string>
     <string name="account_info_username">Nom d\'usuari</string>
     <string name="account_info_email">Correu electrònic</string>
@@ -184,5 +187,28 @@
     <string name="cat_transport">Transport</string>
     <string name="cat_accommodation">Allotjament</string>
     <string name="cat_others">Altres</string>
+
+
+    <!-- RecoverPasswordScreen -->
+    <string name="recover_password_title">Recuperar contrasenya</string>
+    <string name="back">Tornar</string>
+    <string name="recover_password_description">
+    Introdueix el teu correu electrònic associat al compte. T’enviarem un enllaç per restablir la contrasenya.
+</string>
+    <string name="email_label">Correu electrònic</string>
+    <string name="password_recovery_sent">Correu de recuperació enviat</string>
+    <string name="send_link">Enviar enllaç</string>
+
+    <!-- RegisterScreen -->
+    <string name="register_title">Crear Compte</string>
+    <string name="full_name_label">Nom complet</string>
+    <string name="username_label">Nom d\'usuari</string>
+    <string name="password_label">Contrasenya</string>
+    <string name="register_button">Registrar-se</string>
+    <string name="already_have_account">Ja tens un compte?</string>
+    <string name="login_here">Inicia sessió</string>
+
+
+
 
 </resources>

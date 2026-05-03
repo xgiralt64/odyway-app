@@ -125,6 +125,8 @@
     <string name="lang_en">Inglés</string>
 
     <!-- accountinfo -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
     <string name="account_info_title">Información de la cuenta</string>
     <string name="account_info_username">Nombre de usuario</string>
     <string name="account_info_email">Correo electrónico</string>
@@ -184,5 +186,24 @@
     <string name="cat_transport">Transporte</string>
     <string name="cat_accommodation">Alojamiento</string>
     <string name="cat_others">Otros</string>
+
+    <!-- RecoverPasswordScreen -->
+    <string name="recover_password_title">Recuperar contraseña</string>
+    <string name="back">Volver</string>
+    <string name="recover_password_description">
+    Introduce tu correo electrónico asociado a la cuenta. Te enviaremos un enlace para restablecer tu contraseña.</string>
+    <string name="email_label">Correo electrónico</string>
+    <string name="password_recovery_sent">Correo de recuperación enviado</string>
+    <string name="send_link">Enviar enlace</string>
+
+    <!-- RegisterScreen -->
+    <string name="register_title">Crear Cuenta</string>
+    <string name="full_name_label">Nombre completo</string>
+    <string name="username_label">Nombre de usuario</string>
+    <string name="password_label">Contraseña</string>
+    <string name="register_button">Registrarse</string>
+    <string name="already_have_account">¿Ya tienes cuenta?</string>
+    <string name="login_here">Inicia sesión</string>
+
 
 </resources>
