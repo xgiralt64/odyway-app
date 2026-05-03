@@ -90,7 +90,7 @@ fun LoginScreen(
                 email = it
                 authViewModel.clearError()
             },
-            label = { Text(stringResource(id = R.string.email_label))}, // Ajuste temporal hasta strings.xml
+            label = { Text(stringResource(id = R.string.email_label))},
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Person,

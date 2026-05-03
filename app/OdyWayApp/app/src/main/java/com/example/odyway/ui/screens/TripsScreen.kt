@@ -217,7 +217,7 @@ fun TripCardList(trip: Trip, onClick: () -> Unit, onEditClick: () -> Unit, onDel
                 }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
-                    Text(text = "📅 ${trip.startDate.format(formatter)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                    Text(text = "📅 ${trip.startDate.format(formatter)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), fontWeight = FontWeight.SemiBold)
                     Column(horizontalAlignment = Alignment.End) {
                         Text(text = stringResource(R.string.trips_stat_budget), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 10.sp)
                         Text(text = "${trip.budget}€", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.ExtraBold)

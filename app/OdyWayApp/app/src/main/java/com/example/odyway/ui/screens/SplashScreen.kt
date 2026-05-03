@@ -18,11 +18,19 @@ import com.example.odyway.ui.theme.OdyWayTheme
 
 @Composable
 fun SplashScreen(
-    onNavigateToLogin: () -> Unit
+    onSplashFinished: () -> Unit
 ) {
+    // Variable de estado para controlar el progreso (de 0f a 1f)
+    var progress by remember { mutableFloatStateOf(0f) }
+
+    // Corrutina que simula el tiempo de carga del Splash
     LaunchedEffect(Unit) {
-        delay(2000)
-        onNavigateToLogin()
+        while (progress < 1f) {
+            delay(20L)
+            progress += 0.01f
+        }
+        // Cuando la barra llega al 100% (1f), avisamos al NavGraph
+        onSplashFinished()
     }
 
     Box(
@@ -49,6 +57,7 @@ fun SplashScreen(
 
             // Loading
             LinearProgressIndicator(
+                progress = progress, // Esto hace que la barra se vaya llenando
                 color = MaterialTheme.colorScheme.onPrimary,
                 trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
             )
@@ -78,7 +87,7 @@ fun SplashScreen(
 @Composable
 fun SplashScreenPreviewLight() {
     OdyWayTheme(darkTheme = false) {
-        SplashScreen(onNavigateToLogin = {})
+        SplashScreen(onSplashFinished = {})
     }
 }
 
@@ -86,6 +95,6 @@ fun SplashScreenPreviewLight() {
 @Composable
 fun SplashScreenPreviewDark() {
     OdyWayTheme(darkTheme = true) {
-        SplashScreen(onNavigateToLogin = {})
+        SplashScreen(onSplashFinished = {})
     }
 }

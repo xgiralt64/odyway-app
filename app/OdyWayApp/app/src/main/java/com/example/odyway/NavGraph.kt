@@ -22,9 +22,11 @@ import androidx.navigation.compose.NavHost
 import com.example.odyway.ui.screens.*
 import androidx.navigation.navArgument
 import com.example.odyway.ui.viewmodels.TripViewModel
-
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.odyway.ui.viewmodels.AuthViewModel
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 
 // sealed class amb resource IDs per a la traducció
 sealed class Screen(
@@ -79,10 +81,22 @@ fun NavGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Splash.route) {
+                // observamos si hay un usuario logueado en Firebase
+                val currentUser by authViewModel.currentUser.collectAsState()
+
                 SplashScreen(
-                    onNavigateToLogin = {
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
+                    //Le pasamos una única funcion que ejecutara cuando termine su animacion
+                    onSplashFinished = {
+                        if (currentUser != null) {
+                            //si hay usuario, vamos directos a Home
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Splash.route) { inclusive = true }
+                            }
+                        } else {
+                            // Si no hay usuario, vamos al Login
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(Screen.Splash.route) { inclusive = true }
+                            }
                         }
                     }
                 )

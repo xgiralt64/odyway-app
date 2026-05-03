@@ -1,6 +1,6 @@
 classDiagram
 
-%% Diagrama de Dominio OdyWay - Sprint 01
+%% Diagrama de Dominio i Data OdyWay - Sprints 02 i 03
 
 class User {
     +String id
@@ -8,21 +8,29 @@ class User {
     +String username
     +String email
     +String profileImageUrl
-    +register()
+    +Long birthDate
+    +String login
+    +String address
+    +String country
+    +String phone
+    +Boolean acceptEmails
 }
 
-class AuthenticationService {
+class AccessLog {
+    +Int id
+    +String userId
+    +Long timestamp
+    +String action
+}
+
+class AuthRepository {
+    +Flow~User~ currentUser
     +login(email, password)
+    +register(email, password, username, fullName)
     +logout()
     +resetPassword(email)
-}
-
-class Preferences {
-    +String userId
-    +Boolean isDarkMode
-    +Boolean notificationsEnabled
-    +String preferredLanguage
-    +updatePreferences()
+    +sendEmailVerification()
+    +isEmailVerified()
 }
 
 class Trip {
@@ -34,8 +42,6 @@ class Trip {
     +LocalDate startDate
     +LocalDate endDate
     +Double budget
-    +getRemainingBudget()
-    +getTotalCost()
 }
 
 class Activity {
@@ -56,30 +62,30 @@ class ItineraryItem {
     +String title
     +String location
     +Boolean isCompleted
-    +toggleComplete()
 }
 
-class GalleryImage {
-    +String id
-    +String tripId
-    +String imageUrl
-    +String description
+class TripRepository {
+    +getAllTrips() Flow~List~Trip~~
+    +getTripById(id) Trip
+    +addTrip(trip) Result
+    +updateTrip(trip) Result
+    +deleteTrip(id) Result
 }
 
-class Recommendation {
-    +String id
-    +String title
-    +String description
-    +String destination
+class ItineraryRepository {
+    +getItineraryForTrip(tripId) Flow~List~ItineraryItem~~
+    +addItineraryItem(item) Result
+    +updateItineraryItem(item) Result
+    +deleteItineraryItem(itemId) Result
 }
 
 %% Relacions
-
-User "1" --> "1" Preferences : has
-User "1" --> "many" Trip : owns
-User "1" --> "1" AuthenticationService : uses
-User "1" --> "many" Recommendation : receives
+User "1" --> "many" Trip : owns (FK userId)
+User "1" --> "many" AccessLog : generates (FK userId)
+AuthRepository --> User : manages auth state
 
 Trip "1" --> "many" Activity : manages expenses
-Trip "1" --> "many" ItineraryItem : schedules
-Trip "1" --> "many" GalleryImage : stores
+Trip "1" --> "many" ItineraryItem : schedules (FK tripId)
+
+TripRepository --> Trip : CRUD & Validation
+ItineraryRepository --> ItineraryItem : CRUD & Reactive Flow

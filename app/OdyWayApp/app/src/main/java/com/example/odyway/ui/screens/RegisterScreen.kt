@@ -64,7 +64,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = fullName,
             onValueChange = { fullName = it },
-            label = { stringResource(id = R.string.full_name_label) },
+            label = { Text(stringResource(id = R.string.full_name_label)) },
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -76,7 +76,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { stringResource(id = R.string.username_label) },
+            label = { Text(stringResource(id = R.string.username_label)) },
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -88,7 +88,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { stringResource(id = R.string.email_label) },
+            label = { Text(stringResource(id = R.string.email_label)) },
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -100,7 +100,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { stringResource(id = R.string.password_label) },
+            label = { Text(stringResource(id = R.string.password_label)) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
