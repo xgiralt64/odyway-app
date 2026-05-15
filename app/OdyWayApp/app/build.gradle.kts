@@ -97,4 +97,14 @@ dependencies {
     //FIREBASE
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-auth")
+
+    // Retrofit (Para consumir la API)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // OkHttp
+    //implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // Coil
+    //implementation("io.coil-kt:coil-compose:2.4.0")
 }
