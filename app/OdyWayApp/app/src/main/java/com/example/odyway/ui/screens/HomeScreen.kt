@@ -42,7 +42,8 @@ val recomendacionesMock = listOf(
 @Composable
 fun HomeScreen(
     tripViewModel: TripViewModel,
-    onCreateTripClick: () -> Unit
+    onCreateTripClick: () -> Unit,
+    onSearchHotelClick: () -> Unit
 ) {
     // 1. Recolectamos el flujo de viajes desde el ViewModel
     val trips by tripViewModel.trips.collectAsState()
@@ -79,7 +80,7 @@ fun HomeScreen(
                     )
                 }
 
-                IconButton(onClick = { /* TODO: Acción de búsqueda */ }) {
+                IconButton(onClick = onSearchHotelClick) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(R.string.home_search_desc),

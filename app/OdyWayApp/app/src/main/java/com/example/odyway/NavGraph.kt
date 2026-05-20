@@ -27,6 +27,7 @@ import com.example.odyway.ui.viewmodels.AuthViewModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import com.example.odyway.ui.viewmodels.HotelViewModel
 
 // sealed class amb resource IDs per a la traducció
 sealed class Screen(
@@ -38,6 +39,7 @@ sealed class Screen(
     data object Login : Screen("login", R.string.login_button, Icons.Filled.Login)
     data object Register : Screen("register")
     data object RecoverPassword : Screen("recover_password")
+    data object SearchHotel : Screen("search_hotel")
     data object Trips : Screen("trips", R.string.nav_trips, Icons.Filled.Place)
     data object Profile : Screen("profile", R.string.nav_profile, Icons.Filled.Person)
     data object Splash : Screen("splash")
@@ -60,6 +62,8 @@ fun NavGraph() {
 
     // Instanciamos el AuthViewModel aquí para poder cerrar sesión
     val authViewModel: AuthViewModel = hiltViewModel()
+
+    val hotelViewModel: HotelViewModel = hiltViewModel()
 
     val routesWithBottomBar = listOf(Screen.Home.route, Screen.Trips.route, Screen.Profile.route)
 
@@ -149,8 +153,19 @@ fun NavGraph() {
             composable(Screen.Home.route) {
                 HomeScreen(
                     tripViewModel = tripViewModel,
-                    onCreateTripClick = { navController.navigate("add_edit_trip") }
+                    onCreateTripClick = { navController.navigate("add_edit_trip") },
+                    onSearchHotelClick = { navController.navigate(Screen.SearchHotel.route) }
 
+                )
+            }
+
+            composable(Screen.SearchHotel.route) {
+                val currentUser by authViewModel.currentUser.collectAsState()
+                SearchHotelScreen(
+                    hotelViewModel = hotelViewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    userEmail = currentUser?.email ?: "email@odyway.com",
+                    userName = currentUser?.name ?: "Guest"
                 )
             }
 
