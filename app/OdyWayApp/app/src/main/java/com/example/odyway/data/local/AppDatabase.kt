@@ -20,7 +20,7 @@ import com.example.odyway.data.local.entity.UserEntity
         AccessLogEntity::class,
         TripImageEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(TypeConverter::class) // Le indicamos a Room cmmo manejar las fechas
