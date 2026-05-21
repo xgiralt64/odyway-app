@@ -9,6 +9,7 @@ import com.example.odyway.data.local.dao.UserAndLogDao
 import com.example.odyway.data.local.entity.AccessLogEntity
 import com.example.odyway.data.local.entity.ItineraryItemEntity
 import com.example.odyway.data.local.entity.TripEntity
+import com.example.odyway.data.local.entity.TripImageEntity
 import com.example.odyway.data.local.entity.UserEntity
 
 @Database(
@@ -16,7 +17,8 @@ import com.example.odyway.data.local.entity.UserEntity
         UserEntity::class,
         TripEntity::class,
         ItineraryItemEntity::class,
-        AccessLogEntity::class
+        AccessLogEntity::class,
+        TripImageEntity::class
     ],
     version = 2,
     exportSchema = false

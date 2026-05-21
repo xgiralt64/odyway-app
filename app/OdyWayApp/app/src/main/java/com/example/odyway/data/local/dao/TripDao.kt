@@ -24,4 +24,16 @@ interface TripDao {
 
     @Query("SELECT COUNT(*) FROM trips WHERE userId = :userId AND title = :title COLLATE NOCASE")
     suspend fun countTripsByTitle(userId: String, title: String): Int
+
+
+    // galeria de imagenes operaciones
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTripImage(tripImage: com.example.odyway.data.local.entity.TripImageEntity)
+
+    @Query("SELECT * FROM trip_images WHERE tripId = :tripId")
+    fun getImagesForTrip(tripId: String): kotlinx.coroutines.flow.Flow<List<com.example.odyway.data.local.entity.TripImageEntity>>
+
+    @Query("DELETE FROM trip_images WHERE id = :imageId")
+    suspend fun deleteTripImage(imageId: Int)
 }
