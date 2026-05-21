@@ -1,6 +1,6 @@
 package com.example.odyway.ui.screens
 
-import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,14 +17,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.odyway.domain.Hotel
-import com.example.odyway.domain.Room
 import com.example.odyway.ui.viewmodels.HotelViewModel
 import java.time.Instant
 import java.time.LocalDate
@@ -36,19 +33,13 @@ import java.time.format.DateTimeFormatter
 fun SearchHotelScreen(
     hotelViewModel: HotelViewModel,
     onNavigateBack: () -> Unit,
-    userEmail: String = "guest@odyway.com", // Idealmente pasarlo desde AuthViewModel
-    userName: String = "OdyWay Guest"
+    onHotelClick: (String) -> Unit // Este parámetro se encarga de saltar a los detalles
 ) {
     val uiState by hotelViewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
-    // Estados de búsqueda
     var city by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
     var endDate by remember { mutableStateOf<LocalDate?>(null) }
-
-    // Estado para el diálogo de reserva
-    var selectedRoom by remember { mutableStateOf<Pair<String, String>?>(null) } // Pair(hotelId, roomId)
 
     Scaffold(
         topBar = {
@@ -126,7 +117,7 @@ fun SearchHotelScreen(
                 }
             }
 
-            // GESTIÓN DE ERRORES Y CARGA
+            // GESTIÓN DE ESTADOS (Carga, Error, Éxito)
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -143,156 +134,84 @@ fun SearchHotelScreen(
                 // LLISTA D'HOTELS
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp)
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(uiState.hotels) { hotel ->
-                        HotelCard(
+                        HotelCardSimplified(
                             hotel = hotel,
-                            onBookClick = { roomId ->
-                                selectedRoom = Pair(hotel.id, roomId)
-                            }
+                            onClick = { onHotelClick(hotel.id) } // Dispara la navegación
                         )
                     }
                 }
             }
         }
     }
-
-    // DIÀLEG DE CONFIRMACIÓ DE RESERVA (T2.3)
-    if (selectedRoom != null) {
-        AlertDialog(
-            onDismissRequest = { selectedRoom = null },
-            title = { Text("Confirmar Reserva") },
-            text = { Text("Vols confirmar la reserva d'aquesta habitació? Es guardarà al teu planificador de viatges.") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val startStr = startDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""
-                        val endStr = endDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""
-
-                        hotelViewModel.reserveRoom(
-                            hotelId = selectedRoom!!.first,
-                            roomId = selectedRoom!!.second,
-                            startDate = startStr,
-                            endDate = endStr,
-                            guestName = userName,
-                            guestEmail = userEmail,
-                            onSuccess = {
-                                Toast.makeText(context, "Reserva completada amb èxit!", Toast.LENGTH_LONG).show()
-                                selectedRoom = null
-                                onNavigateBack() // Tornem a la pantalla principal
-                            }
-                        )
-                    }
-                ) {
-                    Text("Reservar")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { selectedRoom = null }) { Text("Cancel·lar") }
-            }
-        )
-    }
 }
 
-// ---------------- COMPONENTS REUTILITZABLES ----------------
-
+// =================================================================
+// COMPONENTS REUTILITZABLES
+// =================================================================
 @Composable
-fun HotelCard(hotel: Hotel, onBookClick: (String) -> Unit) {
+fun HotelCardSimplified(hotel: Hotel, onClick: () -> Unit) {
+    val minPrice = hotel.rooms.minOfOrNull { it.price } ?: 0.0
+
+    // 1. Replicamos la lógica del profesor: IP base + ruta relativa
+    val baseUrl = "http://15.224.84.148:8090"
+    val imageUrl = if (hotel.imageUrl.startsWith("http")) hotel.imageUrl else baseUrl + hotel.imageUrl
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            .height(120.dp)
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Column {
-            // Imatge de l'Hotel (Coil)
-            AsyncImage(
-                model = hotel.imageUrl,
+        Row(modifier = Modifier.fillMaxSize()) {
+
+            // Usamos el metodo  (Image + rememberAsyncImagePainter)
+            Image(
+                painter = coil.compose.rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "Imatge de ${hotel.name}",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
+                    .weight(0.35f)
+                    .fillMaxHeight(),
                 contentScale = ContentScale.Crop
             )
 
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = hotel.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Row {
-                        repeat(hotel.rating) {
-                            Icon(Icons.Default.Hotel, contentDescription = "Estrella", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
-                        }
-                    }
-                }
-                Text(text = hotel.address, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f))
-
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("Habitacions disponibles:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Llistat d'habitacions dins de l'hotel
-                hotel.rooms.forEach { room ->
-                    RoomItem(room = room, onBookClick = { onBookClick(room.id) })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RoomItem(room: Room, onBookClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Imatge de l'habitació
-            if (room.images.isNotEmpty()) {
-                AsyncImage(
-                    model = room.images.first(),
-                    contentDescription = "Habitació",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-            }
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = room.roomType, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
-                Text(text = "${room.price} € / nit", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
-            }
-
-            Button(
-                onClick = onBookClick,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            Column(
+                modifier = Modifier
+                    .weight(0.65f)
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Reservar")
+                Column {
+                    Text(
+                        text = "${hotel.name} (${hotel.id})",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = hotel.address,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2
+                    )
+                }
+                Text(
+                    text = "From $minPrice€",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }
 }
 
-// Compliment estricte del PDF: DatePicker natiu de Material 3
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
@@ -311,7 +230,7 @@ fun DatePickerField(
         readOnly = true,
         leadingIcon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
         modifier = modifier.clickable { showDialog = true },
-        enabled = false,
+        enabled = false, // Impide que se abra el teclado y fuerza el clic en toda la caja
         colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -330,9 +249,7 @@ fun DatePickerField(
                         onDateSelected(date)
                     }
                     showDialog = false
-                }) {
-                    Text("OK")
-                }
+                }) { Text("OK") }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) { Text("Cancel·lar") }

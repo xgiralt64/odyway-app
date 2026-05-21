@@ -62,6 +62,23 @@ class AuthRepositoryImpl @Inject constructor(
 
             Log.i(TAG, "Inicio de sesión exitoso. UID: $userId")
 
+            // =================================================================
+            // SOLUCIÓN DEFINITIVA: Sincronizar el usuario de Firebase con Room
+            // =================================================================
+            if (user != null) {
+                val userEntity = UserEntity(
+                    id = user.uid,
+                    name = user.displayName ?: "Viajero",
+                    username = user.displayName ?: email.substringBefore("@"), // Usamos parte del email si no tiene nombre
+                    email = user.email ?: email,
+                    profileImageUrl = user.photoUrl?.toString(),
+                    birthDate = 0L // Valor por defecto
+                )
+                // Insertamos el usuario. Si ya existe, OnConflictStrategy.REPLACE (en tu DAO) lo actualizará
+                userAndLogDao.insertUser(userEntity)
+                Log.i(TAG, "Usuario sincronizado correctamente en la base de datos local (Room).")
+            }
+
             //guardar log de acceso login
             userAndLogDao.insertAccessLog(
                 AccessLogEntity(userId = userId, timestamp = System.currentTimeMillis(), action = "LOGIN")

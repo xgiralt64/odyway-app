@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// 1. Definimos el Estado de la Interfaz (Súper útil para Compose)
+// 1. Añadimos las fechas de búsqueda al Estado Global de la UI
 data class HotelSearchUiState(
     val isLoading: Boolean = false,
     val hotels: List<Hotel> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val searchStartDate: String = "", // AÑADIDO
+    val searchEndDate: String = ""    // AÑADIDO
 )
 
 @HiltViewModel
@@ -26,15 +28,13 @@ class HotelViewModel @Inject constructor(
 
     private val tag = "HotelViewModel"
 
-    // 2. Tubería reactiva del estado
     private val _uiState = MutableStateFlow(HotelSearchUiState())
     val uiState: StateFlow<HotelSearchUiState> = _uiState.asStateFlow()
 
     // ==========================================
-    // BÚSQUEDA DE HOTELES (T2.1 y T2.2)
+    // BÚSQUEDA DE HOTELES
     // ==========================================
     fun searchHotels(city: String, startDate: String, endDate: String) {
-        // Validación básica
         if (city.isBlank() || startDate.isBlank() || endDate.isBlank()) {
             _uiState.value = _uiState.value.copy(
                 errorMessage = "Por favor, introduce una ciudad y las fechas."
@@ -43,11 +43,13 @@ class HotelViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            // Activamos el circulito de carga y limpiamos errores y hoteles anteriores
+            // Guardamos las fechas en el estado para que cualquier pantalla las pueda consultar
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 errorMessage = null,
-                hotels = emptyList()
+                hotels = emptyList(),
+                searchStartDate = startDate, // GUARDADO
+                searchEndDate = endDate      // GUARDADO
             )
 
             Log.d(tag, "Buscando hoteles en $city del $startDate al $endDate...")
@@ -55,19 +57,12 @@ class HotelViewModel @Inject constructor(
             val result = hotelRepository.checkAvailability(
                 startDate = startDate,
                 endDate = endDate,
-                city = city.trim().lowercase() // La API suele preferir minúsculas
+                city = city.trim().lowercase()
             )
 
             result.onSuccess { hotelList ->
-                Log.i(tag, "Se encontraron ${hotelList.size} hoteles.")
-                // Desactivamos la carga y guardamos la lista
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    hotels = hotelList
-                )
+                _uiState.value = _uiState.value.copy(isLoading = false, hotels = hotelList)
             }.onFailure { error ->
-                Log.e(tag, "Error en la búsqueda: ${error.message}")
-                // Mostramos el error
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = error.message ?: "Error desconocido"
@@ -77,31 +72,42 @@ class HotelViewModel @Inject constructor(
     }
 
     // ==========================================
-    // RESERVAR HABITACIÓN (T2.3)
+    // RESERVAR HABITACIÓN (Simplificado gracias al estado)
     // ==========================================
     fun reserveRoom(
         hotelId: String,
         roomId: String,
-        startDate: String,
-        endDate: String,
         guestName: String,
         guestEmail: String,
-        onSuccess: () -> Unit // Función que llamaremos para avisar a la pantalla de que vuelva atrás
+        hotelName: String,
+        roomType: String,
+        price: Double,
+        onSuccess: () -> Unit
     ) {
+        // Recuperamos las fechas directamente desde nuestro estado guardado
+        val startDate = _uiState.value.searchStartDate
+        val endDate = _uiState.value.searchEndDate
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            Log.d(tag, "Reservando habitación $roomId en hotel $hotelId...")
+            Log.d(tag, "Reservando habitación $roomId en hotel $hotelId del $startDate al $endDate...")
 
             val result = hotelRepository.reserveRoom(
-                hotelId, roomId, startDate, endDate, guestName, guestEmail
+                hotelId = hotelId,
+                roomId = roomId,
+                startDate = startDate,
+                endDate = endDate,
+                guestName = guestName,
+                guestEmail = guestEmail,
+                hotelName = hotelName,
+                roomType = roomType,
+                price = price
             )
 
             result.onSuccess {
-                Log.i(tag, "Reserva exitosa guardada en API y Room.")
                 _uiState.value = _uiState.value.copy(isLoading = false)
-                onSuccess() // Avisamos a Compose para hacer un nav.popBackStack() o mostrar Toast
+                onSuccess()
             }.onFailure { error ->
-                Log.e(tag, "Error al reservar: ${error.message}")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = error.message ?: "No se pudo realizar la reserva."
@@ -110,9 +116,6 @@ class HotelViewModel @Inject constructor(
         }
     }
 
-    // ==========================================
-    // UTILIDADES
-    // ==========================================
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }

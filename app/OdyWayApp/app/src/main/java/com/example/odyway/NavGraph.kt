@@ -40,6 +40,7 @@ sealed class Screen(
     data object Register : Screen("register")
     data object RecoverPassword : Screen("recover_password")
     data object SearchHotel : Screen("search_hotel")
+    data object HotelDetails : Screen("hotel_details/{hotelId}")
     data object Trips : Screen("trips", R.string.nav_trips, Icons.Filled.Place)
     data object Profile : Screen("profile", R.string.nav_profile, Icons.Filled.Person)
     data object Splash : Screen("splash")
@@ -159,13 +160,39 @@ fun NavGraph() {
                 )
             }
 
+            // pantalla de Busqueda y Listado de Hoteles
             composable(Screen.SearchHotel.route) {
-                val currentUser by authViewModel.currentUser.collectAsState()
                 SearchHotelScreen(
                     hotelViewModel = hotelViewModel,
                     onNavigateBack = { navController.popBackStack() },
+                    onHotelClick = { hotelId ->
+                        // Navegamos a la pantalla de detalles pasando el ID del hotel por la URL
+                        navController.navigate("hotel_details/$hotelId")
+                    }
+                )
+            }
+
+            // Pantalla de Detalles del Hotel (Recibe el argumento hotelId)
+            composable(
+                route = "hotel_details/{hotelId}",
+                arguments = listOf(navArgument("hotelId") { type = androidx.navigation.NavType.StringType })
+            ) { backStackEntry ->
+                val hotelId = backStackEntry.arguments?.getString("hotelId") ?: return@composable
+                val currentUser by authViewModel.currentUser.collectAsState()
+
+                HotelDetailsScreen(
+                    hotelId = hotelId,
+                    hotelViewModel = hotelViewModel,
+                    onNavigateBack = { navController.popBackStack() },
                     userEmail = currentUser?.email ?: "email@odyway.com",
-                    userName = currentUser?.name ?: "Guest"
+                    userName = currentUser?.name ?: "Guest",
+                    onReservationComplete = {
+                        // Al completar la reserva, redirigimos al usuario de golpe
+                        // a la lista de viajes para que vea su hotel añadido
+                        navController.navigate(Screen.Trips.route) {
+                            popUpTo(Screen.Home.route) { inclusive = false }
+                        }
+                    }
                 )
             }
 

@@ -50,7 +50,8 @@ class HotelRepositoryImpl @Inject constructor(
     }
 
     override suspend fun reserveRoom(
-        hotelId: String, roomId: String, startDate: String, endDate: String, guestName: String, guestEmail: String
+        hotelId: String, roomId: String, startDate: String, endDate: String, guestName: String, guestEmail: String,
+        hotelName: String, roomType: String, price: Double // NUEVO
     ): Result<Unit> {
         return try {
             val request = ReserveRequestDto(hotelId, roomId, startDate, endDate, guestName, guestEmail)
@@ -64,18 +65,17 @@ class HotelRepositoryImpl @Inject constructor(
                     val newTrip = TripEntity(
                         id = UUID.randomUUID().toString(),
                         userId = currentUserId,
-                        title = "Reserva de Hotel",
-                        destination = hotelId,
-                        description = "Habitación: $roomId",
+                        title = "Reserva: $hotelName", // Guardamos el nombre del hotel
+                        destination = hotelId, // O la ciudad si la pasas
+                        description = "Habitación: $roomType", // Guardamos el tipo
                         status = "RESERVED",
                         startDate = LocalDate.parse(startDate),
                         endDate = LocalDate.parse(endDate),
-                        budget = 0.0
+                        budget = price // Guardamos el precio real
                     )
                     tripDao.insertTrip(newTrip)
                     Log.i(tag, "Reserva guardada en Room como Trip: ${newTrip.id}")
                 }
-
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Error al realizar la reserva: ${response.code()}"))
