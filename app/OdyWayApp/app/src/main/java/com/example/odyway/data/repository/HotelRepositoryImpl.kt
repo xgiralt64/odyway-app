@@ -9,6 +9,7 @@ import com.example.odyway.data.remote.dto.ReserveRequestDto
 import com.example.odyway.data.remote.mapper.toDomain
 import com.example.odyway.domain.Hotel
 import com.example.odyway.domain.HotelRepository
+import com.example.odyway.domain.Reservation
 import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDate
 import java.util.UUID
@@ -82,6 +83,77 @@ class HotelRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Result.failure(Exception("Error de conexión al reservar."))
+        }
+    }
+
+
+    //Obtener y Cancelar Reservas (API)
+
+    override suspend fun getGroupReservations(guestEmail: String): Result<List<Reservation>> {
+        return try {
+            val response = hotelApi.getReservations(groupId, guestEmail)
+
+            if (response.isSuccessful) {
+                // Obtenemos el contenedor DTO
+                val body = response.body()
+                // Extraemos la lista de reservas que hay dentro
+                val dtoList = body?.reservations ?: emptyList()
+
+                // Mapeo completo
+                val domainList = dtoList.map { dto ->
+                    Reservation(
+                        id = dto.id,
+                        hotel_id = dto.hotelId,
+                        room_id = dto.roomId,
+                        start_date = dto.startDate,
+                        end_date = dto.endDate,
+                        guest_name = dto.guestName,
+                        guest_email = dto.guestEmail,
+                        // Mapeamos el hotel para obtener su nombre e imageUrl
+                        hotel = dto.hotel?.let { hDto ->
+                            Hotel(
+                                id = hDto.id,
+                                name = hDto.name,
+                                address = hDto.address,
+                                rating = hDto.rating,
+                                imageUrl = hDto.imageUrl,
+                                rooms = emptyList()
+                            )
+                        },
+                        // Mapeamos la habitación por si necesitas el tipo o precio
+                        room = dto.room?.let { rDto ->
+                            com.example.odyway.domain.Room(
+                                id = rDto.id,
+                                roomType = rDto.roomType,
+                                price = rDto.price,
+                                images = rDto.images
+                            )
+                        }
+                    )
+                }
+                Result.success(domainList)
+            } else {
+                Result.failure(Exception("Error de la API: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Fallo crítico al procesar el JSON de reservas: ${e.message}", e)
+            Result.failure(Exception("Error al procesar los datos de la API."))
+        }
+    }
+
+    override suspend fun cancelReservationById(resId: String): Result<Unit> {
+        return try {
+            // Borramos la reserva en la API remota
+            val response = hotelApi.cancelReservationById(resId)
+
+            if (response.isSuccessful) {
+                Log.i(tag, "Reserva $resId cancelada correctamente en la API.")
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Error al cancelar la reserva en la API."))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error de conexión al cancelar la reserva."))
         }
     }
 }

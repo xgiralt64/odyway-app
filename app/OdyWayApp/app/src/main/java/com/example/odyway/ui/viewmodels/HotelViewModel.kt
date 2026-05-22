@@ -119,4 +119,45 @@ class HotelViewModel @Inject constructor(
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
+
+
+    //LOGICA RESERVAS
+    private val _reservations = MutableStateFlow<List<com.example.odyway.domain.Reservation>>(emptyList())
+    val reservations: StateFlow<List<com.example.odyway.domain.Reservation>> = _reservations.asStateFlow()
+
+    fun loadReservations(email: String) {
+        if (email.isBlank()) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            val result = hotelRepository.getGroupReservations(email)
+
+            result.onSuccess { list ->
+                _reservations.value = list
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }.onFailure { error ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = error.message ?: "No se pudieron cargar las reservas."
+                )
+            }
+        }
+    }
+
+    fun cancelReservation(resId: String, email: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            val result = hotelRepository.cancelReservationById(resId)
+
+            result.onSuccess {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                onSuccess()
+                loadReservations(email) // Recargamos la lista automáticamente tras borrar
+            }.onFailure { error ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = error.message ?: "No se pudo cancelar la reserva."
+                )
+            }
+        }
+    }
 }

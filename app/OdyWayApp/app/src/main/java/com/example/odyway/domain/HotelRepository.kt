@@ -19,4 +19,9 @@ interface HotelRepository {
         roomType: String,  // Añadido
         price: Double      // Añadido
     ): Result<Unit>
+
+    suspend fun getGroupReservations(guestEmail: String): Result<List<Reservation>>
+    suspend fun cancelReservationById(resId: String): Result<Unit>
+
+
 }
