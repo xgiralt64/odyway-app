@@ -6,6 +6,7 @@ import com.example.odyway.data.local.mapper.toDomain
 import com.example.odyway.data.local.mapper.toEntity
 import com.example.odyway.domain.AuthRepository
 import com.example.odyway.domain.Trip
+import com.example.odyway.domain.TripImage
 import com.example.odyway.domain.TripRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -113,5 +114,27 @@ class TripRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(Exception("Error borrando el viaje"))
         }
+    }
+
+    override suspend fun saveTripImage(tripId: String, localPath: String) {
+        // Guardamos la ruta de la imagen en Room
+        val entity = com.example.odyway.data.local.entity.TripImageEntity(
+            tripId = tripId,
+            imagePath = localPath
+        )
+        tripDao.insertTripImage(entity)
+    }
+
+    override fun getTripImages(tripId: String): Flow<List<TripImage>> {
+        // Leemos de Room y lo transformamos al modelo de Dominio
+        return tripDao.getImagesForTrip(tripId).map { entities ->
+            entities.map {
+                TripImage(id = it.id, tripId = it.tripId, imagePath = it.imagePath)
+            }
+        }
+    }
+
+    override suspend fun deleteTripImage(imageId: Int) {
+        tripDao.deleteTripImage(imageId)
     }
 }
