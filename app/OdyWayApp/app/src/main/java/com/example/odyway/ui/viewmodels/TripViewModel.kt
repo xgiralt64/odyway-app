@@ -207,4 +207,57 @@ class TripViewModel @Inject constructor(
     fun clearErrorMessage() {
         _uiErrorMessage.value = null
     }
+
+    private val _tripImages = kotlinx.coroutines.flow.MutableStateFlow<List<com.example.odyway.domain.TripImage>>(emptyList())
+    val tripImages: kotlinx.coroutines.flow.StateFlow<List<com.example.odyway.domain.TripImage>> = _tripImages.asStateFlow()
+
+    fun loadImagesForTrip(tripId: String) {
+        viewModelScope.launch {
+            tripRepository.getTripImages(tripId).collect { images ->
+                _tripImages.value = images
+            }
+        }
+    }
+
+    fun saveImagesToInternalStorage(context: android.content.Context, tripId: String, uris: List<android.net.Uri>) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            uris.forEach { uri ->
+                try {
+                    // 1. Generamos un nombre de archivo único para que no se sobreescriban
+                    val fileName = "trip_${tripId}_${System.currentTimeMillis()}_${java.util.UUID.randomUUID().toString().take(5)}.jpg"
+
+                    // 2. Apuntamos a la carpeta privada y segura de nuestra app
+                    val file = java.io.File(context.filesDir, fileName)
+
+                    // 3. Copiamos los bytes de la foto original a nuestro nuevo archivo
+                    context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                        file.outputStream().use { outputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                    }
+
+                    // 4. Guardamos la ruta absoluta y definitiva en Room
+                    tripRepository.saveTripImage(tripId, file.absolutePath)
+                } catch (e: Exception) {
+                    android.util.Log.e("TripViewModel", "Error al copiar la imagen: ${e.message}")
+                }
+            }
+        }
+    }
+
+    fun deleteTripImage(image: com.example.odyway.domain.TripImage) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                // Borramos el archivo físico del almacenamiento del móvil para liberar espacio
+                val file = java.io.File(image.imagePath)
+                if (file.exists()) {
+                    file.delete()
+                }
+                // Lo borramos de la base de datos de Room
+                tripRepository.deleteTripImage(image.id)
+            } catch (e: Exception) {
+                android.util.Log.e("TripViewModel", "Error al borrar imagen: ${e.message}")
+            }
+        }
+    }
 }
