@@ -15,13 +15,12 @@ interface HotelRepository {
         endDate: String,
         guestName: String,
         guestEmail: String,
-        hotelName: String, // Añadido
-        roomType: String,  // Añadido
-        price: Double      // Añadido
+        hotelName: String,
+        roomType: String,
+        price: Double
     ): Result<Unit>
 
     suspend fun getGroupReservations(guestEmail: String): Result<List<Reservation>>
-    suspend fun cancelReservationById(resId: String): Result<Unit>
-
+    suspend fun cancelReservationById(resId: String, hotelId: String): Result<Unit>
 
 }

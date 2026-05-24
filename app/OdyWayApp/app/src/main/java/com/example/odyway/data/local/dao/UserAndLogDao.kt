@@ -6,7 +6,7 @@ import com.example.odyway.data.local.entity.UserEntity
 
 @Dao
 interface UserAndLogDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUser(user: UserEntity)
 
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")

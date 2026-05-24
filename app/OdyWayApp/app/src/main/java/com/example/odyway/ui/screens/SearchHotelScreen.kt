@@ -18,11 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.odyway.BuildConfig
 import com.example.odyway.domain.Hotel
 import com.example.odyway.ui.viewmodels.HotelViewModel
+import com.example.odyway.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -33,7 +36,8 @@ import java.time.format.DateTimeFormatter
 fun SearchHotelScreen(
     hotelViewModel: HotelViewModel,
     onNavigateBack: () -> Unit,
-    onHotelClick: (String) -> Unit // Este parámetro se encarga de saltar a los detalles
+    // maneja la navegacion a la pantalla de detalles del hotel
+    onHotelClick: (String) -> Unit
 ) {
     val uiState by hotelViewModel.uiState.collectAsState()
 
@@ -44,10 +48,10 @@ fun SearchHotelScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Buscar Hoteles") },
+                title = { Text(stringResource(id = R.string.search_hotel_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.search_hotel_back_desc))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -64,7 +68,7 @@ fun SearchHotelScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
-            // PANEL DE BÚSQUEDA
+            // muestra el panel de busqueda de hoteles
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,7 +80,7 @@ fun SearchHotelScreen(
                     OutlinedTextField(
                         value = city,
                         onValueChange = { city = it },
-                        label = { Text("Ciutat (ex: Barcelona, Paris, London)") },
+                        label = { Text(stringResource(id = R.string.search_hotel_city_label)) },
                         leadingIcon = { Icon(Icons.Default.LocationCity, contentDescription = null) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
@@ -86,13 +90,13 @@ fun SearchHotelScreen(
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         DatePickerField(
-                            label = "Data Inici",
+                            label = stringResource(id = R.string.search_hotel_start_date),
                             selectedDate = startDate,
                             onDateSelected = { startDate = it },
                             modifier = Modifier.weight(1f)
                         )
                         DatePickerField(
-                            label = "Data Fi",
+                            label = stringResource(id = R.string.search_hotel_end_date),
                             selectedDate = endDate,
                             onDateSelected = { endDate = it },
                             modifier = Modifier.weight(1f)
@@ -112,12 +116,12 @@ fun SearchHotelScreen(
                     ) {
                         Icon(Icons.Default.Search, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Buscar Disponibilitat", fontWeight = FontWeight.Bold)
+                        Text(stringResource(id = R.string.search_hotel_button), fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
-            // GESTIÓN DE ESTADOS (Carga, Error, Éxito)
+            // gestiona los estados de carga, error y exito de la peticion
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -131,7 +135,7 @@ fun SearchHotelScreen(
                     )
                 }
             } else {
-                // LLISTA D'HOTELS
+                // muestra la lista de hoteles encontrados
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 16.dp),
@@ -140,7 +144,7 @@ fun SearchHotelScreen(
                     items(uiState.hotels) { hotel ->
                         HotelCardSimplified(
                             hotel = hotel,
-                            onClick = { onHotelClick(hotel.id) } // Dispara la navegación
+                            onClick = { onHotelClick(hotel.id) }
                         )
                     }
                 }
@@ -149,15 +153,13 @@ fun SearchHotelScreen(
     }
 }
 
-// =================================================================
-// COMPONENTS REUTILITZABLES
-// =================================================================
+// muestra la informacion resumida de un hotel en la lista
 @Composable
 fun HotelCardSimplified(hotel: Hotel, onClick: () -> Unit) {
     val minPrice = hotel.rooms.minOfOrNull { it.price } ?: 0.0
 
-    // 1. Replicamos la lógica del profesor: IP base + ruta relativa
-    val baseUrl = "http://15.224.84.148:8090"
+    // construye la URL completa de la imagen del hotel
+    val baseUrl = BuildConfig.HOTELS_API_URL
     val imageUrl = if (hotel.imageUrl.startsWith("http")) hotel.imageUrl else baseUrl + hotel.imageUrl
 
     Card(
@@ -170,11 +172,9 @@ fun HotelCardSimplified(hotel: Hotel, onClick: () -> Unit) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-
-            // Usamos el metodo  (Image + rememberAsyncImagePainter)
             Image(
                 painter = coil.compose.rememberAsyncImagePainter(model = imageUrl),
-                contentDescription = "Imatge de ${hotel.name}",
+                contentDescription = stringResource(id = R.string.search_hotel_image_desc, hotel.name),
                 modifier = Modifier
                     .weight(0.35f)
                     .fillMaxHeight(),
@@ -189,7 +189,7 @@ fun HotelCardSimplified(hotel: Hotel, onClick: () -> Unit) {
             ) {
                 Column {
                     Text(
-                        text = "${hotel.name} (${hotel.id})",
+                        text = stringResource(id = R.string.search_hotel_name_format, hotel.name, hotel.id),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -203,7 +203,7 @@ fun HotelCardSimplified(hotel: Hotel, onClick: () -> Unit) {
                     )
                 }
                 Text(
-                    text = "From $minPrice€",
+                    text = stringResource(id = R.string.search_hotel_price_format, minPrice.toString()),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -212,6 +212,7 @@ fun HotelCardSimplified(hotel: Hotel, onClick: () -> Unit) {
     }
 }
 
+// muestra un campo de texto que abre un selector de fecha
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
@@ -230,7 +231,7 @@ fun DatePickerField(
         readOnly = true,
         leadingIcon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
         modifier = modifier.clickable { showDialog = true },
-        enabled = false, // Impide que se abra el teclado y fuerza el clic en toda la caja
+        enabled = false,
         colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -249,10 +250,10 @@ fun DatePickerField(
                         onDateSelected(date)
                     }
                     showDialog = false
-                }) { Text("OK") }
+                }) { Text(stringResource(id = R.string.search_hotel_date_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) { Text("Cancel·lar") }
+                TextButton(onClick = { showDialog = false }) { Text(stringResource(id = R.string.search_hotel_date_cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)

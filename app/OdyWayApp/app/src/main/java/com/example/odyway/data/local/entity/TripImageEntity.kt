@@ -15,7 +15,7 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE // Si se borra el viaje, se borran sus fotos de la BBDD
         )
     ],
-    indices = [Index("tripId")] // Optimiza las búsquedas
+    indices = [Index("tripId")]
 )
 data class TripImageEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

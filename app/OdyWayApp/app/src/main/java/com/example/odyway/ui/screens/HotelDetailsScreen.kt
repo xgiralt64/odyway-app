@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -19,9 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.odyway.BuildConfig
+import com.example.odyway.R
 import com.example.odyway.domain.Room
 import com.example.odyway.ui.viewmodels.HotelViewModel
 import java.time.LocalDate
@@ -48,20 +50,21 @@ fun HotelDetailsScreen(
     LaunchedEffect(uiState.errorMessage) {
         if (uiState.errorMessage != null) {
             Toast.makeText(context, uiState.errorMessage, Toast.LENGTH_LONG).show()
-            hotelViewModel.clearError() // Limpiamos el error después de mostrarlo
+            // Limpia el estado de error tras mostrarlo
+            hotelViewModel.clearError()
         }
     }
 
-    val baseUrl = "http://15.224.84.148:8090"
+    val baseUrl = BuildConfig.HOTELS_API_URL
 
-    // CÁLCULO DE LAS NOCHES
+    // Calcula el total de noches de la estancia
     var nights = 1L
     try {
         if (uiState.searchStartDate.isNotEmpty() && uiState.searchEndDate.isNotEmpty()) {
             val start = LocalDate.parse(uiState.searchStartDate)
             val end = LocalDate.parse(uiState.searchEndDate)
             nights = ChronoUnit.DAYS.between(start, end)
-            if (nights <= 0) nights = 1L // Mínimo 1 noche
+            if (nights <= 0) nights = 1L
         }
     } catch (e: Exception) {
         nights = 1L
@@ -69,11 +72,17 @@ fun HotelDetailsScreen(
 
     Scaffold(
         topBar = {
-            // Aplicamos los colores corporativos: Barra azul oscuro, texto e iconos blancos
             TopAppBar(
-                title = { Text("${hotel.name} (${hotel.id})", fontWeight = FontWeight.SemiBold) },
+                title = {
+                    Text(
+                        stringResource(id = R.string.hotel_details_title_format, hotel.name, hotel.id),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, "Volver") }
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.hotel_details_back_desc))
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -90,13 +99,13 @@ fun HotelDetailsScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            // Banner de la estancia (Fondo suave para destacarlo)
+            // Muestra el resumen de fechas y noches de la estancia
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                color = MaterialTheme.colorScheme.surface, // blanco en tema claro
+                color = MaterialTheme.colorScheme.surface,
                 tonalElevation = 2.dp
             ) {
                 Row(
@@ -105,28 +114,25 @@ fun HotelDetailsScreen(
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     Icon(
                         imageVector = Icons.Default.CalendarMonth,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(26.dp)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column(modifier = Modifier.weight(1f)) {
-
                         Text(
-                            text = "Estada",
+                            text = stringResource(id = R.string.hotel_details_stay),
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onBackground
                         )
 
                         Spacer(modifier = Modifier.height(2.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
-
                             Text(
                                 text = uiState.searchStartDate,
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -154,7 +160,7 @@ fun HotelDetailsScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "$nights nits",
+                            text = stringResource(id = R.string.hotel_details_nights, nights),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -162,9 +168,7 @@ fun HotelDetailsScreen(
                 }
             }
 
-
-
-            // FOTO GRANDE DEL HOTEL con un ligero borde redondeado por abajo
+            // Muestra la imagen principal del hotel
             val hotelImgUrl = if (hotel.imageUrl.startsWith("http")) hotel.imageUrl else baseUrl + hotel.imageUrl
             Image(
                 painter = coil.compose.rememberAsyncImagePainter(model = hotelImgUrl),
@@ -179,6 +183,7 @@ fun HotelDetailsScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Muestra la lista de habitaciones disponibles
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -187,7 +192,6 @@ fun HotelDetailsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(hotel.rooms) { room ->
-                    // Tarjetas de habitaciones con elevación para que destaquen
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -195,23 +199,24 @@ fun HotelDetailsScreen(
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            // Título de la habitación
+
+                            val formattedRoomType = room.roomType.replaceFirstChar { it.uppercase() }
                             Text(
-                                text = "${room.roomType.replaceFirstChar { it.uppercase() }} (${room.id})",
+                                text = stringResource(id = R.string.hotel_details_room_title, formattedRoomType, room.id),
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.titleLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = "${room.price} € / nit",
+                                text = stringResource(id = R.string.hotel_details_price_per_night, room.price.toString()),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodyMedium
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // FOTO DE LA HABITACIÓN
+                            // Muestra la imagen de la habitacion si esta disponible
                             if (room.images.isNotEmpty()) {
                                 val roomImgUrl = if (room.images.first().startsWith("http")) room.images.first() else baseUrl + room.images.first()
                                 Image(
@@ -228,31 +233,39 @@ fun HotelDetailsScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             val totalPrice = room.price * nights
+
+                            // Muestra el precio total y la accion de reserva
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Precio total en azul corporativo
                                 Column {
-                                    Text(text = "Preu Total", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     Text(
-                                        text = "€$totalPrice",
+                                        text = stringResource(id = R.string.hotel_details_total_price),
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.hotel_details_price_format, totalPrice.toString()),
                                         fontWeight = FontWeight.ExtraBold,
                                         fontSize = 20.sp,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
                                 }
-                                // Botón en rojo (error)
                                 Button(
                                     onClick = { selectedRoom = room },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.error,
                                         contentColor = MaterialTheme.colorScheme.onError
                                     ),
-                                    shape = RoundedCornerShape(50) // Botón muy redondeado
+                                    shape = RoundedCornerShape(50)
                                 ) {
-                                    Text("Reservar", fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.hotel_details_reserve_button),
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 8.dp)
+                                    )
                                 }
                             }
                         }
@@ -262,19 +275,27 @@ fun HotelDetailsScreen(
         }
     }
 
+    // Gestiona el dialogo de confirmacion de reserva
     if (selectedRoom != null) {
         val totalPrice = selectedRoom!!.price * nights
+        val successMessage = context.getString(R.string.hotel_details_reserve_success)
 
         AlertDialog(
             onDismissRequest = { selectedRoom = null },
-            title = { Text("Confirmar Reserva", fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(id = R.string.hotel_details_confirm_title), fontWeight = FontWeight.Bold) },
             text = {
                 Text(
-                    "Vols confirmar la reserva de l'habitació ${selectedRoom!!.roomType} per un total de $totalPrice€ a l'hotel ${hotel.name} des del ${uiState.searchStartDate} fins al ${uiState.searchEndDate}?"
+                    stringResource(
+                        id = R.string.hotel_details_confirm_text,
+                        selectedRoom!!.roomType,
+                        totalPrice.toString(),
+                        hotel.name,
+                        uiState.searchStartDate,
+                        uiState.searchEndDate
+                    )
                 )
             },
             confirmButton = {
-                // Botón de confirmar en rojo
                 Button(
                     onClick = {
                         hotelViewModel.reserveRoom(
@@ -286,7 +307,7 @@ fun HotelDetailsScreen(
                             roomType = selectedRoom!!.roomType,
                             price = totalPrice,
                             onSuccess = {
-                                Toast.makeText(context, "Reserva confirmada i guardada!", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, successMessage, Toast.LENGTH_LONG).show()
                                 selectedRoom = null
                                 onReservationComplete()
                             }
@@ -296,11 +317,11 @@ fun HotelDetailsScreen(
                         containerColor = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError
                     )
-                ) { Text("Confirmar") }
+                ) { Text(stringResource(id = R.string.hotel_details_confirm)) }
             },
             dismissButton = {
                 TextButton(onClick = { selectedRoom = null }) {
-                    Text("Cancel·lar", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(id = R.string.hotel_details_cancel), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )

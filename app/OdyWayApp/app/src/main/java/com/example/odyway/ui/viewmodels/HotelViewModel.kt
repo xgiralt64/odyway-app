@@ -12,13 +12,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// 1. Añadimos las fechas de búsqueda al Estado Global de la UI
 data class HotelSearchUiState(
     val isLoading: Boolean = false,
     val hotels: List<Hotel> = emptyList(),
     val errorMessage: String? = null,
-    val searchStartDate: String = "", // AÑADIDO
-    val searchEndDate: String = ""    // AÑADIDO
+    val searchStartDate: String = "",
+    val searchEndDate: String = ""
 )
 
 @HiltViewModel
@@ -31,9 +30,8 @@ class HotelViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HotelSearchUiState())
     val uiState: StateFlow<HotelSearchUiState> = _uiState.asStateFlow()
 
-    // ==========================================
     // BÚSQUEDA DE HOTELES
-    // ==========================================
+
     fun searchHotels(city: String, startDate: String, endDate: String) {
         if (city.isBlank() || startDate.isBlank() || endDate.isBlank()) {
             _uiState.value = _uiState.value.copy(
@@ -48,8 +46,8 @@ class HotelViewModel @Inject constructor(
                 isLoading = true,
                 errorMessage = null,
                 hotels = emptyList(),
-                searchStartDate = startDate, // GUARDADO
-                searchEndDate = endDate      // GUARDADO
+                searchStartDate = startDate,
+                searchEndDate = endDate
             )
 
             Log.d(tag, "Buscando hoteles en $city del $startDate al $endDate...")
@@ -71,9 +69,8 @@ class HotelViewModel @Inject constructor(
         }
     }
 
-    // ==========================================
-    // RESERVAR HABITACIÓN (Simplificado gracias al estado)
-    // ==========================================
+    // RESERVAR HABITACION
+
     fun reserveRoom(
         hotelId: String,
         roomId: String,
@@ -143,10 +140,12 @@ class HotelViewModel @Inject constructor(
         }
     }
 
-    fun cancelReservation(resId: String, email: String, onSuccess: () -> Unit) {
+    fun cancelReservation(resId: String, hotelId: String, email: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            val result = hotelRepository.cancelReservationById(resId)
+
+            // Le pasamos tanto el ID de la reserva como el del hotel
+            val result = hotelRepository.cancelReservationById(resId, hotelId)
 
             result.onSuccess {
                 _uiState.value = _uiState.value.copy(isLoading = false)

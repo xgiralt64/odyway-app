@@ -11,11 +11,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface HotelApi {
-
-    // ==========================================
-    // FASES 1 y 2: BÚSQUEDA Y RESERVA
-    // ==========================================
-
     // Buscar disponibilidad de hoteles
     @GET("/hotels/{group_id}/availability")
     suspend fun checkAvailability(

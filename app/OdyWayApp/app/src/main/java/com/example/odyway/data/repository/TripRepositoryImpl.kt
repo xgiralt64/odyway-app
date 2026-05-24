@@ -89,7 +89,7 @@ class TripRepositoryImpl @Inject constructor(
                 return Result.failure(Exception("La fecha de inicio no puede ser posterior a la fecha de fin"))
             }
 
-            // Validar duplicados al actualizar (excluyendo el propio viaje que estamos editando)
+            // Validar duplicados al actualizar excluyendo el propio viaje que estamos editando
             val existingTrip = tripDao.getTripById(trip.id)
             if (existingTrip != null && existingTrip.title.lowercase() != trip.title.trim().lowercase()) {
                 val duplicateCount = tripDao.countTripsByTitle(currentUserId, trip.title.trim())

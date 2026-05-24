@@ -11,6 +11,7 @@ import com.example.odyway.domain.Hotel
 import com.example.odyway.domain.HotelRepository
 import com.example.odyway.domain.Reservation
 import com.google.firebase.auth.FirebaseAuth
+import com.example.odyway.BuildConfig
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class HotelRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : HotelRepository {
 
-    private val groupId = "G08"
+    private val groupId = BuildConfig.GROUP_ID
     private val tag = "HotelRepoImpl"
 
     override suspend fun checkAvailability(
@@ -66,13 +67,13 @@ class HotelRepositoryImpl @Inject constructor(
                     val newTrip = TripEntity(
                         id = UUID.randomUUID().toString(),
                         userId = currentUserId,
-                        title = "Reserva: $hotelName", // Guardamos el nombre del hotel
-                        destination = hotelId, // O la ciudad si la pasas
-                        description = "Habitación: $roomType", // Guardamos el tipo
+                        title = hotelName,
+                        destination = hotelId,
+                        description = "Room $roomId",
                         status = "RESERVED",
                         startDate = LocalDate.parse(startDate),
                         endDate = LocalDate.parse(endDate),
-                        budget = price // Guardamos el precio real
+                        budget = price
                     )
                     tripDao.insertTrip(newTrip)
                     Log.i(tag, "Reserva guardada en Room como Trip: ${newTrip.id}")
@@ -141,13 +142,18 @@ class HotelRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun cancelReservationById(resId: String): Result<Unit> {
+    override suspend fun cancelReservationById(resId: String, hotelId: String): Result<Unit> {
         return try {
-            // Borramos la reserva en la API remota
+            // Borramos la reserva en la API Remota
             val response = hotelApi.cancelReservationById(resId)
 
             if (response.isSuccessful) {
                 Log.i(tag, "Reserva $resId cancelada correctamente en la API.")
+
+                // Borramos el viaje local en ROOM
+                tripDao.deleteReservedTripLocally(hotelId)
+                Log.i(tag, "Viaje local vinculado al hotel $hotelId eliminado de Room.")
+
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Error al cancelar la reserva en la API."))

@@ -53,6 +53,20 @@
     <string name="profile_no_favorites">Aún no has añadido favoritos</string>
     <string name="profile_stats_coming_soon">Las estadísticas de viaje estarán disponibles pronto</string>
 
+    <!-- Profile Screen Additions -->
+    <string name="profile_tab_reserves">Reservas</string>
+    <string name="profile_default_user">@odyway_user</string>
+    <string name="profile_no_active_reserves">No tienes ninguna reserva activa</string>
+    <string name="profile_cancel_reserve_title">Cancelar Reserva</string>
+    <string name="profile_cancel_reserve_text">¿Seguro que quieres cancelar la reserva en el hotel %1$s? Esta acción eliminará la reserva de la API y de tu dispositivo.</string>
+    <string name="profile_reserve_cancelled_success">¡Reserva cancelada con éxito!</string>
+    <string name="profile_confirm_button">Confirmar</string>
+    <string name="profile_back_button">Atrás</string>
+    <string name="profile_hotel_fallback">Hotel (%1$s)</string>
+    <string name="profile_room_label">Habitación: %1$s</string>
+    <string name="profile_reserve_id">ID: %1$s</string>
+    <string name="profile_cancel_reserve_desc">Cancelar reserva</string>
+
     <!-- preferencesscreen -->
     <string name="prefs_section_general">GENERAL</string>
     <string name="prefs_section_notifications">NOTIFICACIONES</string>
@@ -147,6 +161,7 @@
     <string name="action_cancel">Cancelar</string>
     <string name="action_edit">Editar</string>
     <string name="action_options">Opciones</string>
+    <string name="trip_hotel_included">Hotel Incluido</string>
 
     <!-- addEdittripScreen -->
     <string name="edit_trip_title">Editar Viaje</string>
@@ -205,5 +220,40 @@
     <string name="already_have_account">¿Ya tienes cuenta?</string>
     <string name="login_here">Inicia sesión</string>
 
+    <!-- Hotel Details Screen -->
+    <string name="hotel_details_title_format">%1$s (%2$s)</string>
+    <string name="hotel_details_room_title">%1$s (%2$s)</string>
+    <string name="hotel_details_back_desc">Volver</string>
+    <string name="hotel_details_stay">Estancia</string>
+    <string name="hotel_details_nights">%1$d noches</string>
+    <string name="hotel_details_price_per_night">%1$s € / noche</string>
+    <string name="hotel_details_total_price">Precio Total</string>
+    <string name="hotel_details_price_format">€%1$s</string>
+    <string name="hotel_details_reserve_button">Reservar</string>
+    <string name="hotel_details_confirm_title">Confirmar Reserva</string>
+    <string name="hotel_details_confirm_text">¿Quieres confirmar la reserva de la habitación %1$s por un total de %2$s€ en el hotel %3$s desde el %4$s hasta el %5$s?</string>
+    <string name="hotel_details_reserve_success">¡Reserva confirmada y guardada!</string>
+    <string name="hotel_details_confirm">Confirmar</string>
+    <string name="hotel_details_cancel">Cancelar</string>
+
+    <!-- Search Hotel Screen -->
+    <string name="search_hotel_title">Buscar Hoteles</string>
+    <string name="search_hotel_back_desc">Volver</string>
+    <string name="search_hotel_city_label">Ciudad (ej: Barcelona, París, Londres)</string>
+    <string name="search_hotel_start_date">Fecha Inicio</string>
+    <string name="search_hotel_end_date">Fecha Fin</string>
+    <string name="search_hotel_button">Buscar Disponibilidad</string>
+    <string name="search_hotel_image_desc">Imagen de %1$s</string>
+    <string name="search_hotel_name_format">%1$s (%2$s)</string>
+    <string name="search_hotel_price_format">Desde %1$s€</string>
+    <string name="search_hotel_date_ok">Aceptar</string>
+    <string name="search_hotel_date_cancel">Cancelar</string>
+
+    <!-- Trip Detail Screen -->
+    <string name="dialog_delete_photo_title">¿Eliminar foto?</string>
+    <string name="dialog_delete_photo_text">¿Seguro que quieres eliminar esta foto de la galería del viaje? Esta acción no se puede deshacer.</string>
+    <string name="gallery_empty">Aún no hay fotos</string>
+    <string name="costs_mock_amount">35.00 €</string>
+    <string name="costs_total_format">%1$s €</string>
 
 </resources>

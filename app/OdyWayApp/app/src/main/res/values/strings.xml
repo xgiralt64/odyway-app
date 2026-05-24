@@ -54,6 +54,21 @@
     <string name="profile_no_favorites">You haven\'t added favorites yet</string>
     <string name="profile_stats_coming_soon">Travel statistics coming soon</string>
 
+    <!-- Profile Screen Additions -->
+    <string name="profile_tab_reserves">Reserves</string>
+    <string name="profile_default_user">@odyway_user</string>
+    <string name="profile_no_active_reserves">You have no active reservations</string>
+    <string name="profile_cancel_reserve_title">Cancel Reservation</string>
+    <string name="profile_cancel_reserve_text">Are you sure you want to cancel the reservation at hotel %1$s? This action will remove the reservation from the API and your device.</string>
+    <string name="profile_reserve_cancelled_success">Reservation successfully cancelled!</string>
+    <string name="profile_confirm_button">Confirm</string>
+    <string name="profile_back_button">Back</string>
+    <string name="profile_hotel_fallback">Hotel (%1$s)</string>
+    <string name="profile_room_label">Room: %1$s</string>
+    <string name="profile_reserve_id">ID: %1$s</string>
+    <string name="profile_cancel_reserve_desc">Cancel reservation</string>
+
+
     <!-- preferencesscreen -->
     <string name="prefs_section_general">GENERAL</string>
     <string name="prefs_section_notifications">NOTIFICATIONS</string>
@@ -148,6 +163,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_edit">Edit</string>
     <string name="action_options">Options</string>
+    <string name="trip_hotel_included">Hotel Included</string>
 
     <!-- addEdittripScreen -->
     <string name="edit_trip_title">Edit Trip</string>
@@ -208,5 +224,40 @@
     <string name="already_have_account">Already have an account?</string>
     <string name="login_here">Log in</string>
 
+    <!-- Hotel Details Screen -->
+    <string name="hotel_details_title_format">%1$s (%2$s)</string>
+    <string name="hotel_details_room_title">%1$s (%2$s)</string>
+    <string name="hotel_details_back_desc">Back</string>
+    <string name="hotel_details_stay">Stay</string>
+    <string name="hotel_details_nights">%1$d nights</string>
+    <string name="hotel_details_price_per_night">%1$s € / night</string>
+    <string name="hotel_details_total_price">Total Price</string>
+    <string name="hotel_details_price_format">€%1$s</string>
+    <string name="hotel_details_reserve_button">Reserve</string>
+    <string name="hotel_details_confirm_title">Confirm Reservation</string>
+    <string name="hotel_details_confirm_text">Do you want to confirm the reservation for the %1$s room for a total of %2$s€ at the hotel %3$s from %4$s to %5$s?</string>
+    <string name="hotel_details_reserve_success">Reservation confirmed and saved!</string>
+    <string name="hotel_details_confirm">Confirm</string>
+    <string name="hotel_details_cancel">Cancel</string>
+
+    <!-- Search Hotel Screen -->
+    <string name="search_hotel_title">Search Hotels</string>
+    <string name="search_hotel_back_desc">Back</string>
+    <string name="search_hotel_city_label">City (e.g., Barcelona, Paris, London)</string>
+    <string name="search_hotel_start_date">Start Date</string>
+    <string name="search_hotel_end_date">End Date</string>
+    <string name="search_hotel_button">Search Availability</string>
+    <string name="search_hotel_image_desc">Image of %1$s</string>
+    <string name="search_hotel_name_format">%1$s (%2$s)</string>
+    <string name="search_hotel_price_format">From %1$s€</string>
+    <string name="search_hotel_date_ok">OK</string>
+    <string name="search_hotel_date_cancel">Cancel</string>
+
+    <!-- Trip Detail Screen -->
+    <string name="dialog_delete_photo_title">Delete photo?</string>
+    <string name="dialog_delete_photo_text">Are you sure you want to delete this photo from the trip gallery? This action cannot be undone.</string>
+    <string name="gallery_empty">No photos yet</string>
+    <string name="costs_mock_amount">35.00 €</string>
+    <string name="costs_total_format">%1$s €</string>
 
 </resources>

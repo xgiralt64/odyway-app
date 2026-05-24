@@ -36,4 +36,8 @@ interface TripDao {
 
     @Query("DELETE FROM trip_images WHERE id = :imageId")
     suspend fun deleteTripImage(imageId: Int)
+
+
+    @Query("DELETE FROM trips WHERE status = 'RESERVED' AND destination = :hotelId")
+    suspend fun deleteReservedTripLocally(hotelId: String)
 }

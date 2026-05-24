@@ -21,8 +21,8 @@ data class RoomDto(
 data class ReserveRequestDto(
     @SerializedName("hotel_id") val hotelId: String,
     @SerializedName("room_id") val roomId: String,
-    @SerializedName("start_date") val startDate: String, // Formato "YYYY-MM-DD"
-    @SerializedName("end_date") val endDate: String,     // Formato "YYYY-MM-DD"
+    @SerializedName("start_date") val startDate: String, // formato "YYYY-MM-DD"
+    @SerializedName("end_date") val endDate: String,
     @SerializedName("guest_name") val guestName: String,
     @SerializedName("guest_email") val guestEmail: String
 )

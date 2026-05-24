@@ -46,6 +46,7 @@ import com.example.odyway.ui.viewmodels.TripViewModel
 import java.io.File
 import java.time.format.DateTimeFormatter
 
+// Gestiona la pantalla de detalles del viaje y sus pestañas
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripDetailScreen(
@@ -58,21 +59,14 @@ fun TripDetailScreen(
     val trips by tripViewModel.trips.collectAsState()
     val currentTrip = trips.find { it.id == tripId }
     val itinerary by tripViewModel.currentItinerary.collectAsState()
-
-    // Obtenemos las imágenes reales guardadas en Room
     val tripImages by tripViewModel.tripImages.collectAsState()
 
     var showDeleteTripDialog by remember { mutableStateOf(false) }
-
-    // ==========================================
-    // NUEVO ESTADO: Diálogo de borrar foto
-    // ==========================================
-    // Guardamos la imagen que el usuario quiere borrar (o null si no quiere borrar ninguna)
     var imageToDelete by remember { mutableStateOf<TripImage?>(null) }
 
     val context = LocalContext.current
 
-    // Lanzador del PhotoPicker de Android (Selector unificado del sistema con Google Photos)
+    // Lanza el selector de fotos del sistema
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia()
     ) { uris ->
@@ -84,7 +78,7 @@ fun TripDetailScreen(
     LaunchedEffect(currentTrip?.id) {
         currentTrip?.id?.let {
             tripViewModel.loadItineraryForTrip(it)
-            tripViewModel.loadImagesForTrip(it) // Cargamos las fotos al abrir la pantalla
+            tripViewModel.loadImagesForTrip(it)
         }
     }
 
@@ -113,7 +107,7 @@ fun TripDetailScreen(
             item {
                 TripDetailHeader(
                     trip = currentTrip,
-                    tripImages = tripImages, // Pasamos las imágenes para la foto de portada
+                    tripImages = tripImages,
                     onNavigateBack = onNavigateBack,
                     onEditTripClick = onEditTripClick,
                     onDeleteTripClick = { showDeleteTripDialog = true }
@@ -154,13 +148,11 @@ fun TripDetailScreen(
                 2 -> galleryTabContent(
                     images = tripImages,
                     onAddPhotoClick = {
-                        // Lanzamos el selector moderno del sistema (ImageOnly)
                         photoPickerLauncher.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                         )
                     },
                     onDeletePhotoClick = { image ->
-                        // En lugar de borrar directamente, guardamos la imagen en el estado para mostrar el diálogo
                         imageToDelete = image
                     }
                 )
@@ -168,7 +160,7 @@ fun TripDetailScreen(
         }
     }
 
-    // DIÁLOGO DE BORRAR VIAJE ENTERO (Ya estaba)
+    // Muestra el dialogo para borrar el viaje entero
     if (showDeleteTripDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteTripDialog = false },
@@ -187,45 +179,37 @@ fun TripDetailScreen(
         )
     }
 
-    // ==========================================
-    // NUEVO DIÁLOGO: Confirmar borrar foto
-    // ==========================================
+    // Muestra el dialogo para confirmar el borrado de una foto
     imageToDelete?.let { image ->
         AlertDialog(
-            onDismissRequest = { imageToDelete = null }, // Si cancela o pincha fuera, cerramos
-            title = { Text("Eliminar foto?", fontWeight = FontWeight.Bold) },
-            text = { Text("Segur que vols eliminar aquesta foto de la galeria del viatge? Aquesta acció no es pot desfer.") },
+            onDismissRequest = { imageToDelete = null },
+            title = { Text(stringResource(id = R.string.dialog_delete_photo_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(id = R.string.dialog_delete_photo_text)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        // Aquí ejecutamos el borrado real
                         tripViewModel.deleteTripImage(image)
-                        imageToDelete = null // Cerramos el diálogo
+                        imageToDelete = null
                     }
                 ) {
-                    Text("Eliminar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.action_delete), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { imageToDelete = null }) {
-                    Text("Cancel·lar", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(id = R.string.action_cancel), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
     }
 }
 
-// ---------------------------------------------------------------------------------------------------
-// El resto de componentes (TripDetailHeader, itineraryTabContent, costsTabContent, galleryTabContent...)
-// permanecen EXACTAMENTE IGUAL que en el paso anterior. No hay que cambiar nada más.
-// ---------------------------------------------------------------------------------------------------
-
+// Muestra la cabecera con la imagen principal del viaje y opciones
 @Composable
 fun TripDetailHeader(trip: Trip, tripImages: List<TripImage>, onNavigateBack: () -> Unit, onEditTripClick: () -> Unit, onDeleteTripClick: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-        // Mostramos la primera foto de la galería como portada, si no tiene, mostramos la de por defecto
         if (tripImages.isNotEmpty()) {
             AsyncImage(
                 model = File(tripImages.first().imagePath),
@@ -235,7 +219,7 @@ fun TripDetailHeader(trip: Trip, tripImages: List<TripImage>, onNavigateBack: ()
             )
         } else {
             Image(
-                painter = painterResource(id = R.drawable.paris_example), // Tu imagen por defecto
+                painter = painterResource(id = R.drawable.paris_example),
                 contentDescription = stringResource(R.string.trips_photo_desc),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -293,6 +277,7 @@ fun TripDetailHeader(trip: Trip, tripImages: List<TripImage>, onNavigateBack: ()
     }
 }
 
+// Muestra el contenido de la pestaña de itinerario
 fun androidx.compose.foundation.lazy.LazyListScope.itineraryTabContent(
     itinerary: List<ItineraryItem>,
     tripId: String,
@@ -334,6 +319,7 @@ fun androidx.compose.foundation.lazy.LazyListScope.itineraryTabContent(
     item { Spacer(modifier = Modifier.height(60.dp)) }
 }
 
+// Muestra el resumen de una actividad en el itinerario
 @Composable
 fun ActivityCardSummary(activity: ItineraryItem) {
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -350,6 +336,7 @@ fun ActivityCardSummary(activity: ItineraryItem) {
     HorizontalDivider(modifier = Modifier.padding(start = 80.dp, end = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 }
 
+// Muestra el contenido de la pestaña de gastos
 fun androidx.compose.foundation.lazy.LazyListScope.costsTabContent(trip: Trip, itinerary: List<ItineraryItem>) {
     val totalSpent = 117.50
     val progress = (totalSpent / trip.budget).toFloat()
@@ -358,7 +345,7 @@ fun androidx.compose.foundation.lazy.LazyListScope.costsTabContent(trip: Trip, i
     item {
         Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary), shape = RoundedCornerShape(16.dp)) {
             Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "$totalSpent €", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onPrimary)
+                Text(text = stringResource(R.string.costs_total_format, totalSpent.toString()), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onPrimary)
                 Spacer(modifier = Modifier.height(8.dp))
                 LinearProgressIndicator(progress = progress, modifier = Modifier.fillMaxWidth().height(6.dp).clip(CircleShape), color = MaterialTheme.colorScheme.error, trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f))
                 Spacer(modifier = Modifier.height(8.dp))
@@ -385,13 +372,14 @@ fun androidx.compose.foundation.lazy.LazyListScope.costsTabContent(trip: Trip, i
                 Text(text = activity.title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                 Text(text = stringResource(R.string.costs_activity_label), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
             }
-            Text(text = "35.00 €", fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onBackground)
+            Text(text = stringResource(R.string.costs_mock_amount), fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onBackground)
         }
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     }
     item { Spacer(modifier = Modifier.height(60.dp)) }
 }
 
+// Muestra el contenido de la pestaña de galeria
 fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(
     images: List<TripImage>,
     onAddPhotoClick: () -> Unit,
@@ -411,7 +399,7 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(
     if (images.isEmpty()) {
         item {
             Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                Text("Encara no hi ha fotos", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                Text(stringResource(R.string.gallery_empty), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
             }
         }
     } else {
@@ -420,7 +408,6 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(
                 for (image in rowImages) {
                     Box(modifier = Modifier.weight(1f).aspectRatio(1f).clip(RoundedCornerShape(8.dp))) {
 
-                        // Cargamos la imagen real usando Coil y File
                         AsyncImage(
                             model = File(image.imagePath),
                             contentDescription = stringResource(R.string.trips_photo_desc),
@@ -428,7 +415,6 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(
                             modifier = Modifier.fillMaxSize()
                         )
 
-                        // Botón de borrar encima de la imagen
                         IconButton(
                             onClick = { onDeletePhotoClick(image) },
                             modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).background(Color.Black.copy(alpha = 0.5f), CircleShape).size(32.dp)
@@ -437,7 +423,6 @@ fun androidx.compose.foundation.lazy.LazyListScope.galleryTabContent(
                         }
                     }
                 }
-                // Si la fila solo tiene una foto (impar), añadimos un hueco vacío
                 if (rowImages.size == 1) Spacer(modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(8.dp))

@@ -62,9 +62,7 @@ class AuthRepositoryImpl @Inject constructor(
 
             Log.i(TAG, "Inicio de sesión exitoso. UID: $userId")
 
-            // =================================================================
-            // SOLUCIÓN DEFINITIVA: Sincronizar el usuario de Firebase con Room
-            // =================================================================
+            // Sincronizar el usuario de Firebase con Room
             if (user != null) {
                 val userEntity = UserEntity(
                     id = user.uid,
@@ -74,7 +72,7 @@ class AuthRepositoryImpl @Inject constructor(
                     profileImageUrl = user.photoUrl?.toString(),
                     birthDate = 0L // Valor por defecto
                 )
-                // Insertamos el usuario. Si ya existe, OnConflictStrategy.REPLACE (en tu DAO) lo actualizará
+                // Insertamos el usuario. Si ya existe, OnConflictStrategy.REPLACE lo actualizará
                 userAndLogDao.insertUser(userEntity)
                 Log.i(TAG, "Usuario sincronizado correctamente en la base de datos local (Room).")
             }

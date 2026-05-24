@@ -53,6 +53,20 @@
     <string name="profile_no_favorites">Encara no has afegit preferits</string>
     <string name="profile_stats_coming_soon">Les estadístiques de viatge estaran disponibles aviat</string>
 
+    <!-- Profile Screen Additions -->
+    <string name="profile_tab_reserves">Reserves</string>
+    <string name="profile_default_user">@odyway_user</string>
+    <string name="profile_no_active_reserves">No tens cap reserva activa</string>
+    <string name="profile_cancel_reserve_title">Cancel·lar Reserva</string>
+    <string name="profile_cancel_reserve_text">Segur que vols cancel·lar la reserva a l\'hotel %1$s? Aquesta acció eliminarà la reserva de la API i del teu mòbil.</string>
+    <string name="profile_reserve_cancelled_success">Reserva cancel·lada amb èxit!</string>
+    <string name="profile_confirm_button">Confirmar</string>
+    <string name="profile_back_button">Enrere</string>
+    <string name="profile_hotel_fallback">Hotel (%1$s)</string>
+    <string name="profile_room_label">Habitació: %1$s</string>
+    <string name="profile_reserve_id">ID: %1$s</string>
+    <string name="profile_cancel_reserve_desc">Cancel·lar reserva</string>
+
     <!-- preferencesscreen -->
     <string name="prefs_section_general">GENERAL</string>
     <string name="prefs_section_notifications">NOTIFICACIONS</string>
@@ -148,6 +162,7 @@
     <string name="action_cancel">Cancel·lar</string>
     <string name="action_edit">Editar</string>
     <string name="action_options">Opcions</string>
+    <string name="trip_hotel_included">Hotel Inclòs</string>
 
     <!-- addEdittripScreen -->
     <string name="edit_trip_title">Editar Viatge</string>
@@ -208,7 +223,42 @@
     <string name="already_have_account">Ja tens un compte?</string>
     <string name="login_here">Inicia sessió</string>
 
+    <!-- Hotel Details Screen -->
+    <string name="hotel_details_title_format">%1$s (%2$s)</string>
+    <string name="hotel_details_room_title">%1$s (%2$s)</string>
+    <string name="hotel_details_back_desc">Enrere</string>
+    <string name="hotel_details_stay">Estada</string>
+    <string name="hotel_details_nights">%1$d nits</string>
+    <string name="hotel_details_price_per_night">%1$s € / nit</string>
+    <string name="hotel_details_total_price">Preu Total</string>
+    <string name="hotel_details_price_format">€%1$s</string>
+    <string name="hotel_details_reserve_button">Reservar</string>
+    <string name="hotel_details_confirm_title">Confirmar Reserva</string>
+    <string name="hotel_details_confirm_text">Vols confirmar la reserva de l\'habitació %1$s per un total de %2$s€ a l\'hotel %3$s des del %4$s fins al %5$s?</string>
+    <string name="hotel_details_reserve_success">Reserva confirmada i guardada!</string>
+    <string name="hotel_details_confirm">Confirmar</string>
+    <string name="hotel_details_cancel">Cancel·lar</string>
 
+
+    <!-- Search Hotel Screen -->
+    <string name="search_hotel_title">Cercar Hotels</string>
+    <string name="search_hotel_back_desc">Enrere</string>
+    <string name="search_hotel_city_label">Ciutat (ex: Barcelona, París, Londres)</string>
+    <string name="search_hotel_start_date">Data Inici</string>
+    <string name="search_hotel_end_date">Data Fi</string>
+    <string name="search_hotel_button">Buscar Disponibilitat</string>
+    <string name="search_hotel_image_desc">Imatge de %1$s</string>
+    <string name="search_hotel_name_format">%1$s (%2$s)</string>
+    <string name="search_hotel_price_format">Des de %1$s€</string>
+    <string name="search_hotel_date_ok">D\'acord</string>
+    <string name="search_hotel_date_cancel">Cancel·lar</string>
+
+    <!-- Trip Detail Screen -->
+    <string name="dialog_delete_photo_title">Eliminar foto?</string>
+    <string name="dialog_delete_photo_text">Segur que vols eliminar aquesta foto de la galeria del viatge? Aquesta acció no es pot desfer.</string>
+    <string name="gallery_empty">Encara no hi ha fotos</string>
+    <string name="costs_mock_amount">35.00 €</string>
+    <string name="costs_total_format">%1$s €</string>
 
 
 </resources>

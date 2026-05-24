@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.odyway.BuildConfig
 import com.example.odyway.R
 import com.example.odyway.domain.Reservation
 import com.example.odyway.ui.viewmodels.AuthViewModel
@@ -39,13 +39,12 @@ import java.util.*
 fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel(),
-    hotelViewModel: HotelViewModel = hiltViewModel(), // AÑADIDO
-    authViewModel: AuthViewModel = hiltViewModel()    // AÑADIDO
+    hotelViewModel: HotelViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val username by settingsViewModel.username.collectAsState()
     val birthDate by settingsViewModel.birthDate.collectAsState()
 
-    // Estados de Firebase y la API de reservas
     val currentUser by authViewModel.currentUser.collectAsState()
     val reservations by hotelViewModel.reservations.collectAsState()
     val uiState by hotelViewModel.uiState.collectAsState()
@@ -53,7 +52,7 @@ fun ProfileScreen(
     var reservationToCancel by remember { mutableStateOf<Reservation?>(null) }
     val context = LocalContext.current
 
-    // Cargamos las reservas del usuario logueado usando su email real de Firebase (T4.1)
+    // Carga las reservas del usuario logueado
     LaunchedEffect(currentUser?.email) {
         currentUser?.email?.let { email ->
             hotelViewModel.loadReservations(email)
@@ -62,9 +61,8 @@ fun ProfileScreen(
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    // Modificamos el nombre de la primera pestaña a "Reserves"
     val tabs = listOf(
-        "Reserves",
+        stringResource(id = R.string.profile_tab_reserves),
         stringResource(id = R.string.profile_tab_favorites),
         stringResource(id = R.string.profile_tab_stats)
     )
@@ -96,7 +94,7 @@ fun ProfileScreen(
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // CABECERA DEL PERFIL (Azul oscuro OdyWay)
+            // Muestra la cabecera del perfil de usuario
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -140,7 +138,7 @@ fun ProfileScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
-                        text = currentUser?.email ?: "@odyway_user",
+                        text = currentUser?.email ?: stringResource(id = R.string.profile_default_user),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -167,19 +165,19 @@ fun ProfileScreen(
                 }
             }
 
-            // CONTADORES STATS
+            // Muestra los contadores de estadisticas
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStatItem("Reserves", reservations.size.toString())
+                ProfileStatItem(stringResource(id = R.string.profile_tab_reserves), reservations.size.toString())
                 ProfileStatItem(stringResource(id = R.string.profile_countries_label), "1")
                 ProfileStatItem(stringResource(id = R.string.profile_photos_label), "0")
             }
 
-            // TAB BAR (Línea indicadora roja corporativa)
+            // Barra de pestañas principal
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 containerColor = MaterialTheme.colorScheme.background,
@@ -206,7 +204,7 @@ fun ProfileScreen(
                 }
             }
 
-            // CONTENIDO DE LAS PESTAÑAS
+            // Controla el contenido visible de cada pestaña
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -214,14 +212,16 @@ fun ProfileScreen(
             ) {
                 when (selectedTabIndex) {
                     0 -> {
-                        // PESTAÑA 0: RESERVAS REALES (T4.1, T4.3)
                         if (uiState.isLoading) {
                             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator()
                             }
                         } else if (reservations.isEmpty()) {
                             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text("No tens cap reserva activa", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                                Text(
+                                    text = stringResource(id = R.string.profile_no_active_reserves),
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                                )
                             }
                         } else {
                             LazyColumn(
@@ -248,107 +248,107 @@ fun ProfileScreen(
         }
     }
 
-    // DIÁLOGO DE CONFIRMACIÓN PARA ELIMINAR RESERVA (T4.2)
+    // Muestra el dialogo de confirmacion para eliminar una reserva
     if (reservationToCancel != null) {
+        val hotelName = reservationToCancel!!.hotel?.name ?: reservationToCancel!!.hotel_id.toString()
+        val successMessage = context.getString(R.string.profile_reserve_cancelled_success)
+
         AlertDialog(
             onDismissRequest = { reservationToCancel = null },
-            title = { Text("Cancel·lar Reserva", fontWeight = FontWeight.Bold) },
-            text = { Text("Segur que vols cancel·lar la reserva a l'hotel ${reservationToCancel!!.hotel?.name ?: reservationToCancel!!.hotel_id}? Aquesta acció eliminarà la reserva de la API del professor.") },
+            title = { Text(stringResource(id = R.string.profile_cancel_reserve_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(id = R.string.profile_cancel_reserve_text, hotelName)) },
             confirmButton = {
                 Button(
                     onClick = {
                         currentUser?.email?.let { email ->
                             hotelViewModel.cancelReservation(
                                 resId = reservationToCancel!!.id,
+                                hotelId = reservationToCancel!!.hotel_id,
                                 email = email,
                                 onSuccess = {
-                                    Toast.makeText(context, "Reserva cancel·lada amb èxit!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
                                     reservationToCancel = null
                                 }
                             )
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Confirmar") }
+                ) { Text(stringResource(id = R.string.profile_confirm_button)) }
             },
             dismissButton = {
                 TextButton(onClick = { reservationToCancel = null }) {
-                    Text("Enrere", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(id = R.string.profile_back_button), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
     }
 }
 
-// COMPONENTE: Tarjeta de reserva adaptada (T4.3 - Muestra las imágenes del hotel)
+// Muestra la tarjeta con la informacion de una reserva
 @Composable
 fun ProfileReservationCard(item: Reservation, onDeleteClick: () -> Unit) {
-    val baseUrl = "http://15.224.84.148:8090"
+    val baseUrl = BuildConfig.HOTELS_API_URL
 
-    // Si la API devuelve ruta relativa, le añadimos la IP base del profesor
     val hotelImgUrl = item.hotel?.imageUrl?.let {
         if (it.startsWith("http")) it else baseUrl + it
     } ?: ""
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(115.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)),
+        modifier = Modifier.fillMaxWidth().height(140.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            // Imagen del hotel a la izquierda (T4.3)
             Image(
                 painter = coil.compose.rememberAsyncImagePainter(model = hotelImgUrl),
                 contentDescription = null,
-                modifier = Modifier
-                    .weight(0.35f)
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.weight(0.35f).fillMaxHeight().background(MaterialTheme.colorScheme.surfaceVariant),
                 contentScale = ContentScale.Crop
             )
 
-            // Información en el centro
             Column(
-                modifier = Modifier
-                    .weight(0.53f)
-                    .padding(10.dp),
+                modifier = Modifier.weight(0.53f).padding(12.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
+                    // Título
                     Text(
-                        text = item.hotel?.name ?: "Hotel (${item.hotel_id})",
+                        text = "${item.hotel?.name ?: item.hotel_id} - Room ${item.room_id}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        maxLines = 1
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
-                        text = "Habitació: ${item.room?.roomType?.replaceFirstChar { it.uppercase() } ?: item.room_id}",
+                        text = "${item.start_date} ➔ ${item.end_date}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
-                        text = "${item.start_date} ➔ ${item.end_date}",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary
+                        text = "Price: €${item.room?.price ?: "0.0"}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
+
                 Text(
-                    text = "ID: ${item.id}",
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    text = item.guest_name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
 
-            // Botón de eliminar (papelera roja corporativa) a la derecha
             Box(
-                modifier = Modifier
-                    .weight(0.12f)
-                    .fillMaxHeight(),
+                modifier = Modifier.weight(0.12f).fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
                 IconButton(onClick = onDeleteClick) {

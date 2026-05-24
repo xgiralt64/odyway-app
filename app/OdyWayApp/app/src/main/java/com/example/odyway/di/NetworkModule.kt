@@ -1,6 +1,7 @@
 package com.example.odyway.di
 
 import android.R.attr.level
+import com.example.odyway.BuildConfig
 import com.example.odyway.data.remote.api.HotelApi
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     // URL base de la API del profesor (¡Recuerda los permisos de ClearTextTraffic en el Manifest!)
-    private const val BASE_URL = "http://15.224.84.148:8090/"
+    private const val BASE_URL = BuildConfig.HOTELS_API_URL
 
     @Provides
     @Singleton

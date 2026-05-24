@@ -28,9 +28,7 @@ class TripViewModel @Inject constructor(
 
     private val tag = "TripViewModel_LOG"
 
-    // ==========================================
-    // 1. ESTADOS DE LA INTERFAZ (UI STATE)
-    // ==========================================
+    // ESTADOS DE LA INTERFAZ (UI STATE)
 
     val trips: StateFlow<List<Trip>> = tripRepository.getAllTrips()
         .stateIn(
@@ -67,9 +65,7 @@ class TripViewModel @Inject constructor(
         Log.d(tag, "Inicializando TripViewModel...")
     }
 
-    // ==========================================
-    // 2. OPERACIONES DE VIAJES (TRIPS)
-    // ==========================================
+    // PERACIONES DE VIAJES (TRIPS)
 
     fun addTrip(trip: Trip) {
         if (!validateTripDates(trip.startDate, trip.endDate) || !validateRequiredTripFields(trip)) {
@@ -112,15 +108,15 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    // ==========================================
-    // 3. OPERACIONES DE ITINERARIO (ACTIVIDADES)
-    // ==========================================
+
+    // OPERACIONES DE ITINERARIO (ACTIVIDADES)
+
 
     fun loadItineraryForTrip(tripId: String) {
         _currentTripId.value = tripId
     }
 
-    // Función extra para limpiar la pantalla al salir de Detalles o al cerrar sesión
+    // Funcion extra para limpiar la pantalla al salir de Detalles o al cerrar sesión
     fun clearCurrentItinerary() {
         _currentTripId.value = null
     }
@@ -160,9 +156,9 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    // ==========================================
-    // 4. LÓGICA DE VALIDACIÓN
-    // ==========================================
+
+    // LOGICA DE VALIDACIÓN
+
     private fun validateRequiredTripFields(trip: Trip): Boolean {
         if (trip.title.isBlank() || trip.destination.isBlank()) {
             showError("El título y el destino son obligatorios.")
@@ -195,9 +191,7 @@ class TripViewModel @Inject constructor(
         return true
     }
 
-    // ==========================================
-    // 5. GESTIÓN DE ERRORES UI Y LOGS
-    // ==========================================
+    // GESTIÓN DE ERRORES UI Y LOGS
 
     private fun showError(message: String) {
         Log.e(tag, "Error de Validación/Operación: $message")
@@ -223,20 +217,20 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             uris.forEach { uri ->
                 try {
-                    // 1. Generamos un nombre de archivo único para que no se sobreescriban
+                    // Generamos un nombre de archivo único para que no se sobreescriban
                     val fileName = "trip_${tripId}_${System.currentTimeMillis()}_${java.util.UUID.randomUUID().toString().take(5)}.jpg"
 
-                    // 2. Apuntamos a la carpeta privada y segura de nuestra app
+                    // Apuntamos a la carpeta privada y segura de nuestra app
                     val file = java.io.File(context.filesDir, fileName)
 
-                    // 3. Copiamos los bytes de la foto original a nuestro nuevo archivo
+                    // Copiamos los bytes de la foto original a nuestro nuevo archivo
                     context.contentResolver.openInputStream(uri)?.use { inputStream ->
                         file.outputStream().use { outputStream ->
                             inputStream.copyTo(outputStream)
                         }
                     }
 
-                    // 4. Guardamos la ruta absoluta y definitiva en Room
+                    // Guardamos la ruta absoluta y definitiva en Room
                     tripRepository.saveTripImage(tripId, file.absolutePath)
                 } catch (e: Exception) {
                     android.util.Log.e("TripViewModel", "Error al copiar la imagen: ${e.message}")
