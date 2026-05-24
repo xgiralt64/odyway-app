@@ -202,17 +202,20 @@ class TripViewModel @Inject constructor(
         _uiErrorMessage.value = null
     }
 
-    private val _tripImages = kotlinx.coroutines.flow.MutableStateFlow<List<com.example.odyway.domain.TripImage>>(emptyList())
-    val tripImages: kotlinx.coroutines.flow.StateFlow<List<com.example.odyway.domain.TripImage>> = _tripImages.asStateFlow()
-
-    fun loadImagesForTrip(tripId: String) {
-        viewModelScope.launch {
-            tripRepository.getTripImages(tripId).collect { images ->
-                _tripImages.value = images
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val tripImages: StateFlow<List<com.example.odyway.domain.TripImage>> = _currentTripId
+        .flatMapLatest { tripId ->
+            if (tripId != null) {
+                tripRepository.getTripImages(tripId)
+            } else {
+                flowOf(emptyList()) // Si no hay viaje, vaciamos la galería
             }
         }
-    }
-
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
     fun saveImagesToInternalStorage(context: android.content.Context, tripId: String, uris: List<android.net.Uri>) {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             uris.forEach { uri ->

@@ -77,8 +77,9 @@ fun TripDetailScreen(
 
     LaunchedEffect(currentTrip?.id) {
         currentTrip?.id?.let {
+            // Al decirle al ViewModel cuál es el viaje actual,
+            // automáticamente cargará su itinerario y sus imágenes sin mezclarlas.
             tripViewModel.loadItineraryForTrip(it)
-            tripViewModel.loadImagesForTrip(it)
         }
     }
 
